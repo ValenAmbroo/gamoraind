@@ -64,7 +64,7 @@ namespace Gamora_Indumentaria
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar categorías: {ex.Message}", "Error",
+                MessageBox.Show(string.Format("Error al cargar categorías: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -85,7 +85,8 @@ namespace Gamora_Indumentaria
         /// </summary>
         private void ActualizarCamposPorCategoria()
         {
-            // Limpiar campos
+            // Limpiar campos - usar DataSource = null para limpiar ComboBox con DataSource
+            cboTalle.DataSource = null;
             cboTalle.Items.Clear();
             txtSabor.Text = "";
 
@@ -132,7 +133,7 @@ namespace Gamora_Indumentaria
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar talles: {ex.Message}", "Error",
+                MessageBox.Show(string.Format("Error al cargar talles: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -163,14 +164,14 @@ namespace Gamora_Indumentaria
 
                 int nuevoId = inventarioDAL.AgregarProducto(producto);
 
-                MessageBox.Show($"Producto agregado exitosamente con ID: {nuevoId}", "Éxito",
+                MessageBox.Show(string.Format("Producto agregado exitosamente con ID: {0}", nuevoId), "Éxito",
                               MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 LimpiarFormulario();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar el producto: {ex.Message}", "Error",
+                MessageBox.Show(string.Format("Error al guardar el producto: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -222,7 +223,8 @@ namespace Gamora_Indumentaria
             // Validar precio si se ingresó
             if (!string.IsNullOrWhiteSpace(txtPrecio.Text))
             {
-                if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio < 0)
+                decimal precio;
+                if (!decimal.TryParse(txtPrecio.Text, out precio) || precio < 0)
                 {
                     MessageBox.Show("El precio debe ser un número válido mayor o igual a cero.", "Validación",
                                   MessageBoxButtons.OK, MessageBoxIcon.Warning);

@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Ejecutar Gamora Indumentaria",
+      "type": "shell",
+      "command": "cd \"Gamora Indumentaria\" && \"bin\\Debug\\Gamora Indumentaria.exe\"",
+      "group": "build",
+      "isBackground": false
+    }
+  ]
+}

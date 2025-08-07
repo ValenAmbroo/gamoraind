@@ -48,7 +48,7 @@ namespace Gamora_Indumentaria
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar categorías: {ex.Message}", "Error",
+                MessageBox.Show(string.Format("Error al cargar categorías: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -79,7 +79,7 @@ namespace Gamora_Indumentaria
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al cargar inventario: {ex.Message}", "Error",
+                MessageBox.Show(string.Format("Error al cargar inventario: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }

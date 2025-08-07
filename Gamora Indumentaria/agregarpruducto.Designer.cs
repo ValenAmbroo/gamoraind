@@ -457,10 +457,10 @@
             this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNombre.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtNombre.Location = new System.Drawing.Point(150, 11);
+            this.txtNombre.Location = new System.Drawing.Point(167, 11);
             this.txtNombre.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtNombre.Name = "txtNombre";
-            this.txtNombre.Size = new System.Drawing.Size(653, 27);
+            this.txtNombre.Size = new System.Drawing.Size(636, 27);
             this.txtNombre.TabIndex = 1;
             // 
             // panelCategoria

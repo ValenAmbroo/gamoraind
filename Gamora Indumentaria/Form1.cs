@@ -15,6 +15,7 @@ namespace Gamora_Indumentaria
         //string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\VentasDB.mdf;Integrated Security=True;";
 
         private string perfilUsuario;
+        private Panel panelContenido; // Panel para contener los formularios hijos
 
         public Form1(string perfil)
         {
@@ -26,7 +27,48 @@ namespace Gamora_Indumentaria
             perfilUsuario = perfil; // ← ahora sí existe la variable "perfil"
             panelsubprincipal.Visible = false;
 
+            // Crear panel de contenido principal
+            CrearPanelContenido();
+
             AplicarPerfil();
+        }
+
+        /// <summary>
+        /// Crea el panel principal donde se cargarán los formularios hijos
+        /// </summary>
+        private void CrearPanelContenido()
+        {
+            panelContenido = new Panel();
+            panelContenido.Name = "panelContenido";
+            panelContenido.Dock = DockStyle.Fill;
+            panelContenido.BackColor = Color.FromArgb(240, 240, 240);
+            panelContenido.Margin = new Padding(200, 50, 0, 0); // Dejar espacio para el menú lateral
+
+            // Posicionar el panel a la derecha del menú lateral
+            panelContenido.Location = new Point(200, 40); // Después del menú lateral y barra superior
+            panelContenido.Size = new Size(this.Width - 200, this.Height - 40);
+            panelContenido.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
+            this.Controls.Add(panelContenido);
+            panelContenido.BringToFront(); // Traer al frente para que no quede debajo de otros controles
+        }
+
+        /// <summary>
+        /// Carga un formulario hijo dentro del panel de contenido
+        /// </summary>
+        private void CargarFormularioHijo(Form formularioHijo)
+        {
+            // Limpiar el panel de contenido
+            panelContenido.Controls.Clear();
+
+            // Configurar el formulario hijo
+            formularioHijo.TopLevel = false;
+            formularioHijo.FormBorderStyle = FormBorderStyle.None;
+            formularioHijo.Dock = DockStyle.Fill;
+
+            // Agregar al panel y mostrar
+            panelContenido.Controls.Add(formularioHijo);
+            formularioHijo.Show();
         }
 
 
@@ -75,7 +117,7 @@ namespace Gamora_Indumentaria
 
         private void button5_Click(object sender, EventArgs e)
         {
-
+            CargarFormularioHijo(new inventario());
         }
 
         private void panel6_Paint(object sender, PaintEventArgs e)
@@ -94,20 +136,7 @@ namespace Gamora_Indumentaria
 
         private void button6_Click(object sender, EventArgs e)
         {
-
-            productos productos = new productos();
-            this.Hide();
-            productos.FormClosed += (s, args) => this.Close(); // Cierra Form2 cuando se cierre Form3
-            productos.Show();
-            //Verifica si el form actual (Form3) está en pantalla completa
-            bool esPantallaCompleta = this.WindowState == FormWindowState.Maximized;
-
-
-
-
-            // Aplica el mismo estado de ventana que tenía el anterior
-            productos.WindowState = esPantallaCompleta ? FormWindowState.Maximized : FormWindowState.Normal;
-
+            CargarFormularioHijo(new productos());
         }
 
         private void panel7_Paint(object sender, PaintEventArgs e)
@@ -127,14 +156,14 @@ namespace Gamora_Indumentaria
 
         private void btnsubprincipal_MouseEnter(object sender, EventArgs e)
         {
-           // Button btn = sender as Button;
+            // Button btn = sender as Button;
             //btn.BackColor = Color.FromArgb(0, 120, 215); // Color al pasar el mouse
         }
 
         private void btnsubprincipal_MouseLeave(object sender, EventArgs e)
         {
-           // Button btn = sender as Button;
-           // btn.BackColor = Color.FromArgb(255, 255, 255); // Vuelve al color original
+            // Button btn = sender as Button;
+            // btn.BackColor = Color.FromArgb(255, 255, 255); // Vuelve al color original
         }
         private void AplicarPerfil()
         {
@@ -166,27 +195,16 @@ namespace Gamora_Indumentaria
 
         private void button9_Click(object sender, EventArgs e)
         {
-
+            CargarFormularioHijo(new agregarpruducto());
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            ventas ventas = new ventas();
-            this.Hide();
-            ventas.FormClosed += (s, args) => this.Close(); // Cierra Form2 cuando se cierre Form3
-            ventas.Show();
-            //Verifica si el form actual (Form3) está en pantalla completa
-            bool esPantallaCompleta = this.WindowState == FormWindowState.Maximized;
-
-
-
-
-            // Aplica el mismo estado de ventana que tenía el anterior
-            ventas.WindowState = esPantallaCompleta ? FormWindowState.Maximized : FormWindowState.Normal;
+            CargarFormularioHijo(new ventas());
         }
     }
 }
-       
+
 
 
 
