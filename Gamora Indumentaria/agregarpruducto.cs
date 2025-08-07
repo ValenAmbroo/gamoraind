@@ -8,66 +8,248 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Gamora_Indumentaria.Data;
 
 namespace Gamora_Indumentaria
 {
     public partial class agregarpruducto : Form
     {
-        private string _categoria;
-        private string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\VentasDB.mdf;Integrated Security=True;";
-        private string categoria;
+        private InventarioDAL inventarioDAL;
+        private Categoria categoriaSeleccionada;
+        private List<TallePorCategoria> tallesDisponibles;
 
         public agregarpruducto()
         {
             InitializeComponent();
-            
-            _categoria = _categoria;
-            
+            inventarioDAL = new InventarioDAL();
+            CargarCategorias();
         }
 
-        public agregarpruducto(string categoria)
+        public agregarpruducto(string nombreCategoria) : this()
         {
-            this.categoria = categoria;
+            // Si se pasa una categoría específica, seleccionarla
+            for (int i = 0; i < cboCategoria.Items.Count; i++)
+            {
+                Categoria cat = (Categoria)cboCategoria.Items[i];
+                if (cat.Nombre == nombreCategoria)
+                {
+                    cboCategoria.SelectedIndex = i;
+                    break;
+                }
+            }
         }
 
         private void agregarpruducto_Load(object sender, EventArgs e)
         {
-            InitializeComponent();
-            _categoria = _categoria;
-            //lblCategoriaValor.Text = _categoria;
-
-            // Cargar talles en el comboBox
-            cboTalle.Items.AddRange(new string[] { "S", "M", "L", "XL", "38", "40", "42", "44", "46", "N/A" });
-            cboTalle.SelectedIndex = 0;
+            // La inicialización se hace en el constructor
         }
 
+        /// <summary>
+        /// Carga todas las categorías disponibles en el ComboBox
+        /// </summary>
+        private void CargarCategorias()
+        {
+            try
+            {
+                var categorias = inventarioDAL.ObtenerCategorias();
+
+                cboCategoria.DataSource = categorias;
+                cboCategoria.DisplayMember = "Nombre";
+                cboCategoria.ValueMember = "Id";
+
+                if (categorias.Count > 0)
+                {
+                    cboCategoria.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar categorías: {ex.Message}", "Error",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Maneja el cambio de categoría y actualiza los talles disponibles
+        /// </summary>
+        private void cboCategoria_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cboCategoria.SelectedItem == null) return;
+
+            categoriaSeleccionada = (Categoria)cboCategoria.SelectedItem;
+            ActualizarCamposPorCategoria();
+        }
+
+        /// <summary>
+        /// Actualiza los campos del formulario según la categoría seleccionada
+        /// </summary>
+        private void ActualizarCamposPorCategoria()
+        {
+            // Limpiar campos
+            cboTalle.Items.Clear();
+            txtSabor.Text = "";
+
+            // Mostrar/ocultar campos según la categoría
+            bool tieneCategoria = categoriaSeleccionada != null;
+
+            if (tieneCategoria)
+            {
+                // Configurar visibilidad de campos según la categoría
+                bool esTalleVisible = categoriaSeleccionada.TieneTalle;
+                bool esVaper = categoriaSeleccionada.Nombre == "VAPER";
+
+                lblTalle.Visible = esTalleVisible;
+                cboTalle.Visible = esTalleVisible;
+
+                lblSabor.Visible = esVaper;
+                txtSabor.Visible = esVaper;
+
+                // Cargar talles si la categoría los tiene
+                if (esTalleVisible)
+                {
+                    CargarTallesPorCategoria(categoriaSeleccionada.Id);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Carga los talles disponibles para la categoría seleccionada
+        /// </summary>
+        private void CargarTallesPorCategoria(int categoriaId)
+        {
+            try
+            {
+                tallesDisponibles = inventarioDAL.ObtenerTallesPorCategoria(categoriaId);
+
+                cboTalle.DataSource = tallesDisponibles;
+                cboTalle.DisplayMember = "TalleValor";
+                cboTalle.ValueMember = "Id";
+
+                if (tallesDisponibles.Count > 0)
+                {
+                    cboTalle.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar talles: {ex.Message}", "Error",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Guarda el nuevo producto en la base de datos
+        /// </summary>
         private void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtNombre.Text) || cboTalle.SelectedIndex == -1)
+            if (!ValidarFormulario()) return;
+
+            try
             {
-                MessageBox.Show("Por favor, completá todos los campos.");
-                return;
-            }
+                var producto = new ProductoInventario
+                {
+                    CategoriaId = categoriaSeleccionada.Id,
+                    Nombre = txtNombre.Text.Trim(),
+                    Descripcion = string.IsNullOrWhiteSpace(txtDescripcion.Text) ? null : txtDescripcion.Text.Trim(),
+                    CodigoBarra = string.IsNullOrWhiteSpace(txtCodigoBarra.Text) ? null : txtCodigoBarra.Text.Trim(),
+                    TalleId = categoriaSeleccionada.TieneTalle && cboTalle.SelectedValue != null ?
+                             (int?)cboTalle.SelectedValue : null,
+                    Sabor = categoriaSeleccionada.Nombre == "VAPER" && !string.IsNullOrWhiteSpace(txtSabor.Text) ?
+                           txtSabor.Text.Trim() : null,
+                    Cantidad = (int)nudCantidad.Value,
+                    PrecioVenta = string.IsNullOrWhiteSpace(txtPrecio.Text) ? null :
+                                 (decimal?)Convert.ToDecimal(txtPrecio.Text)
+                };
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+                int nuevoId = inventarioDAL.AgregarProducto(producto);
+
+                MessageBox.Show($"Producto agregado exitosamente con ID: {nuevoId}", "Éxito",
+                              MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarFormulario();
+            }
+            catch (Exception ex)
             {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("INSERT INTO Inventario (Categoria, Nombre, Talle, Cantidad) VALUES (@cat, @nom, @talle, @cant)", con);
-                cmd.Parameters.AddWithValue("@cat", _categoria);
-                cmd.Parameters.AddWithValue("@nom", txtNombre.Text);
-                cmd.Parameters.AddWithValue("@talle", cboTalle.Text);
-                cmd.Parameters.AddWithValue("@cant", (int)nudCantidad.Value);
-
-                cmd.ExecuteNonQuery();
+                MessageBox.Show($"Error al guardar el producto: {ex.Message}", "Error",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            MessageBox.Show("Producto agregado exitosamente.");
-            this.Close(); // Cierra el formulario luego de guardar
         }
 
-        private void lblCategoriaValor_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Valida que todos los campos requeridos estén completos
+        /// </summary>
+        private bool ValidarFormulario()
         {
-           
+            if (categoriaSeleccionada == null)
+            {
+                MessageBox.Show("Por favor, selecciona una categoría.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                MessageBox.Show("Por favor, ingresa el nombre del producto.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtNombre.Focus();
+                return false;
+            }
+
+            if (categoriaSeleccionada.TieneTalle && cboTalle.SelectedIndex == -1)
+            {
+                MessageBox.Show("Por favor, selecciona un talle.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cboTalle.Focus();
+                return false;
+            }
+
+            if (categoriaSeleccionada.Nombre == "VAPER" && string.IsNullOrWhiteSpace(txtSabor.Text))
+            {
+                MessageBox.Show("Por favor, ingresa el sabor del vaper.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtSabor.Focus();
+                return false;
+            }
+
+            if (nudCantidad.Value <= 0)
+            {
+                MessageBox.Show("La cantidad debe ser mayor a cero.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                nudCantidad.Focus();
+                return false;
+            }
+
+            // Validar precio si se ingresó
+            if (!string.IsNullOrWhiteSpace(txtPrecio.Text))
+            {
+                if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio < 0)
+                {
+                    MessageBox.Show("El precio debe ser un número válido mayor o igual a cero.", "Validación",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPrecio.Focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Limpia todos los campos del formulario
+        /// </summary>
+        private void LimpiarFormulario()
+        {
+            txtNombre.Text = "";
+            txtDescripcion.Text = "";
+            txtCodigoBarra.Text = "";
+            txtSabor.Text = "";
+            txtPrecio.Text = "";
+            nudCantidad.Value = 1;
+
+            if (cboTalle.Items.Count > 0)
+                cboTalle.SelectedIndex = 0;
+
+            txtNombre.Focus();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -75,17 +257,25 @@ namespace Gamora_Indumentaria
             this.Close();
         }
 
-        private void cboCategoria_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnLimpiar_Click(object sender, EventArgs e)
         {
-            cboCategoria.Items.AddRange(new string[]
-{
-        "BUZOS", "CAMPERAS", "REMERAS", "CHALECOS", "JOGGING",
-        "JEANS HOMBRE", "JEANS DAMA", "BOXER", "ZAPATILLAS",
-        "GORRAS", "CADENITAS", "VAPER", "RELOJ", "ANTEOJOS"
-});
+            LimpiarFormulario();
+        }
 
-            cboCategoria.SelectedIndex = 0; // selecciona por defecto
-                        // muestra los datos
+        private void button4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.Close();
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+
         }
     }
-    }
+}

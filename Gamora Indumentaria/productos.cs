@@ -8,84 +8,195 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Gamora_Indumentaria.Data;
 
 namespace Gamora_Indumentaria
 {
     public partial class productos : Form
     {
-        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\VentasDB.mdf;Integrated Security=True;";
-
+        private InventarioDAL inventarioDAL;
 
         public productos()
         {
             InitializeComponent();
+            inventarioDAL = new InventarioDAL();
         }
-      
+
         private void productos_Load(object sender, EventArgs e)
         {
-            cboCategoria.Items.AddRange(new string[]
-   {
-        "BUZOS", "CAMPERAS", "REMERAS", "CHALECOS", "JOGGING",
-        "JEANS HOMBRE", "JEANS DAMA", "BOXER", "ZAPATILLAS",
-        "GORRAS", "CADENITAS", "VAPER", "RELOJ", "ANTEOJOS"
-   });
-
-            cboCategoria.SelectedIndex = 0; // selecciona por defecto
-            ActualizarGrid();               // muestra los datos
+            CargarCategorias();
+            ActualizarGrid();
         }
 
-        // ✔️ Este método carga productos por categoría en el DataGridView
-        private void ActualizarGrid()
+        /// <summary>
+        /// Carga todas las categorías en el ComboBox
+        /// </summary>
+        private void CargarCategorias()
         {
-            string categoria = cboCategoria.SelectedItem?.ToString();
-            if (string.IsNullOrEmpty(categoria)) return;
-
-            using (SqlConnection con = new SqlConnection(connectionString))
+            try
             {
-                //con.Open();
-                SqlDataAdapter da = new SqlDataAdapter("SELECT Id, Nombre, Talle, Cantidad FROM Inventario WHERE Categoria = @cat", con);
-                da.SelectCommand.Parameters.AddWithValue("@cat", categoria);
-                DataTable dt = new DataTable();
-               // da.Fill(dt);
-                dgvInventario.DataSource = dt;
+                var categorias = inventarioDAL.ObtenerCategorias();
+
+                cboCategoria.DataSource = categorias;
+                cboCategoria.DisplayMember = "Nombre";
+                cboCategoria.ValueMember = "Id";
+
+                if (categorias.Count > 0)
+                {
+                    cboCategoria.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar categorías: {ex.Message}", "Error",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // 🔁 Cada vez que se cambia la categoría, se actualiza la grilla
+        /// <summary>
+        /// Actualiza el DataGridView con los productos
+        /// </summary>
+        private void ActualizarGrid()
+        {
+            try
+            {
+                DataTable dt;
+
+                if (cboCategoria.SelectedItem != null)
+                {
+                    Categoria categoria = (Categoria)cboCategoria.SelectedItem;
+                    dt = inventarioDAL.ObtenerInventarioPorCategoria(categoria.Nombre);
+                }
+                else
+                {
+                    dt = inventarioDAL.ObtenerInventarioCompleto();
+                }
+
+                dgvInventario.DataSource = dt;
+
+                // Configurar el aspecto del DataGridView
+                ConfigurarDataGridView();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar inventario: {ex.Message}", "Error",
+                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Configura el aspecto y columnas del DataGridView
+        /// </summary>
+        private void ConfigurarDataGridView()
+        {
+            if (dgvInventario.Columns.Count > 0)
+            {
+                // Ocultar columna ID
+                if (dgvInventario.Columns["Id"] != null)
+                    dgvInventario.Columns["Id"].Visible = false;
+
+                // Configurar anchos de columnas
+                if (dgvInventario.Columns["Categoria"] != null)
+                    dgvInventario.Columns["Categoria"].Width = 120;
+
+                if (dgvInventario.Columns["Producto"] != null)
+                    dgvInventario.Columns["Producto"].Width = 200;
+
+                if (dgvInventario.Columns["Descripcion"] != null)
+                    dgvInventario.Columns["Descripcion"].Width = 250;
+
+                if (dgvInventario.Columns["Talle"] != null)
+                    dgvInventario.Columns["Talle"].Width = 80;
+
+                if (dgvInventario.Columns["Sabor"] != null)
+                    dgvInventario.Columns["Sabor"].Width = 100;
+
+                if (dgvInventario.Columns["Cantidad"] != null)
+                {
+                    dgvInventario.Columns["Cantidad"].Width = 80;
+                    dgvInventario.Columns["Cantidad"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                }
+
+                if (dgvInventario.Columns["PrecioVenta"] != null)
+                {
+                    dgvInventario.Columns["PrecioVenta"].Width = 100;
+                    dgvInventario.Columns["PrecioVenta"].DefaultCellStyle.Format = "C";
+                    dgvInventario.Columns["PrecioVenta"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                }
+
+                // Ocultar columnas de fechas para simplificar la vista
+                if (dgvInventario.Columns["FechaCreacion"] != null)
+                    dgvInventario.Columns["FechaCreacion"].Visible = false;
+
+                if (dgvInventario.Columns["FechaModificacion"] != null)
+                    dgvInventario.Columns["FechaModificacion"].Visible = false;
+
+                if (dgvInventario.Columns["Activo"] != null)
+                    dgvInventario.Columns["Activo"].Visible = false;
+
+                // Marcar productos con stock bajo en rojo
+                MarcarStockBajo();
+            }
+        }
+
+        /// <summary>
+        /// Marca las filas con stock bajo en color rojo
+        /// </summary>
+        private void MarcarStockBajo()
+        {
+            foreach (DataGridViewRow row in dgvInventario.Rows)
+            {
+                if (row.Cells["Cantidad"] != null && row.Cells["Cantidad"].Value != null)
+                {
+                    int cantidad = Convert.ToInt32(row.Cells["Cantidad"].Value);
+                    if (cantidad <= 5)
+                    {
+                        row.DefaultCellStyle.BackColor = Color.LightPink;
+                        row.DefaultCellStyle.ForeColor = Color.DarkRed;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Maneja el cambio de categoría
+        /// </summary>
         private void cboCategoria_SelectedIndexChanged(object sender, EventArgs e)
         {
             ActualizarGrid();
         }
 
-        // ➕ Botón para abrir el formulario de agregar producto
+        /// <summary>
+        /// Abre el formulario para agregar un producto
+        /// </summary>
         private void btnAgregar_Click(object sender, EventArgs e)
         {
             if (cboCategoria.SelectedItem != null)
             {
-                string categoria = cboCategoria.SelectedItem.ToString();
-                agregarpruducto form = new agregarpruducto(categoria); // o FormAgregar si corregiste el nombre
-                form.ShowDialog();
+                Categoria categoria = (Categoria)cboCategoria.SelectedItem;
+                agregarpruducto form = new agregarpruducto(categoria.Nombre);
 
-                // Recargar productos
-                ActualizarGrid();
+                // Usar ShowDialog para esperar a que se cierre el formulario
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    ActualizarGrid(); // Recargar después de agregar
+                }
             }
-           
+            else
+            {
+                // Si no hay categoría seleccionada, abrir el formulario sin preselección
+                agregarpruducto form = new agregarpruducto();
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    ActualizarGrid();
+                }
+            }
         }
 
         private void btnAgregar_Click_1(object sender, EventArgs e)
         {
-            agregarpruducto agregarpruducto = new agregarpruducto();
-            this.Hide();
-            agregarpruducto.FormClosed += (s, args) => this.Close(); // Cierra Form2 cuando se cierre Form3
-            agregarpruducto.Show();
-            //Verifica si el form actual (Form3) está en pantalla completa
-            bool esPantallaCompleta = this.WindowState == FormWindowState.Maximized;
-
-
-
-
-            // Aplica el mismo estado de ventana que tenía el anterior
-            agregarpruducto.WindowState = esPantallaCompleta ? FormWindowState.Maximized : FormWindowState.Normal;
+            // Mantener la funcionalidad existente si se usa en otro lugar
+            btnAgregar_Click(sender, e);
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -95,7 +206,7 @@ namespace Gamora_Indumentaria
 
         private void dgvInventario_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // Aquí se puede agregar funcionalidad para editar productos al hacer click
         }
 
         private void btnRefrescar_Click(object sender, EventArgs e)
@@ -105,7 +216,8 @@ namespace Gamora_Indumentaria
 
         private void cboCategoria_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-
+            // Mantener la funcionalidad existente
+            cboCategoria_SelectedIndexChanged(sender, e);
         }
     }
 }
