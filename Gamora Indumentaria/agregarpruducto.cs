@@ -87,7 +87,7 @@ namespace Gamora_Indumentaria
         {
             // Limpiar campos - usar DataSource = null para limpiar ComboBox con DataSource
             cboTalle.DataSource = null;
-            cboTalle.Items.Clear();
+             cboTalle.Items.Clear();
             txtSabor.Text = "";
 
             // Mostrar/ocultar campos según la categoría

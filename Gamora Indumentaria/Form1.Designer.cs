@@ -72,7 +72,7 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.White;
             this.panel1.Controls.Add(this.button3);
@@ -140,7 +140,7 @@
             // 
             // panel3
             // 
-            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panel3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panel3.BackColor = System.Drawing.Color.Black;
             this.panel3.Controls.Add(this.panel9);
@@ -207,7 +207,7 @@
             this.btnsubadministracion.Name = "btnsubadministracion";
             this.btnsubadministracion.Size = new System.Drawing.Size(141, 45);
             this.btnsubadministracion.TabIndex = 7;
-            this.btnsubadministracion.Text = "ADMINISTRACION";
+            this.btnsubadministracion.Text = "⚙️ ADMINISTRACIÓN";
             this.btnsubadministracion.UseVisualStyleBackColor = true;
             this.btnsubadministracion.Click += new System.EventHandler(this.btnsubadministracion_Click);
             // 
@@ -218,7 +218,7 @@
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(141, 45);
             this.button9.TabIndex = 5;
-            this.button9.Text = "ARTICULOS";
+            this.button9.Text = "➕ AGREGAR PRODUCTOS";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
@@ -230,7 +230,7 @@
             this.btnsubprincipal.Name = "btnsubprincipal";
             this.btnsubprincipal.Size = new System.Drawing.Size(140, 45);
             this.btnsubprincipal.TabIndex = 4;
-            this.btnsubprincipal.Text = "PRINCIPAL";
+            this.btnsubprincipal.Text = "📊 OPERACIONES";
             this.btnsubprincipal.UseVisualStyleBackColor = true;
             this.btnsubprincipal.Click += new System.EventHandler(this.btnsubprincipal_Click);
             this.btnsubprincipal.MouseEnter += new System.EventHandler(this.btnsubprincipal_MouseEnter);
@@ -243,7 +243,7 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(140, 45);
             this.button6.TabIndex = 2;
-            this.button6.Text = "INVENTARIO";
+            this.button6.Text = "📦 GESTIÓN DE STOCK";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -256,7 +256,7 @@
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(61, 31);
             this.button10.TabIndex = 6;
-            this.button10.Text = "SALIR";
+            this.button10.Text = "🔓 CERRAR SESIÓN";
             this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
@@ -268,13 +268,13 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(155, 45);
             this.button4.TabIndex = 0;
-            this.button4.Text = "VENTAS";
+            this.button4.Text = "💰 PUNTO DE VENTA";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // panel5
             // 
-            this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.panel5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel5.BackColor = System.Drawing.SystemColors.ControlText;
             this.panel5.Controls.Add(this.label3);
@@ -352,7 +352,7 @@
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(155, 45);
             this.button8.TabIndex = 4;
-            this.button8.Text = "CERRAR CAJA";
+            this.button8.Text = "💳 ARQUEO DE CAJA";
             this.button8.UseVisualStyleBackColor = true;
             // 
             // button7
@@ -363,8 +363,9 @@
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(155, 45);
             this.button7.TabIndex = 2;
-            this.button7.Text = "HISTORIAL VENTAS";
+            this.button7.Text = "📊 REPORTES Y ESTADÍSTICAS";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button5
             // 
@@ -374,7 +375,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(155, 45);
             this.button5.TabIndex = 1;
-            this.button5.Text = "EDITAR VENTAS";
+            this.button5.Text = "📋 CONSULTAR INVENTARIO";
             this.button5.UseVisualStyleBackColor = true;
             // 
             // contextMenuStrip1
@@ -405,7 +406,7 @@
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(155, 45);
             this.button12.TabIndex = 4;
-            this.button12.Text = "CERRAR CAJA";
+            this.button12.Text = "💳 ARQUEO DE CAJA";
             this.button12.UseVisualStyleBackColor = true;
             // 
             // button13
@@ -416,8 +417,9 @@
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(155, 45);
             this.button13.TabIndex = 2;
-            this.button13.Text = "HISTORIAL VENTAS";
+            this.button13.Text = "📊 REPORTES Y ESTADÍSTICAS";
             this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button14
             // 
@@ -427,7 +429,7 @@
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(155, 45);
             this.button14.TabIndex = 1;
-            this.button14.Text = "EDITAR VENTAS";
+            this.button14.Text = "🔧 CONFIGURACIÓN";
             this.button14.UseVisualStyleBackColor = true;
             // 
             // button15
@@ -438,7 +440,7 @@
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(155, 45);
             this.button15.TabIndex = 0;
-            this.button15.Text = "VENTAS";
+            this.button15.Text = "💰 PUNTO DE VENTA";
             this.button15.UseVisualStyleBackColor = true;
             // 
             // panel2

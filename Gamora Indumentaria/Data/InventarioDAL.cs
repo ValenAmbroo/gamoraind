@@ -11,11 +11,10 @@ namespace Gamora_Indumentaria.Data
     /// </summary>
     public class InventarioDAL
     {
-        private readonly string connectionString;
-
         public InventarioDAL()
         {
-            connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=|DataDirectory|\VentasDB.mdf;Integrated Security=True;";
+            // Inicializar la base de datos si es necesario
+            DatabaseManager.InitializeDatabase();
         }
 
         #region Categorías
@@ -27,24 +26,23 @@ namespace Gamora_Indumentaria.Data
         {
             List<Categoria> categorias = new List<Categoria>();
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            try
             {
-                string query = "SELECT Id, Nombre, TieneTalle, TipoTalle FROM Categorias ORDER BY Nombre";
-                SqlCommand cmd = new SqlCommand(query, con);
+                string query = "SELECT Id, Nombre FROM Categorias ORDER BY Nombre";
+                DataTable dt = DatabaseManager.ExecuteQuery(query);
 
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                foreach (DataRow row in dt.Rows)
                 {
                     categorias.Add(new Categoria
                     {
-                        Id = (int)reader["Id"],
-                        Nombre = reader["Nombre"].ToString(),
-                        TieneTalle = (bool)reader["TieneTalle"],
-                        TipoTalle = reader["TipoTalle"].ToString()
+                        Id = Convert.ToInt32(row["Id"]),
+                        Nombre = row["Nombre"].ToString()
                     });
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error al obtener categorías: {0}", ex.Message), ex);
             }
 
             return categorias;
@@ -57,28 +55,32 @@ namespace Gamora_Indumentaria.Data
         {
             List<TallePorCategoria> talles = new List<TallePorCategoria>();
 
-            using (SqlConnection con = new SqlConnection(connectionString))
+            try
             {
                 string query = @"SELECT Id, TalleValor, Orden 
                                FROM TiposTalle 
                                WHERE CategoriaId = @CategoriaId 
                                ORDER BY Orden";
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@CategoriaId", categoriaId);
+                SqlParameter[] parameters = {
+                    new SqlParameter("@CategoriaId", categoriaId)
+                };
 
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = DatabaseManager.ExecuteQuery(query, parameters);
 
-                while (reader.Read())
+                foreach (DataRow row in dt.Rows)
                 {
                     talles.Add(new TallePorCategoria
                     {
-                        Id = (int)reader["Id"],
-                        TalleValor = reader["TalleValor"].ToString(),
-                        Orden = (int)reader["Orden"]
+                        Id = Convert.ToInt32(row["Id"]),
+                        TalleValor = row["TalleValor"].ToString(),
+                        Orden = Convert.ToInt32(row["Orden"])
                     });
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error al obtener talles: {0}", ex.Message), ex);
             }
 
             return talles;
@@ -93,14 +95,8 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public DataTable ObtenerInventarioCompleto()
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string query = "SELECT * FROM vw_InventarioCompleto ORDER BY Categoria, Producto, Talle";
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
-            }
+            string query = "SELECT * FROM vw_InventarioCompleto ORDER BY Categoria, Producto, Talle";
+            return DatabaseManager.ExecuteQuery(query);
         }
 
         /// <summary>
@@ -108,18 +104,11 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public DataTable ObtenerInventarioPorCategoria(string categoria)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string query = @"SELECT * FROM vw_InventarioCompleto 
-                               WHERE Categoria = @Categoria 
-                               ORDER BY Producto, Talle";
+            string query = @"SELECT * FROM vw_InventarioCompleto 
+                           WHERE Categoria = @Categoria 
+                           ORDER BY Producto, Talle";
 
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
-                da.SelectCommand.Parameters.AddWithValue("@Categoria", categoria);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
-            }
+            return DatabaseManager.ExecuteQuery(query, new SqlParameter("@Categoria", categoria));
         }
 
         /// <summary>
@@ -127,24 +116,20 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public int AgregarProducto(ProductoInventario producto)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("sp_AgregarProducto", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+            string query = @"
+                INSERT INTO Inventario (CategoriaId, Nombre, Descripcion, CodigoBarras, Stock, Precio, FechaCreacion)
+                VALUES (@CategoriaId, @Nombre, @Descripcion, @CodigoBarras, @Stock, @Precio, GETDATE());
+                SELECT SCOPE_IDENTITY();";
 
-                cmd.Parameters.AddWithValue("@CategoriaId", producto.CategoriaId);
-                cmd.Parameters.AddWithValue("@Nombre", producto.Nombre);
-                cmd.Parameters.AddWithValue("@Descripcion", (object)producto.Descripcion ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@CodigoBarra", (object)producto.CodigoBarra ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@TalleId", (object)producto.TalleId ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Sabor", (object)producto.Sabor ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@Cantidad", producto.Cantidad);
-                cmd.Parameters.AddWithValue("@PrecioVenta", (object)producto.PrecioVenta ?? DBNull.Value);
+            object result = DatabaseManager.ExecuteScalar(query,
+                new SqlParameter("@CategoriaId", producto.CategoriaId),
+                new SqlParameter("@Nombre", producto.Nombre),
+                new SqlParameter("@Descripcion", (object)producto.Descripcion ?? DBNull.Value),
+                new SqlParameter("@CodigoBarras", (object)producto.CodigoBarra ?? DBNull.Value),
+                new SqlParameter("@Stock", producto.Cantidad),
+                new SqlParameter("@Precio", (object)producto.PrecioVenta ?? DBNull.Value));
 
-                object result = cmd.ExecuteScalar();
-                return Convert.ToInt32(result);
-            }
+            return Convert.ToInt32(result);
         }
 
         /// <summary>
@@ -152,17 +137,14 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public void ActualizarStock(int inventarioId, int cantidadNueva)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                SqlCommand cmd = new SqlCommand("sp_ActualizarStock", con);
-                cmd.CommandType = CommandType.StoredProcedure;
+            string query = @"
+                UPDATE Inventario 
+                SET Stock = @CantidadNueva
+                WHERE Id = @InventarioId";
 
-                cmd.Parameters.AddWithValue("@InventarioId", inventarioId);
-                cmd.Parameters.AddWithValue("@CantidadNueva", cantidadNueva);
-
-                cmd.ExecuteNonQuery();
-            }
+            DatabaseManager.ExecuteNonQuery(query,
+                new SqlParameter("@InventarioId", inventarioId),
+                new SqlParameter("@CantidadNueva", cantidadNueva));
         }
 
         /// <summary>
@@ -170,14 +152,8 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public DataTable ObtenerStockBajo()
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                string query = "SELECT * FROM vw_StockBajo";
-                SqlDataAdapter da = new SqlDataAdapter(query, con);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-                return dt;
-            }
+            string query = "SELECT * FROM vw_StockBajo";
+            return DatabaseManager.ExecuteQuery(query);
         }
 
         /// <summary>
@@ -185,17 +161,11 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         public void EliminarProducto(int inventarioId)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                string query = @"UPDATE Inventario 
-                               SET Activo = 0, FechaModificacion = GETDATE() 
-                               WHERE Id = @Id";
+            string query = @"UPDATE Inventario 
+                           SET Stock = 0
+                           WHERE Id = @Id";
 
-                SqlCommand cmd = new SqlCommand(query, con);
-                cmd.Parameters.AddWithValue("@Id", inventarioId);
-                cmd.ExecuteNonQuery();
-            }
+            DatabaseManager.ExecuteNonQuery(query, new SqlParameter("@Id", inventarioId));
         }
 
         #endregion

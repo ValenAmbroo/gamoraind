@@ -17,6 +17,10 @@ namespace Gamora_Indumentaria
         private string perfilUsuario;
         private Panel panelContenido; // Panel para contener los formularios hijos
 
+        // Variables para arrastrar el formulario
+        private bool arrastrando = false;
+        private Point ultimaPosicion;
+
         public Form1(string perfil)
         {
             InitializeComponent();
@@ -26,9 +30,13 @@ namespace Gamora_Indumentaria
 
             perfilUsuario = perfil; // ← ahora sí existe la variable "perfil"
             panelsubprincipal.Visible = false;
+            panelsubadministracion.Visible = false;
 
             // Crear panel de contenido principal
             CrearPanelContenido();
+
+            // Configurar eventos para arrastrar el formulario desde panel1
+            ConfigurarArrastre();
 
             AplicarPerfil();
         }
@@ -58,17 +66,67 @@ namespace Gamora_Indumentaria
         /// </summary>
         private void CargarFormularioHijo(Form formularioHijo)
         {
-            // Limpiar el panel de contenido
-            panelContenido.Controls.Clear();
+            try
+            {
+                // Limpiar el panel de contenido
+                panelContenido.Controls.Clear();
 
-            // Configurar el formulario hijo
-            formularioHijo.TopLevel = false;
-            formularioHijo.FormBorderStyle = FormBorderStyle.None;
-            formularioHijo.Dock = DockStyle.Fill;
+                // Configurar el formulario hijo
+                formularioHijo.TopLevel = false;
+                formularioHijo.FormBorderStyle = FormBorderStyle.None;
+                formularioHijo.Dock = DockStyle.Fill;
 
-            // Agregar al panel y mostrar
-            panelContenido.Controls.Add(formularioHijo);
-            formularioHijo.Show();
+                // Agregar al panel y mostrar
+                panelContenido.Controls.Add(formularioHijo);
+                formularioHijo.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al cargar formulario: " + ex.Message + "\n\nDetalles: " + ex.ToString(),
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Configura los eventos para permitir arrastrar el formulario desde panel1
+        /// </summary>
+        private void ConfigurarArrastre()
+        {
+            // Agregar eventos al panel1 (barra superior)
+            panel1.MouseDown += Panel1_MouseDown;
+            panel1.MouseMove += Panel1_MouseMove;
+            panel1.MouseUp += Panel1_MouseUp;
+
+            // También agregar eventos al label1 si está en panel1
+            label1.MouseDown += Panel1_MouseDown;
+            label1.MouseMove += Panel1_MouseMove;
+            label1.MouseUp += Panel1_MouseUp;
+        }
+
+        private void Panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                arrastrando = true;
+                ultimaPosicion = e.Location;
+            }
+        }
+
+        private void Panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (arrastrando)
+            {
+                // Calcular la nueva posición del formulario
+                Point nuevaPosicion = this.Location;
+                nuevaPosicion.X += e.X - ultimaPosicion.X;
+                nuevaPosicion.Y += e.Y - ultimaPosicion.Y;
+                this.Location = nuevaPosicion;
+            }
+        }
+
+        private void Panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            arrastrando = false;
         }
 
 
@@ -111,8 +169,15 @@ namespace Gamora_Indumentaria
 
         private void button10_Click(object sender, EventArgs e)
         {
-            this.Close();
+            // Ocultar Form1 y mostrar el login
+            this.Hide();
 
+            // Crear una nueva instancia del login
+            Form3 loginForm = new Form3();
+            loginForm.Show();
+
+            // Cuando se cierre el login, cerrar toda la aplicación
+            loginForm.FormClosed += (s, args) => Application.Exit();
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -131,7 +196,16 @@ namespace Gamora_Indumentaria
 
         private void btnsubprincipal_Click(object sender, EventArgs e)
         {
+            // Alternar visibilidad del panel de operaciones
             panelsubprincipal.Visible = !panelsubprincipal.Visible;
+
+            // Si se abre este panel, cerrar el de administración
+            if (panelsubprincipal.Visible)
+            {
+                panelsubadministracion.Visible = false;
+                // Traer el panel al frente
+                panelsubprincipal.BringToFront();
+            }
         }
 
         private void button6_Click(object sender, EventArgs e)
@@ -146,7 +220,16 @@ namespace Gamora_Indumentaria
 
         private void btnsubadministracion_Click(object sender, EventArgs e)
         {
+            // Alternar visibilidad del panel de administración
             panelsubadministracion.Visible = !panelsubadministracion.Visible;
+
+            // Si se abre este panel, cerrar el de operaciones
+            if (panelsubadministracion.Visible)
+            {
+                panelsubprincipal.Visible = false;
+                // Traer el panel al frente
+                panelsubadministracion.BringToFront();
+            }
         }
 
         private void lblHora_Click(object sender, EventArgs e)
@@ -201,6 +284,31 @@ namespace Gamora_Indumentaria
         private void button4_Click(object sender, EventArgs e)
         {
             CargarFormularioHijo(new ventas());
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                MessageBox.Show("Abriendo estadísticas de ventas...", "Debug", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                CargarFormularioHijo(new EstadisticasVentas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir estadísticas de ventas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new Estadisticas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

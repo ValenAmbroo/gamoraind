@@ -5,11 +5,6 @@ VisualStudioVersion = 17.11.35219.272
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gamora Indumentaria", "Gamora Indumentaria\Gamora Indumentaria.csproj", "{3D0B5F3B-A632-4338-83CE-CA80F8DD0CD6}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{D6FE05C1-BF29-4BCF-B615-5BD9B43F796A}"
-	ProjectSection(SolutionItems) = preProject
-		VentasDB.mdf = VentasDB.mdf
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

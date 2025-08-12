@@ -56,10 +56,7 @@ namespace Gamora_Indumentaria
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string perfil = "empleado"; // o "administrador", según la validación
-                                        // Form1 form1 = new Form1(perfil);
-                                        //form1.Show();
-                                        //this.Close();
+           
             Form1 form1 = new Form1("empleado");
 
             //Form1 form1 = new Form1();
