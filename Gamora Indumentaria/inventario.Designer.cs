@@ -28,248 +28,281 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.button3 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
-            this.label5 = new System.Windows.Forms.Label();
-            this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.lblHora = new System.Windows.Forms.Label();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.components = new System.ComponentModel.Container();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.btnCerrar = new System.Windows.Forms.Button();
+            this.lblTitulo = new System.Windows.Forms.Label();
+            this.panelFiltros = new System.Windows.Forms.Panel();
+            this.chkSoloBajo = new System.Windows.Forms.CheckBox();
+            this.nudStockMax = new System.Windows.Forms.NumericUpDown();
+            this.nudStockMin = new System.Windows.Forms.NumericUpDown();
+            this.lblStockRango = new System.Windows.Forms.Label();
+            this.txtSabor = new System.Windows.Forms.TextBox();
+            this.lblSabor = new System.Windows.Forms.Label();
+            this.cboTalle = new System.Windows.Forms.ComboBox();
+            this.lblTalle = new System.Windows.Forms.Label();
+            this.cboCategoria = new System.Windows.Forms.ComboBox();
+            this.lblCategoria = new System.Windows.Forms.Label();
+            this.txtBuscar = new System.Windows.Forms.TextBox();
+            this.lblBuscar = new System.Windows.Forms.Label();
+            this.panelAcciones = new System.Windows.Forms.FlowLayoutPanel();
+            this.dgvInventario = new System.Windows.Forms.DataGridView();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lblResumen = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.panelTop.SuspendLayout();
+            this.panelFiltros.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStockMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStockMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvInventario)).BeginInit();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel1
+            // panelTop
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.panel1.Controls.Add(this.button3);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.button2);
-            this.panel1.Controls.Add(this.button4);
-            this.panel1.Location = new System.Drawing.Point(1, -1);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(893, 31);
-            this.panel1.TabIndex = 3;
+            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.Controls.Add(this.btnCerrar);
+            this.panelTop.Controls.Add(this.lblTitulo);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(1100, 42);
+            this.panelTop.TabIndex = 0;
             // 
-            // button3
+            // btnCerrar
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button3.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.cerrrar_;
-            this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button3.Location = new System.Drawing.Point(857, 0);
-            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(33, 32);
-            this.button3.TabIndex = 2;
-            this.button3.UseVisualStyleBackColor = false;
+            this.btnCerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCerrar.FlatAppearance.BorderSize = 0;
+            this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnCerrar.Location = new System.Drawing.Point(1058, 3);
+            this.btnCerrar.Name = "btnCerrar";
+            this.btnCerrar.Size = new System.Drawing.Size(39, 34);
+            this.btnCerrar.TabIndex = 1;
+            this.btnCerrar.Text = "✕";
+            this.btnCerrar.UseVisualStyleBackColor = true;
             // 
-            // label2
+            // lblTitulo
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(2, 5);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(218, 19);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "GAMORA INDUMENTARIA";
+            this.lblTitulo.AutoSize = true;
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.lblTitulo.Location = new System.Drawing.Point(12, 8);
+            this.lblTitulo.Name = "lblTitulo";
+            this.lblTitulo.Size = new System.Drawing.Size(104, 25);
+            this.lblTitulo.TabIndex = 2;
+            this.lblTitulo.Text = "Inventario";
             // 
-            // button2
+            // panelFiltros
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button2.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.nuevo_minimized_;
-            this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button2.Location = new System.Drawing.Point(783, -1);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(33, 32);
-            this.button2.TabIndex = 0;
-            this.button2.UseVisualStyleBackColor = false;
+            this.panelFiltros.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.panelFiltros.Controls.Add(this.chkSoloBajo);
+            this.panelFiltros.Controls.Add(this.nudStockMax);
+            this.panelFiltros.Controls.Add(this.nudStockMin);
+            this.panelFiltros.Controls.Add(this.lblStockRango);
+            this.panelFiltros.Controls.Add(this.txtSabor);
+            this.panelFiltros.Controls.Add(this.lblSabor);
+            this.panelFiltros.Controls.Add(this.cboTalle);
+            this.panelFiltros.Controls.Add(this.lblTalle);
+            this.panelFiltros.Controls.Add(this.cboCategoria);
+            this.panelFiltros.Controls.Add(this.lblCategoria);
+            this.panelFiltros.Controls.Add(this.txtBuscar);
+            this.panelFiltros.Controls.Add(this.lblBuscar);
+            this.panelFiltros.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelFiltros.Location = new System.Drawing.Point(0, 42);
+            this.panelFiltros.Name = "panelFiltros";
+            this.panelFiltros.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
+            this.panelFiltros.Size = new System.Drawing.Size(1100, 82);
+            this.panelFiltros.TabIndex = 1;
             // 
-            // button4
+            // chkSoloBajo
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.button4.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.maximized_n;
-            this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button4.Location = new System.Drawing.Point(820, -1);
-            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(33, 32);
-            this.button4.TabIndex = 1;
-            this.button4.UseVisualStyleBackColor = false;
+            this.chkSoloBajo.AutoSize = true;
+            this.chkSoloBajo.Location = new System.Drawing.Point(950, 14);
+            this.chkSoloBajo.Name = "chkSoloBajo";
+            this.chkSoloBajo.Size = new System.Drawing.Size(132, 17);
+            this.chkSoloBajo.TabIndex = 11;
+            this.chkSoloBajo.Text = "Solo stock bajo (<=10)";
+            this.chkSoloBajo.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // nudStockMax
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label1.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(25, 50);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 16);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "PRODUCTO";
+            this.nudStockMax.Location = new System.Drawing.Point(874, 50);
+            this.nudStockMax.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudStockMax.Name = "nudStockMax";
+            this.nudStockMax.Size = new System.Drawing.Size(70, 20);
+            this.nudStockMax.TabIndex = 10;
+            this.nudStockMax.Value = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
             // 
-            // label3
+            // nudStockMin
             // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label3.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(25, 86);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(61, 16);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "MODELO";
+            this.nudStockMin.Location = new System.Drawing.Point(798, 50);
+            this.nudStockMin.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+            this.nudStockMin.Name = "nudStockMin";
+            this.nudStockMin.Size = new System.Drawing.Size(70, 20);
+            this.nudStockMin.TabIndex = 9;
             // 
-            // label4
+            // lblStockRango
             // 
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label4.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(25, 122);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(52, 16);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "TALLE";
+            this.lblStockRango.AutoSize = true;
+            this.lblStockRango.Location = new System.Drawing.Point(795, 14);
+            this.lblStockRango.Name = "lblStockRango";
+            this.lblStockRango.Size = new System.Drawing.Size(73, 13);
+            this.lblStockRango.TabIndex = 8;
+            this.lblStockRango.Text = "Rango Stock:";
             // 
-            // comboBox1
+            // txtSabor
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(124, 50);
-            this.comboBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(151, 21);
-            this.comboBox1.TabIndex = 7;
+            this.txtSabor.Location = new System.Drawing.Point(650, 50);
+            this.txtSabor.Name = "txtSabor";
+            this.txtSabor.Size = new System.Drawing.Size(130, 20);
+            this.txtSabor.TabIndex = 7;
+            this.txtSabor.Visible = false;
             // 
-            // comboBox2
+            // lblSabor
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(124, 84);
-            this.comboBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(151, 21);
-            this.comboBox2.TabIndex = 8;
+            this.lblSabor.AutoSize = true;
+            this.lblSabor.Location = new System.Drawing.Point(647, 14);
+            this.lblSabor.Name = "lblSabor";
+            this.lblSabor.Size = new System.Drawing.Size(35, 13);
+            this.lblSabor.TabIndex = 6;
+            this.lblSabor.Text = "Sabor";
+            this.lblSabor.Visible = false;
             // 
-            // comboBox3
+            // cboTalle
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(124, 119);
-            this.comboBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(151, 21);
-            this.comboBox3.TabIndex = 9;
+            this.cboTalle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboTalle.FormattingEnabled = true;
+            this.cboTalle.Location = new System.Drawing.Point(520, 50);
+            this.cboTalle.Name = "cboTalle";
+            this.cboTalle.Size = new System.Drawing.Size(120, 21);
+            this.cboTalle.TabIndex = 5;
+            this.cboTalle.Visible = false;
             // 
-            // dataGridView1
+            // lblTalle
             // 
-            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(6, 192);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidth = 62;
-            this.dataGridView1.RowTemplate.Height = 28;
-            this.dataGridView1.Size = new System.Drawing.Size(593, 313);
-            this.dataGridView1.TabIndex = 10;
+            this.lblTalle.AutoSize = true;
+            this.lblTalle.Location = new System.Drawing.Point(517, 14);
+            this.lblTalle.Name = "lblTalle";
+            this.lblTalle.Size = new System.Drawing.Size(30, 13);
+            this.lblTalle.TabIndex = 4;
+            this.lblTalle.Text = "Talle";
+            this.lblTalle.Visible = false;
             // 
-            // button1
+            // cboCategoria
             // 
-            this.button1.Location = new System.Drawing.Point(217, 142);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(57, 34);
-            this.button1.TabIndex = 11;
-            this.button1.Text = "AGREGAR";
-            this.button1.UseVisualStyleBackColor = true;
+            this.cboCategoria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboCategoria.FormattingEnabled = true;
+            this.cboCategoria.Location = new System.Drawing.Point(350, 50);
+            this.cboCategoria.Name = "cboCategoria";
+            this.cboCategoria.Size = new System.Drawing.Size(160, 21);
+            this.cboCategoria.TabIndex = 3;
             // 
-            // button5
+            // lblCategoria
             // 
-            this.button5.Location = new System.Drawing.Point(147, 142);
-            this.button5.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(57, 34);
-            this.button5.TabIndex = 12;
-            this.button5.Text = "eliminar";
-            this.button5.UseVisualStyleBackColor = true;
+            this.lblCategoria.AutoSize = true;
+            this.lblCategoria.Location = new System.Drawing.Point(347, 14);
+            this.lblCategoria.Name = "lblCategoria";
+            this.lblCategoria.Size = new System.Drawing.Size(54, 13);
+            this.lblCategoria.TabIndex = 2;
+            this.lblCategoria.Text = "Categoría";
             // 
-            // label5
+            // txtBuscar
             // 
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.label5.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(315, 50);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(142, 16);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "CODIGO DE BARRA";
+            this.txtBuscar.Location = new System.Drawing.Point(13, 50);
+            this.txtBuscar.Name = "txtBuscar";
+            this.txtBuscar.Size = new System.Drawing.Size(320, 20);
+            this.txtBuscar.TabIndex = 1;
             // 
-            // comboBox4
+            // lblBuscar
             // 
-            this.comboBox4.FormattingEnabled = true;
-            this.comboBox4.Location = new System.Drawing.Point(318, 77);
-            this.comboBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.comboBox4.Name = "comboBox4";
-            this.comboBox4.Size = new System.Drawing.Size(151, 21);
-            this.comboBox4.TabIndex = 14;
+            this.lblBuscar.AutoSize = true;
+            this.lblBuscar.Location = new System.Drawing.Point(10, 14);
+            this.lblBuscar.Name = "lblBuscar";
+            this.lblBuscar.Size = new System.Drawing.Size(40, 13);
+            this.lblBuscar.TabIndex = 0;
+            this.lblBuscar.Text = "Buscar";
             // 
-            // lblHora
+            // panelAcciones
             // 
-            this.lblHora.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHora.AutoSize = true;
-            this.lblHora.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lblHora.Font = new System.Drawing.Font("Impact", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHora.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.lblHora.Location = new System.Drawing.Point(724, 40);
-            this.lblHora.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblHora.Name = "lblHora";
-            this.lblHora.Size = new System.Drawing.Size(54, 27);
-            this.lblHora.TabIndex = 15;
-            this.lblHora.Text = "hora";
+            this.panelAcciones.BackColor = System.Drawing.Color.White;
+            this.panelAcciones.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelAcciones.Location = new System.Drawing.Point(0, 124);
+            this.panelAcciones.Name = "panelAcciones";
+            this.panelAcciones.Padding = new System.Windows.Forms.Padding(10, 5, 0, 5);
+            this.panelAcciones.Size = new System.Drawing.Size(1100, 10);
+            this.panelAcciones.TabIndex = 2;
+            // 
+            // dgvInventario
+            // 
+            this.dgvInventario.AllowUserToAddRows = false;
+            this.dgvInventario.AllowUserToDeleteRows = false;
+            this.dgvInventario.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvInventario.BackgroundColor = System.Drawing.Color.White;
+            this.dgvInventario.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvInventario.Location = new System.Drawing.Point(0, 134);
+            this.dgvInventario.MultiSelect = false;
+            this.dgvInventario.Name = "dgvInventario";
+            this.dgvInventario.ReadOnly = true;
+            this.dgvInventario.RowHeadersVisible = false;
+            this.dgvInventario.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvInventario.Size = new System.Drawing.Size(1100, 466);
+            this.dgvInventario.TabIndex = 3;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblResumen});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 600);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1100, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lblResumen
+            // 
+            this.lblResumen.Name = "lblResumen";
+            this.lblResumen.Size = new System.Drawing.Size(120, 17);
+            this.lblResumen.Text = "0 registros mostrados";
             // 
             // inventario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.AppWorkspace;
-            this.ClientSize = new System.Drawing.Size(891, 526);
-            this.Controls.Add(this.lblHora);
-            this.Controls.Add(this.comboBox4);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.button5);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.comboBox3);
-            this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.panel1);
+            this.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.ClientSize = new System.Drawing.Size(1100, 622);
+            this.Controls.Add(this.dgvInventario);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.panelAcciones);
+            this.Controls.Add(this.panelFiltros);
+            this.Controls.Add(this.panelTop);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.KeyPreview = true;
             this.Name = "inventario";
-            this.Text = "inventario";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Inventario";
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
+            this.panelFiltros.ResumeLayout(false);
+            this.panelFiltros.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStockMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStockMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvInventario)).EndInit();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,22 +310,26 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ComboBox comboBox4;
-        private System.Windows.Forms.Label lblHora;
+        private System.Windows.Forms.Panel panelTop;
+        private System.Windows.Forms.Button btnCerrar;
+        private System.Windows.Forms.Label lblTitulo;
+        private System.Windows.Forms.Panel panelFiltros;
+        private System.Windows.Forms.TextBox txtBuscar;
+        private System.Windows.Forms.Label lblBuscar;
+        private System.Windows.Forms.ComboBox cboCategoria;
+        private System.Windows.Forms.Label lblCategoria;
+        private System.Windows.Forms.ComboBox cboTalle;
+        private System.Windows.Forms.Label lblTalle;
+        private System.Windows.Forms.TextBox txtSabor;
+        private System.Windows.Forms.Label lblSabor;
+        private System.Windows.Forms.CheckBox chkSoloBajo;
+        private System.Windows.Forms.NumericUpDown nudStockMax;
+        private System.Windows.Forms.NumericUpDown nudStockMin;
+        private System.Windows.Forms.Label lblStockRango;
+        private System.Windows.Forms.FlowLayoutPanel panelAcciones;
+        private System.Windows.Forms.DataGridView dgvInventario;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel lblResumen;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

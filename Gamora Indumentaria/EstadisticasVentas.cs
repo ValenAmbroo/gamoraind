@@ -13,6 +13,28 @@ namespace Gamora_Indumentaria
     {
         private DateTime fechaDesde;
         private DateTime fechaHasta;
+        // Helper para asegurar que una serie exista en un chart
+        private void EnsureSerie(Chart chart, string nombre, SeriesChartType tipo, Color? color = null)
+        {
+            if (chart == null) return;
+            if (chart.Series.IndexOf(nombre) < 0)
+            {
+                // Si hay una única serie default sin nombre esperado, se puede renombrar
+                if (chart.Series.Count == 1 && chart.Series[0].Points.Count == 0 && chart.Series[0].Name == "Series1")
+                {
+                    chart.Series[0].Name = nombre;
+                    chart.Series[0].ChartType = tipo;
+                    if (color.HasValue) chart.Series[0].Color = color.Value;
+                }
+                else
+                {
+                    Series s = new Series(nombre);
+                    s.ChartType = tipo;
+                    if (color.HasValue) s.Color = color.Value;
+                    chart.Series.Add(s);
+                }
+            }
+        }
         public EstadisticasVentas()
         {
             try
@@ -170,74 +192,80 @@ namespace Gamora_Indumentaria
         {
             if (chartVentasTiempo == null) return;
 
+            // Asegurar que la serie 'Ventas' exista
+            if (chartVentasTiempo.Series.IndexOf("Ventas") < 0)
+            {
+                // Configurar nuevamente el gráfico si la serie no está
+                ConfigurarGraficoVentasTiempo();
+            }
+            if (chartVentasTiempo.Series.IndexOf("Ventas") < 0 && chartVentasTiempo.Series.Count > 0)
+            {
+                // Renombrar primera serie como fallback
+                chartVentasTiempo.Series[0].Name = "Ventas";
+            }
+            if (chartVentasTiempo.Series.IndexOf("Ventas") < 0)
+            {
+                chartVentasTiempo.Series.Add("Ventas");
+            }
+
             chartVentasTiempo.Series["Ventas"].Points.Clear();
 
             try
             {
-                string query = "";
-                string formatoFecha = "";
-
+                // Determinar rango según filtro, actualizando fechaDesde/fechaHasta (hasta exclusivo)
+                DateTime hoy = DateTime.Today;
                 switch (periodo.ToLower())
                 {
                     case "hoy":
-                        formatoFecha = "FORMAT(FechaVenta, 'HH:00') + 'h'";
-                        query = string.Format(@"
-                            SELECT {0} as Periodo, 
-                                   SUM(Total) as TotalVentas
-                            FROM Ventas 
-                            WHERE CAST(FechaVenta AS DATE) = CAST(GETDATE() AS DATE)
-                            GROUP BY {0}, DATEPART(HOUR, FechaVenta)
-                            ORDER BY DATEPART(HOUR, FechaVenta)", formatoFecha);
+                        fechaDesde = hoy;
+                        fechaHasta = hoy.AddDays(1);
                         break;
-
                     case "esta semana":
-                        formatoFecha = "FORMAT(FechaVenta, 'ddd')";
-                        query = string.Format(@"
-                            SELECT {0} as Periodo, 
-                                   SUM(Total) as TotalVentas
-                            FROM Ventas 
-                            WHERE FechaVenta >= DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0) 
-                              AND FechaVenta < DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()) + 1, 0)
-                            GROUP BY {0}, DATEPART(WEEKDAY, FechaVenta)
-                            ORDER BY DATEPART(WEEKDAY, FechaVenta)", formatoFecha);
+                        int diff = (int)hoy.DayOfWeek; // domingo=0
+                        DateTime inicioSemana = hoy.AddDays(-diff);
+                        fechaDesde = inicioSemana;
+                        fechaHasta = inicioSemana.AddDays(7);
                         break;
-
                     case "este mes":
-                        formatoFecha = "FORMAT(FechaVenta, 'dd/MM')";
-                        query = string.Format(@"
-                            SELECT {0} as Periodo, 
-                                   SUM(Total) as TotalVentas
-                            FROM Ventas 
-                            WHERE YEAR(FechaVenta) = YEAR(GETDATE()) 
-                              AND MONTH(FechaVenta) = MONTH(GETDATE())
-                            GROUP BY {0}, DAY(FechaVenta)
-                            ORDER BY DAY(FechaVenta)", formatoFecha);
+                        fechaDesde = new DateTime(hoy.Year, hoy.Month, 1);
+                        fechaHasta = fechaDesde.AddMonths(1);
                         break;
-
                     case "últimos 7 días":
-                        formatoFecha = "FORMAT(FechaVenta, 'dd/MM')";
-                        query = string.Format(@"
-                            SELECT {0} as Periodo, 
-                                   SUM(Total) as TotalVentas
-                            FROM Ventas 
-                            WHERE FechaVenta >= DATEADD(DAY, -7, GETDATE())
-                            GROUP BY {0}, CAST(FechaVenta AS DATE)
-                            ORDER BY CAST(FechaVenta AS DATE)", formatoFecha);
+                        fechaHasta = hoy.AddDays(1);
+                        fechaDesde = fechaHasta.AddDays(-7);
                         break;
-
                     case "últimos 30 días":
-                        formatoFecha = "FORMAT(FechaVenta, 'dd/MM')";
-                        query = string.Format(@"
-                            SELECT {0} as Periodo, 
-                                   SUM(Total) as TotalVentas
-                            FROM Ventas 
-                            WHERE FechaVenta >= DATEADD(DAY, -30, GETDATE())
-                            GROUP BY {0}, CAST(FechaVenta AS DATE)
-                            ORDER BY CAST(FechaVenta AS DATE)", formatoFecha);
+                        fechaHasta = hoy.AddDays(1);
+                        fechaDesde = fechaHasta.AddDays(-30);
                         break;
                 }
 
-                DataTable dt = DatabaseManager.ExecuteQuery(query);
+                // Agrupar por día dentro del rango
+                string query = @"SELECT 
+                                CONVERT(VARCHAR(5), FechaVenta, 108) AS Periodo,
+                                SUM(Total) AS TotalVentas
+                              FROM Ventas
+                              WHERE FechaVenta >= @Desde AND FechaVenta < @Hasta AND DATEDIFF(DAY, @Desde, FechaVenta) = 0
+                              GROUP BY DATEPART(HOUR, FechaVenta), CONVERT(VARCHAR(5), FechaVenta, 108)
+                              ORDER BY DATEPART(HOUR, FechaVenta);";
+
+                // Si rango mayor a un día, agrupar por fecha
+                if ((fechaHasta - fechaDesde).TotalDays > 1)
+                {
+                    query = @"SELECT 
+                                CONVERT(VARCHAR(5), MIN(FechaVenta), 103) AS Periodo,
+                                SUM(Total) AS TotalVentas
+                              FROM Ventas
+                              WHERE FechaVenta >= @Desde AND FechaVenta < @Hasta
+                              GROUP BY CAST(FechaVenta AS DATE)
+                              ORDER BY CAST(FechaVenta AS DATE);";
+                }
+
+                SqlParameter[] parametros = {
+                    new SqlParameter("@Desde", fechaDesde),
+                    new SqlParameter("@Hasta", fechaHasta)
+                };
+                DataTable dt = DatabaseManager.ExecuteQuery(query, parametros);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -266,7 +294,7 @@ namespace Gamora_Indumentaria
         private void CargarProductosMasVendidos()
         {
             if (chartProductosVendidos == null) return;
-
+            EnsureSerie(chartProductosVendidos, "Productos", SeriesChartType.Bar);
             chartProductosVendidos.Series["Productos"].Points.Clear();
 
             try
@@ -278,10 +306,15 @@ namespace Gamora_Indumentaria
                     FROM DetalleVentas dv
                     INNER JOIN Inventario i ON dv.ProductoId = i.Id
                     INNER JOIN Ventas v ON dv.VentaId = v.Id
+                    WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
                     GROUP BY i.Nombre
                     ORDER BY CantidadVendida DESC";
 
-                DataTable dt = DatabaseManager.ExecuteQuery(query);
+                SqlParameter[] parametros = {
+                    new SqlParameter("@Desde", fechaDesde),
+                    new SqlParameter("@Hasta", fechaHasta)
+                };
+                DataTable dt = DatabaseManager.ExecuteQuery(query, parametros);
 
                 Color[] colores = {
                     Color.FromArgb(231, 76, 60),
@@ -325,7 +358,7 @@ namespace Gamora_Indumentaria
         private void CargarVentasPorCategoria()
         {
             if (chartCategorias == null) return;
-
+            EnsureSerie(chartCategorias, "Categorías", SeriesChartType.Pie);
             chartCategorias.Series["Categorías"].Points.Clear();
 
             try
@@ -337,10 +370,16 @@ namespace Gamora_Indumentaria
                     FROM DetalleVentas dv
                     INNER JOIN Inventario i ON dv.ProductoId = i.Id
                     INNER JOIN Categorias c ON i.CategoriaId = c.Id
+                    INNER JOIN Ventas v ON dv.VentaId = v.Id
+                    WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
                     GROUP BY c.Nombre
                     ORDER BY TotalVentas DESC";
 
-                DataTable dt = DatabaseManager.ExecuteQuery(query);
+                SqlParameter[] parametros = {
+                    new SqlParameter("@Desde", fechaDesde),
+                    new SqlParameter("@Hasta", fechaHasta)
+                };
+                DataTable dt = DatabaseManager.ExecuteQuery(query, parametros);
 
                 Color[] colores = {
                     Color.FromArgb(52, 152, 219),
@@ -382,22 +421,28 @@ namespace Gamora_Indumentaria
         private void CargarTendenciaMensual()
         {
             if (chartTendenciaMensual == null) return;
-
+            EnsureSerie(chartTendenciaMensual, "Tendencia", SeriesChartType.Line, Color.FromArgb(46, 204, 113));
             chartTendenciaMensual.Series["Tendencia"].Points.Clear();
 
             try
             {
-                string query = @"
-                    SELECT 
-                        FORMAT(FechaVenta, 'MMM yyyy') AS MesTexto,
+                // Tomar 6 meses hacia atrás desde fechaHasta
+                DateTime inicio = new DateTime(fechaHasta.Year, fechaHasta.Month, 1).AddMonths(-5); // incluye mes actual (-5 = 6 meses)
+                DateTime fin = new DateTime(fechaHasta.Year, fechaHasta.Month, 1).AddMonths(1); // siguiente mes exclusivo
+                string query = @"SELECT 
+                        DATENAME(MONTH, FechaVenta) + ' ' + CAST(YEAR(FechaVenta) AS VARCHAR) AS MesTexto,
                         FORMAT(FechaVenta, 'yyyy-MM') AS MesOrden,
                         SUM(Total) AS TotalVentas
-                    FROM Ventas 
-                    WHERE FechaVenta >= DATEADD(MONTH, -6, GETDATE())
-                    GROUP BY FORMAT(FechaVenta, 'MMM yyyy'), FORMAT(FechaVenta, 'yyyy-MM')
+                    FROM Ventas
+                    WHERE FechaVenta >= @Inicio AND FechaVenta < @Fin
+                    GROUP BY DATENAME(MONTH, FechaVenta), YEAR(FechaVenta), FORMAT(FechaVenta, 'yyyy-MM')
                     ORDER BY MesOrden";
 
-                DataTable dt = DatabaseManager.ExecuteQuery(query);
+                SqlParameter[] parametros = {
+                    new SqlParameter("@Inicio", inicio),
+                    new SqlParameter("@Fin", fin)
+                };
+                DataTable dt = DatabaseManager.ExecuteQuery(query, parametros);
 
                 if (dt.Rows.Count == 0)
                 {
@@ -486,27 +531,13 @@ namespace Gamora_Indumentaria
                 {
                     Filter = "CSV files (*.csv)|*.csv",
                     Title = "Exportar Estadísticas de Ventas",
-                    FileName = string.Format("EstadisticasVentas_{0:yyyyMMdd}.csv", DateTime.Now)
+                    FileName = string.Format("EstadisticasVentas_{0:yyyyMMdd}_{1:yyyyMMdd}.csv", fechaDesde, fechaHasta.AddDays(-1))
                 };
 
                 if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
                     // Obtener datos reales para exportar
-                    string query = @"
-                        SELECT 
-                            ISNULL(SUM(v.Total), 0) AS TotalVentas,
-                            ISNULL(SUM(dv.Cantidad), 0) AS TotalUnidades,
-                            COUNT(DISTINCT v.Id) AS TotalTransacciones,
-                            CASE 
-                                WHEN COUNT(DISTINCT v.Id) > 0 
-                                THEN ISNULL(SUM(v.Total), 0) / COUNT(DISTINCT v.Id)
-                                ELSE 0 
-                            END AS PromedioVenta
-                        FROM Ventas v
-                        LEFT JOIN DetalleVentas dv ON v.Id = dv.VentaId
-                        WHERE v.FechaVenta >= DATEADD(DAY, -30, GETDATE())";
-
-                    DataTable dtResumen = DatabaseManager.ExecuteQuery(query);
+                    DataTable dtResumen = ReporteVentasGenerator.GetResumen(fechaDesde, fechaHasta);
 
                     string contenidoCsv = "Estadísticas de Ventas - " + DateTime.Now.ToString("dd/MM/yyyy HH:mm") + "\n\n";
 
@@ -526,16 +557,20 @@ namespace Gamora_Indumentaria
                     }
 
                     // Agregar productos más vendidos
-                    string queryProductos = @"
-                        SELECT TOP 10 
+                    string queryProductos = @"SELECT TOP 10 
                             i.Nombre AS Producto,
                             SUM(dv.Cantidad) AS CantidadVendida
                         FROM DetalleVentas dv
                         INNER JOIN Inventario i ON dv.ProductoId = i.Id
+                        INNER JOIN Ventas v ON dv.VentaId = v.Id
+                        WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
                         GROUP BY i.Nombre
                         ORDER BY CantidadVendida DESC";
-
-                    DataTable dtProductos = DatabaseManager.ExecuteQuery(queryProductos);
+                    SqlParameter[] paramProd = {
+                        new SqlParameter("@Desde", fechaDesde),
+                        new SqlParameter("@Hasta", fechaHasta)
+                    };
+                    DataTable dtProductos = DatabaseManager.ExecuteQuery(queryProductos, paramProd);
 
                     contenidoCsv += "Productos Más Vendidos\n";
                     contenidoCsv += "Producto,Cantidad Vendida\n";

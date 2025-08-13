@@ -210,7 +210,7 @@ namespace Gamora_Indumentaria
 
         private void button6_Click(object sender, EventArgs e)
         {
-            CargarFormularioHijo(new productos());
+            CargarFormularioHijo(new inventario());
         }
 
         private void panel7_Paint(object sender, PaintEventArgs e)
@@ -309,6 +309,45 @@ namespace Gamora_Indumentaria
             {
                 MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnListadoVentas_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new ListadoVentas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir listado de ventas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new HistorialVentas());
+        }
+
+        private void btnCierreCaja_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new CierreCaja());
+        }
+
+        private void panel5_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new CierreCaja());
+
+        }
+
+        private void button5_Click_1(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new inventario());
+
         }
     }
 }

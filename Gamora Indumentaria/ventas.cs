@@ -59,11 +59,14 @@ namespace Gamora_Indumentaria
 
             try
             {
+                // Tabla ya migrada: usar solo PrecioVenta
                 string query = @"
-                    SELECT i.Id, i.Nombre, i.Precio, i.Stock, c.Nombre as Categoria
-                    FROM Inventario i
-                    INNER JOIN Categorias c ON i.CategoriaId = c.Id
-                    WHERE i.CodigoBarras = @codigo AND i.Stock > 0";
+              SELECT i.Id, i.Nombre,
+                  i.PrecioVenta AS Precio,
+                  i.Stock, c.Nombre as Categoria
+              FROM Inventario i
+              INNER JOIN Categorias c ON i.CategoriaId = c.Id
+              WHERE i.CodigoBarras = @codigo AND i.Stock > 0";
 
                 SqlParameter[] parameters = {
                     new SqlParameter("@codigo", codigoBarras)
@@ -371,7 +374,7 @@ namespace Gamora_Indumentaria
             // cmbMetodoPago1
             // 
             this.cmbMetodoPago1.FormattingEnabled = true;
-           
+
             this.cmbMetodoPago1.Location = new System.Drawing.Point(9, 83);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
             this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 28);

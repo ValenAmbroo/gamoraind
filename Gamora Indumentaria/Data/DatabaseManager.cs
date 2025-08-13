@@ -13,6 +13,8 @@ namespace Gamora_Indumentaria.Data
     /// </summary>
     public static class DatabaseManager
     {
+        // Flag para controlar si se cargan datos de ejemplo (desactivado para usar solo datos reales)
+        private const bool CARGAR_DATOS_EJEMPLO = false;
         // Cadena de conexión principal para la aplicación
         public static readonly string ConnectionString = @"Data Source=DESKTOP-8860VEA;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
 
@@ -39,7 +41,10 @@ namespace Gamora_Indumentaria.Data
                 VerificarEstructuraTablas();
                 VerificarYCrearTablas();
                 CrearVistas();
-                InsertarDatosEjemplo();
+                if (CARGAR_DATOS_EJEMPLO)
+                {
+                    InsertarDatosEjemplo();
+                }
             }
             catch (Exception ex)
             {
@@ -157,6 +162,16 @@ namespace Gamora_Indumentaria.Data
                             ('Remeras'), ('Pantalones'), ('Vestidos'), ('Accesorios'), ('Calzado');
                         END
 
+                        -- Asegurar categoría VAPER (y opcional VAPERS) exista aunque la tabla ya exista
+                        IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'VAPER')
+                        BEGIN
+                            INSERT INTO Categorias (Nombre) VALUES ('VAPER');
+                        END
+                        IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'VAPERS')
+                        BEGIN
+                            INSERT INTO Categorias (Nombre) VALUES ('VAPERS');
+                        END
+
                         -- Tabla Inventario
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Inventario')
                         BEGIN
@@ -164,13 +179,34 @@ namespace Gamora_Indumentaria.Data
                                 Id INT IDENTITY(1,1) PRIMARY KEY,
                                 Nombre NVARCHAR(200) NOT NULL,
                                 Descripcion NVARCHAR(500),
-                                Precio DECIMAL(10,2) NOT NULL,
+                                PrecioVenta DECIMAL(10,2) NOT NULL, -- Precio de venta
+                                PrecioCompra DECIMAL(10,2) NULL, -- Precio de compra (puede ser NULL al inicio)
                                 Stock INT NOT NULL DEFAULT 0,
                                 CategoriaId INT,
+                                TalleId INT NULL,
+                                Sabor NVARCHAR(100) NULL,
                                 CodigoBarras NVARCHAR(50) NULL,
                                 FechaCreacion DATETIME DEFAULT GETDATE(),
                                 FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id)
                             );
+                        END
+
+                        -- Compatibilidad: renombrar columna antigua 'Precio' a 'PrecioVenta' si existe
+                        IF COL_LENGTH('Inventario','PrecioVenta') IS NULL AND COL_LENGTH('Inventario','Precio') IS NOT NULL
+                        BEGIN
+                            EXEC sp_rename 'Inventario.Precio','PrecioVenta','COLUMN';
+                        END
+
+                        -- Compatibilidad: renombrar columna antigua 'PrecioCosto' a 'PrecioCompra'
+                        IF COL_LENGTH('Inventario','PrecioCompra') IS NULL AND COL_LENGTH('Inventario','PrecioCosto') IS NOT NULL
+                        BEGIN
+                            EXEC sp_rename 'Inventario.PrecioCosto','PrecioCompra','COLUMN';
+                        END
+
+                        -- Agregar columna PrecioCompra si no existe (nueva estructura)
+                        IF COL_LENGTH('Inventario','PrecioCompra') IS NULL
+                        BEGIN
+                            ALTER TABLE Inventario ADD PrecioCompra DECIMAL(10,2) NULL;
                         END
 
                         -- Agregar columna CodigoBarras si no existe
@@ -178,6 +214,18 @@ namespace Gamora_Indumentaria.Data
                                      WHERE TABLE_NAME = 'Inventario' AND COLUMN_NAME = 'CodigoBarras')
                         BEGIN
                             ALTER TABLE Inventario ADD CodigoBarras NVARCHAR(50) NULL;
+                        END
+                        -- Agregar columna TalleId si no existe
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Inventario' AND COLUMN_NAME = 'TalleId')
+                        BEGIN
+                            ALTER TABLE Inventario ADD TalleId INT NULL;
+                        END
+                        -- Agregar columna Sabor si no existe
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Inventario' AND COLUMN_NAME = 'Sabor')
+                        BEGIN
+                            ALTER TABLE Inventario ADD Sabor NVARCHAR(100) NULL;
                         END
 
                         -- Tabla Ventas
@@ -190,6 +238,29 @@ namespace Gamora_Indumentaria.Data
                                 MetodoPago NVARCHAR(50) NOT NULL,
                                 Cliente NVARCHAR(200) NULL
                             );
+                        END
+
+                        -- Tabla TiposTalle (relaciona categorías con valores de talle)
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'TiposTalle')
+                        BEGIN
+                            CREATE TABLE TiposTalle (
+                                Id INT IDENTITY(1,1) PRIMARY KEY,
+                                CategoriaId INT NOT NULL,
+                                TalleValor NVARCHAR(20) NOT NULL,
+                                Orden INT NOT NULL,
+                                FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id)
+                            );
+
+                            -- Poblar talles básicos si la tabla estaba vacía
+                            INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden)
+                            SELECT c.Id, v.TalleValor, v.Orden FROM Categorias c
+                            CROSS APPLY (VALUES
+                                ('Remeras','XS',1),('Remeras','S',2),('Remeras','M',3),('Remeras','L',4),('Remeras','XL',5),
+                                ('Pantalones','36',1),('Pantalones','38',2),('Pantalones','40',3),('Pantalones','42',4),('Pantalones','44',5),
+                                ('Vestidos','S',1),('Vestidos','M',2),('Vestidos','L',3),
+                                ('Calzado','35',1),('Calzado','36',2),('Calzado','37',3),('Calzado','38',4),('Calzado','39',5),('Calzado','40',6)
+                            ) v(CategoriaNombre,TalleValor,Orden)
+                            WHERE c.Nombre = v.CategoriaNombre;
                         END
                         ELSE
                         BEGIN
@@ -248,10 +319,46 @@ namespace Gamora_Indumentaria.Data
                             ALTER TABLE DetalleVentas ADD Subtotal DECIMAL(10,2);
                             -- Calcular subtotal para registros existentes
                             UPDATE DetalleVentas SET Subtotal = Cantidad * PrecioUnitario WHERE Subtotal IS NULL;
+                        END
+
+                        -- Agregar columna CostoUnitario si no existe (para cálculo de ganancias históricas)
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'DetalleVentas' AND COLUMN_NAME = 'CostoUnitario')
+                        BEGIN
+                            ALTER TABLE DetalleVentas ADD CostoUnitario DECIMAL(10,2) NULL;
+                        END
+
+                        -- Tabla CierresCaja para almacenar resumen diario
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'CierresCaja')
+                        BEGIN
+                            CREATE TABLE CierresCaja (
+                                Id INT IDENTITY(1,1) PRIMARY KEY,
+                                Fecha DATE NOT NULL UNIQUE,
+                                TotalVentas DECIMAL(18,2) NOT NULL,
+                                CostoMercaderia DECIMAL(18,2) NOT NULL,
+                                Ganancia DECIMAL(18,2) NOT NULL,
+                                CantidadVentas INT NOT NULL,
+                                CantidadItems INT NOT NULL,
+                                HoraCierre DATETIME NOT NULL DEFAULT GETDATE()
+                            );
                         END";
 
                     SqlCommand cmd = new SqlCommand(createTables, connection);
                     cmd.ExecuteNonQuery();
+
+                    string createIndexes = @"
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Ventas_FechaVenta')
+                            CREATE INDEX IX_Ventas_FechaVenta ON Ventas(FechaVenta);
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_Ventas_MetodoPago')
+                            CREATE INDEX IX_Ventas_MetodoPago ON Ventas(MetodoPago);
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DetalleVentas_VentaId')
+                            CREATE INDEX IX_DetalleVentas_VentaId ON DetalleVentas(VentaId);
+                        IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_DetalleVentas_ProductoId')
+                            CREATE INDEX IX_DetalleVentas_ProductoId ON DetalleVentas(ProductoId);";
+                    using (SqlCommand idxCmd = new SqlCommand(createIndexes, connection))
+                    {
+                        idxCmd.ExecuteNonQuery();
+                    }
                 }
             }
             catch (Exception ex)
@@ -270,68 +377,58 @@ namespace Gamora_Indumentaria.Data
                 using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
-
-                    // Verificar si las vistas ya existen
-                    string checkViews = @"
-                        SELECT COUNT(*) FROM sys.views 
-                        WHERE name IN ('vw_InventarioCompleto', 'vw_StockBajo')";
-
-                    SqlCommand checkCmd = new SqlCommand(checkViews, connection);
-                    int existingViews = (int)checkCmd.ExecuteScalar();
-
-                    // Solo crear las vistas si no existen ambas
-                    if (existingViews < 2)
+                    // Siempre recrear vistas para asegurar estructura actualizada (incluye columna Talle)
+                    string dropViews = @"
+                        IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_InventarioCompleto')
+                            DROP VIEW vw_InventarioCompleto;
+                        IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_StockBajo')
+                            DROP VIEW vw_StockBajo;";
+                    using (SqlCommand dropCmd = new SqlCommand(dropViews, connection))
                     {
-                        // Eliminar vistas existentes si existen
-                        string dropViews = @"
-                            IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_InventarioCompleto')
-                                DROP VIEW vw_InventarioCompleto;
-                            
-                            IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_StockBajo')
-                                DROP VIEW vw_StockBajo;";
-
-                        SqlCommand dropCmd = new SqlCommand(dropViews, connection);
                         dropCmd.ExecuteNonQuery();
+                    }
 
-                        // Crear vista vw_InventarioCompleto
-                        string createView1 = @"
-                            CREATE VIEW vw_InventarioCompleto AS
-                            SELECT 
-                                i.Id,
-                                i.Nombre AS Producto,
-                                ISNULL(i.Descripcion, '') AS Descripcion,
-                                ISNULL(i.Precio, 0) AS PrecioVenta,
-                                ISNULL(i.Stock, 0) AS Cantidad,
-                                c.Nombre AS Categoria,
-                                ISNULL(i.CodigoBarras, '') AS CodigoBarras,
-                                ISNULL(i.FechaCreacion, GETDATE()) AS FechaCreacion,
-                                i.CategoriaId,
-                                NULL AS TalleId,
-                                '' AS Talle,
-                                '' AS Sabor,
-                                ISNULL(i.FechaCreacion, GETDATE()) AS FechaModificacion,
-                                1 AS Activo
-                            FROM Inventario i
-                            INNER JOIN Categorias c ON i.CategoriaId = c.Id";
-
-                        SqlCommand cmd1 = new SqlCommand(createView1, connection);
+                    string createView1 = @"
+                        CREATE VIEW vw_InventarioCompleto AS
+                        SELECT 
+                            i.Id,
+                            i.Nombre AS Producto,
+                            ISNULL(i.Descripcion, '') AS Descripcion,
+                            ISNULL(i.PrecioVenta, 0) AS PrecioVenta,
+                            ISNULL(i.PrecioCompra, 0) AS PrecioCompra,
+                            ISNULL(i.Stock, 0) AS Cantidad,
+                            c.Nombre AS Categoria,
+                            ISNULL(i.CodigoBarras, '') AS CodigoBarras,
+                            ISNULL(i.FechaCreacion, GETDATE()) AS FechaCreacion,
+                            i.CategoriaId,
+                            i.TalleId,
+                            ISNULL(tt.TalleValor,'') AS Talle,
+                            ISNULL(i.Sabor,'') AS Sabor,
+                            ISNULL(i.FechaCreacion, GETDATE()) AS FechaModificacion,
+                            1 AS Activo
+                        FROM Inventario i
+                        INNER JOIN Categorias c ON i.CategoriaId = c.Id
+                        LEFT JOIN TiposTalle tt ON i.TalleId = tt.Id";
+                    using (SqlCommand cmd1 = new SqlCommand(createView1, connection))
+                    {
                         cmd1.ExecuteNonQuery();
+                    }
 
-                        // Crear vista vw_StockBajo
-                        string createView2 = @"
-                            CREATE VIEW vw_StockBajo AS
-                            SELECT 
-                                i.Id,
-                                i.Nombre AS Producto,
-                                c.Nombre AS Categoria,
-                                ISNULL(i.Stock, 0) AS Cantidad,
-                                ISNULL(i.Precio, 0) AS PrecioVenta,
-                                'Stock Bajo' AS Estado
-                            FROM Inventario i
-                            INNER JOIN Categorias c ON i.CategoriaId = c.Id
-                            WHERE ISNULL(i.Stock, 0) <= 10";
-
-                        SqlCommand cmd2 = new SqlCommand(createView2, connection);
+                    string createView2 = @"
+                        CREATE VIEW vw_StockBajo AS
+                        SELECT 
+                            i.Id,
+                            i.Nombre AS Producto,
+                            c.Nombre AS Categoria,
+                            ISNULL(i.Stock, 0) AS Cantidad,
+                            ISNULL(i.PrecioVenta, 0) AS PrecioVenta,
+                            ISNULL(i.PrecioCompra, 0) AS PrecioCompra,
+                            'Stock Bajo' AS Estado
+                        FROM Inventario i
+                        INNER JOIN Categorias c ON i.CategoriaId = c.Id
+                        WHERE ISNULL(i.Stock, 0) <= 10";
+                    using (SqlCommand cmd2 = new SqlCommand(createView2, connection))
+                    {
                         cmd2.ExecuteNonQuery();
                     }
                 }
@@ -360,17 +457,17 @@ namespace Gamora_Indumentaria.Data
                     if (inventarioCount == 0)
                     {
                         string insertInventario = @"
-                            INSERT INTO Inventario (Nombre, Descripcion, Precio, Stock, CategoriaId, CodigoBarras) VALUES 
-                            ('Remera Básica Blanca', 'Remera de algodón 100%', 2500.00, 50, 1, '7891234567890'),
-                            ('Jean Clásico Azul', 'Pantalón jean corte recto', 4500.00, 30, 2, '7891234567891'),
-                            ('Vestido Casual Negro', 'Vestido para uso diario', 3500.00, 20, 3, '7891234567892'),
-                            ('Collar Dorado', 'Collar de acero dorado', 1500.00, 15, 4, '7891234567893'),
-                            ('Zapatillas Deportivas', 'Zapatillas para correr', 8500.00, 25, 5, '7891234567894'),
-                            ('Remera Estampada', 'Remera con diseño exclusivo', 3000.00, 40, 1, '7891234567895'),
-                            ('Pantalón Cargo', 'Pantalón con bolsillos', 5500.00, 20, 2, '7891234567896'),
-                            ('Vestido de Noche', 'Vestido elegante', 8500.00, 10, 3, '7891234567897'),
-                            ('Pulsera de Plata', 'Pulsera artesanal', 2200.00, 12, 4, '7891234567898'),
-                            ('Botas de Cuero', 'Botas para invierno', 12000.00, 15, 5, '7891234567899');";
+                            INSERT INTO Inventario (Nombre, Descripcion, PrecioVenta, PrecioCompra, Stock, CategoriaId, CodigoBarras) VALUES 
+                            ('Remera Básica Blanca', 'Remera de algodón 100%', 2500.00, 1500.00, 50, 1, '7891234567890'),
+                            ('Jean Clásico Azul', 'Pantalón jean corte recto', 4500.00, 3000.00, 30, 2, '7891234567891'),
+                            ('Vestido Casual Negro', 'Vestido para uso diario', 3500.00, 2100.00, 20, 3, '7891234567892'),
+                            ('Collar Dorado', 'Collar de acero dorado', 1500.00, 800.00, 15, 4, '7891234567893'),
+                            ('Zapatillas Deportivas', 'Zapatillas para correr', 8500.00, 6000.00, 25, 5, '7891234567894'),
+                            ('Remera Estampada', 'Remera con diseño exclusivo', 3000.00, 1800.00, 40, 1, '7891234567895'),
+                            ('Pantalón Cargo', 'Pantalón con bolsillos', 5500.00, 3500.00, 20, 2, '7891234567896'),
+                            ('Vestido de Noche', 'Vestido elegante', 8500.00, 5000.00, 10, 3, '7891234567897'),
+                            ('Pulsera de Plata', 'Pulsera artesanal', 2200.00, 1200.00, 12, 4, '7891234567898'),
+                            ('Botas de Cuero', 'Botas para invierno', 12000.00, 8000.00, 15, 5, '7891234567899');";
 
                         SqlCommand inventarioCmd = new SqlCommand(insertInventario, connection);
                         inventarioCmd.ExecuteNonQuery();
@@ -612,13 +709,18 @@ namespace Gamora_Indumentaria.Data
                         int ventaId = Convert.ToInt32(cmd.ExecuteScalar());
 
                         // 2. Insertar los detalles y actualizar stock con validación de stock
-                        string insertDetalle = @"
+                        bool existeCostoUnitario = false;
+                        using (SqlCommand checkCosto = new SqlCommand("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='DetalleVentas' AND COLUMN_NAME='CostoUnitario'", conn, transaction))
+                        {
+                            existeCostoUnitario = Convert.ToInt32(checkCosto.ExecuteScalar()) > 0;
+                        }
+                        string insertDetalle = existeCostoUnitario ? @"
+                            INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal, CostoUnitario)
+                            VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal, @CostoUnitario);
+                            UPDATE Inventario SET Stock = Stock - @Cantidad WHERE Id = @ProductoId;" : @"
                             INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
                             VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal);
-                            
-                            UPDATE Inventario 
-                            SET Stock = Stock - @Cantidad 
-                            WHERE Id = @ProductoId;";
+                            UPDATE Inventario SET Stock = Stock - @Cantidad WHERE Id = @ProductoId;";
 
                         foreach (var detalle in detalles)
                         {
@@ -641,6 +743,16 @@ namespace Gamora_Indumentaria.Data
                                 cmdDetalle.Parameters.AddWithValue("@Cantidad", detalle.Cantidad);
                                 cmdDetalle.Parameters.AddWithValue("@PrecioUnitario", detalle.PrecioUnitario);
                                 cmdDetalle.Parameters.AddWithValue("@Subtotal", detalle.Subtotal);
+                                if (insertDetalle.Contains("@CostoUnitario"))
+                                {
+                                    // Obtener costo (PrecioCompra) actual del producto
+                                    using (SqlCommand costoCmd = new SqlCommand("SELECT ISNULL(PrecioCompra,0) FROM Inventario WHERE Id=@Id", conn, transaction))
+                                    {
+                                        costoCmd.Parameters.AddWithValue("@Id", detalle.ProductoId);
+                                        var costo = Convert.ToDecimal(costoCmd.ExecuteScalar());
+                                        cmdDetalle.Parameters.AddWithValue("@CostoUnitario", costo);
+                                    }
+                                }
                                 cmdDetalle.ExecuteNonQuery();
                             }
                         }
@@ -670,6 +782,78 @@ namespace Gamora_Indumentaria.Data
                 Subtotal = item.Subtotal
             }).ToList();
             return ProcesarVenta(totalVenta, metodoPago, detalles);
+        }
+
+        /// <summary>
+        /// Realiza el cierre de caja del día (fecha local) calculando ventas, costo y ganancia.
+        /// </summary>
+        public static void CerrarCaja(DateTime fecha)
+        {
+            DateTime dia = fecha.Date;
+            using (SqlConnection conn = new SqlConnection(ConnectionString))
+            {
+                conn.Open();
+                using (SqlTransaction tr = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        // Evitar duplicar cierre
+                        using (SqlCommand existe = new SqlCommand("SELECT COUNT(*) FROM CierresCaja WHERE Fecha=@F", conn, tr))
+                        {
+                            existe.Parameters.AddWithValue("@F", dia);
+                            if (Convert.ToInt32(existe.ExecuteScalar()) > 0)
+                                throw new Exception("Ya existe un cierre para esta fecha");
+                        }
+
+                        string sql = @"
+                            SELECT v.Id, v.Total, v.FechaVenta, d.Cantidad, d.PrecioUnitario, ISNULL(d.CostoUnitario,0) AS CostoUnitario
+                            FROM Ventas v
+                            INNER JOIN DetalleVentas d ON v.Id = d.VentaId
+                            WHERE CONVERT(date, v.FechaVenta) = @Fecha";
+                        decimal totalVentas = 0m, costoTotal = 0m; int cantVentas = 0, cantItems = 0; int lastVenta = -1;
+                        using (SqlCommand cmd = new SqlCommand(sql, conn, tr))
+                        {
+                            cmd.Parameters.AddWithValue("@Fecha", dia);
+                            using (SqlDataReader rd = cmd.ExecuteReader())
+                            {
+                                while (rd.Read())
+                                {
+                                    int ventaId = rd.GetInt32(0);
+                                    decimal total = rd.GetDecimal(1);
+                                    if (ventaId != lastVenta)
+                                    {
+                                        totalVentas += total;
+                                        cantVentas++;
+                                        lastVenta = ventaId;
+                                    }
+                                    int cantidad = rd.GetInt32(3);
+                                    decimal costoUnit = rd.GetDecimal(5);
+                                    decimal precioUnit = rd.GetDecimal(4);
+                                    cantItems += cantidad;
+                                    costoTotal += costoUnit * cantidad;
+                                }
+                            }
+                        }
+                        decimal ganancia = totalVentas - costoTotal;
+                        using (SqlCommand insert = new SqlCommand(@"INSERT INTO CierresCaja (Fecha, TotalVentas, CostoMercaderia, Ganancia, CantidadVentas, CantidadItems) VALUES (@Fecha,@Total,@Costo,@Gan,@CV,@CI)", conn, tr))
+                        {
+                            insert.Parameters.AddWithValue("@Fecha", dia);
+                            insert.Parameters.AddWithValue("@Total", totalVentas);
+                            insert.Parameters.AddWithValue("@Costo", costoTotal);
+                            insert.Parameters.AddWithValue("@Gan", ganancia);
+                            insert.Parameters.AddWithValue("@CV", cantVentas);
+                            insert.Parameters.AddWithValue("@CI", cantItems);
+                            insert.ExecuteNonQuery();
+                        }
+                        tr.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        tr.Rollback();
+                        throw new Exception("Error al cerrar caja: " + ex.Message, ex);
+                    }
+                }
+            }
         }
     }
 }

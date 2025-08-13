@@ -87,7 +87,7 @@ namespace Gamora_Indumentaria
         {
             // Limpiar campos - usar DataSource = null para limpiar ComboBox con DataSource
             cboTalle.DataSource = null;
-             cboTalle.Items.Clear();
+            cboTalle.Items.Clear();
             txtSabor.Text = "";
 
             // Mostrar/ocultar campos según la categoría
@@ -97,7 +97,7 @@ namespace Gamora_Indumentaria
             {
                 // Configurar visibilidad de campos según la categoría
                 bool esTalleVisible = categoriaSeleccionada.TieneTalle;
-                bool esVaper = categoriaSeleccionada.Nombre == "VAPER";
+                bool esVaper = EsCategoriaVaper(categoriaSeleccionada);
 
                 lblTalle.Visible = esTalleVisible;
                 cboTalle.Visible = esTalleVisible;
@@ -109,6 +109,12 @@ namespace Gamora_Indumentaria
                 if (esTalleVisible)
                 {
                     CargarTallesPorCategoria(categoriaSeleccionada.Id);
+                }
+
+                if (esVaper)
+                {
+                    CargarSaboresVaper();
+                    ConfigurarAutocompleteSabor();
                 }
             }
         }
@@ -155,11 +161,13 @@ namespace Gamora_Indumentaria
                     CodigoBarra = string.IsNullOrWhiteSpace(txtCodigoBarra.Text) ? null : txtCodigoBarra.Text.Trim(),
                     TalleId = categoriaSeleccionada.TieneTalle && cboTalle.SelectedValue != null ?
                              (int?)cboTalle.SelectedValue : null,
-                    Sabor = categoriaSeleccionada.Nombre == "VAPER" && !string.IsNullOrWhiteSpace(txtSabor.Text) ?
+                    Sabor = EsCategoriaVaper(categoriaSeleccionada) && !string.IsNullOrWhiteSpace(txtSabor.Text) ?
                            txtSabor.Text.Trim() : null,
                     Cantidad = (int)nudCantidad.Value,
                     PrecioVenta = string.IsNullOrWhiteSpace(txtPrecio.Text) ? null :
                                  (decimal?)Convert.ToDecimal(txtPrecio.Text)
+                    ,
+                    PrecioCosto = string.IsNullOrWhiteSpace(txtPrecioCosto.Text) ? null : (decimal?)Convert.ToDecimal(txtPrecioCosto.Text)
                 };
 
                 int nuevoId = inventarioDAL.AgregarProducto(producto);
@@ -174,6 +182,42 @@ namespace Gamora_Indumentaria
                 MessageBox.Show(string.Format("Error al guardar el producto: {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void CargarSaboresVaper()
+        {
+            try
+            {
+                string q = "SELECT DISTINCT Sabor FROM Inventario WHERE Sabor IS NOT NULL AND LTRIM(RTRIM(Sabor)) <> '' ORDER BY Sabor";
+                DataTable dt = DatabaseManager.ExecuteQuery(q);
+                List<string> sabores = new List<string>();
+                foreach (DataRow r in dt.Rows)
+                {
+                    sabores.Add(r["Sabor"].ToString());
+                }
+                // Si existe un ComboBox cboSabor lo llenamos; si solo TextBox, usamos AutoComplete
+                if (this.Controls.Find("cboSabor", true).FirstOrDefault() is ComboBox cboSabor)
+                {
+                    cboSabor.Items.Clear();
+                    cboSabor.Items.AddRange(sabores.ToArray());
+                }
+                saboresVaper = sabores;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error cargando sabores: " + ex.Message);
+            }
+        }
+
+        private List<string> saboresVaper = new List<string>();
+        private void ConfigurarAutocompleteSabor()
+        {
+            if (txtSabor == null) return;
+            var source = new AutoCompleteStringCollection();
+            source.AddRange(saboresVaper.ToArray());
+            txtSabor.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            txtSabor.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+            txtSabor.AutoCompleteCustomSource = source;
         }
 
         /// <summary>
@@ -204,7 +248,7 @@ namespace Gamora_Indumentaria
                 return false;
             }
 
-            if (categoriaSeleccionada.Nombre == "VAPER" && string.IsNullOrWhiteSpace(txtSabor.Text))
+            if (EsCategoriaVaper(categoriaSeleccionada) && string.IsNullOrWhiteSpace(txtSabor.Text))
             {
                 MessageBox.Show("Por favor, ingresa el sabor del vaper.", "Validación",
                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -217,6 +261,23 @@ namespace Gamora_Indumentaria
                 MessageBox.Show("La cantidad debe ser mayor a cero.", "Validación",
                               MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 nudCantidad.Focus();
+                return false;
+            }
+
+            // Precios requeridos
+            if (string.IsNullOrWhiteSpace(txtPrecio.Text))
+            {
+                MessageBox.Show("Por favor, ingresa el precio de venta.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPrecio.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPrecioCosto.Text))
+            {
+                MessageBox.Show("Por favor, ingresa el precio de compra.", "Validación",
+                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtPrecioCosto.Focus();
                 return false;
             }
 
@@ -233,6 +294,30 @@ namespace Gamora_Indumentaria
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(txtPrecioCosto.Text))
+            {
+                decimal precioC;
+                if (!decimal.TryParse(txtPrecioCosto.Text, out precioC) || precioC < 0)
+                {
+                    MessageBox.Show("El precio de compra debe ser un número válido >= 0.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtPrecioCosto.Focus();
+                    return false;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(txtPrecio.Text) && !string.IsNullOrWhiteSpace(txtPrecioCosto.Text))
+            {
+                decimal pv, pc;
+                if (decimal.TryParse(txtPrecio.Text, out pv) && decimal.TryParse(txtPrecioCosto.Text, out pc))
+                {
+                    if (pc > pv)
+                    {
+                        var res = MessageBox.Show("El precio de compra es mayor que el de venta. ¿Desea continuar?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (res == DialogResult.No) return false;
+                    }
+                }
+            }
+
             return true;
         }
 
@@ -246,6 +331,7 @@ namespace Gamora_Indumentaria
             txtCodigoBarra.Text = "";
             txtSabor.Text = "";
             txtPrecio.Text = "";
+            txtPrecioCosto.Text = "";
             nudCantidad.Value = 1;
 
             if (cboTalle.Items.Count > 0)
@@ -278,6 +364,14 @@ namespace Gamora_Indumentaria
         private void button2_Click(object sender, EventArgs e)
         {
 
+        }
+
+        // Helper para determinar si la categoría es un Vaper (acepta variantes VAPER / VAPERS)
+        private bool EsCategoriaVaper(Categoria cat)
+        {
+            if (cat == null || string.IsNullOrWhiteSpace(cat.Nombre)) return false;
+            var nombre = cat.Nombre.Trim().ToUpperInvariant();
+            return nombre == "VAPER" || nombre == "VAPERS"; // permitir ambas denominaciones
         }
     }
 }

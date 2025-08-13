@@ -137,7 +137,7 @@ namespace Gamora_Indumentaria
                         c.Nombre AS Categoria,
                         i.Nombre AS Producto,
                         i.Stock,
-                        i.Precio
+                        COALESCE(i.PrecioVenta, i.Precio) AS Precio
                     FROM Inventario i
                     INNER JOIN Categorias c ON i.CategoriaId = c.Id
                     WHERE i.Stock <= 5 AND i.Stock > 0

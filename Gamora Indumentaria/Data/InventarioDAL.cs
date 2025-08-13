@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
+using System.Linq;
 
 namespace Gamora_Indumentaria.Data
 {
@@ -33,10 +34,16 @@ namespace Gamora_Indumentaria.Data
 
                 foreach (DataRow row in dt.Rows)
                 {
+                    string nombre = row["Nombre"].ToString();
+                    // Heurística: categorías de indumentaria que manejan talles
+                    bool tieneTalle = EsCategoriaConTalle(nombre);
+                    string tipoTalle = InferirTipoTalle(nombre);
                     categorias.Add(new Categoria
                     {
                         Id = Convert.ToInt32(row["Id"]),
-                        Nombre = row["Nombre"].ToString()
+                        Nombre = nombre,
+                        TieneTalle = tieneTalle,
+                        TipoTalle = tipoTalle
                     });
                 }
             }
@@ -46,6 +53,27 @@ namespace Gamora_Indumentaria.Data
             }
 
             return categorias;
+        }
+
+        // Determina si una categoría maneja talles (heurística basada en nombre)
+        private bool EsCategoriaConTalle(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) return false;
+            nombre = nombre.Trim().ToUpperInvariant();
+            // Ajusta aquí según tus categorías reales
+            string[] categoriasConTalle = { "REMERAS", "PANTALONES", "VESTIDOS", "CALZADO", "BUZOS", "CAMPERAS" };
+            return categoriasConTalle.Contains(nombre);
+        }
+
+        // Inferir tipo de talle (alfanumérico vs numérico) para uso futuro
+        private string InferirTipoTalle(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) return null;
+            nombre = nombre.Trim().ToUpperInvariant();
+            // Ejemplo simple: Calzado suele ser numérico, resto alfanumérico
+            if (nombre == "CALZADO") return "NUM";
+            if (EsCategoriaConTalle(nombre)) return "ALFA";
+            return null;
         }
 
         /// <summary>
@@ -117,8 +145,8 @@ namespace Gamora_Indumentaria.Data
         public int AgregarProducto(ProductoInventario producto)
         {
             string query = @"
-                INSERT INTO Inventario (CategoriaId, Nombre, Descripcion, CodigoBarras, Stock, Precio, FechaCreacion)
-                VALUES (@CategoriaId, @Nombre, @Descripcion, @CodigoBarras, @Stock, @Precio, GETDATE());
+                INSERT INTO Inventario (CategoriaId, Nombre, Descripcion, CodigoBarras, TalleId, Sabor, Stock, PrecioVenta, PrecioCompra, FechaCreacion)
+                VALUES (@CategoriaId, @Nombre, @Descripcion, @CodigoBarras, @TalleId, @Sabor, @Stock, @PrecioVenta, @PrecioCompra, GETDATE());
                 SELECT SCOPE_IDENTITY();";
 
             object result = DatabaseManager.ExecuteScalar(query,
@@ -126,8 +154,11 @@ namespace Gamora_Indumentaria.Data
                 new SqlParameter("@Nombre", producto.Nombre),
                 new SqlParameter("@Descripcion", (object)producto.Descripcion ?? DBNull.Value),
                 new SqlParameter("@CodigoBarras", (object)producto.CodigoBarra ?? DBNull.Value),
+                new SqlParameter("@TalleId", (object)producto.TalleId ?? DBNull.Value),
+                new SqlParameter("@Sabor", (object)producto.Sabor ?? DBNull.Value),
                 new SqlParameter("@Stock", producto.Cantidad),
-                new SqlParameter("@Precio", (object)producto.PrecioVenta ?? DBNull.Value));
+                new SqlParameter("@PrecioVenta", (object)producto.PrecioVenta ?? DBNull.Value),
+                new SqlParameter("@PrecioCompra", (object)producto.PrecioCosto ?? DBNull.Value));
 
             return Convert.ToInt32(result);
         }
@@ -208,6 +239,7 @@ namespace Gamora_Indumentaria.Data
         public string Sabor { get; set; } // Para vapers
         public int Cantidad { get; set; }
         public decimal? PrecioVenta { get; set; }
+        public decimal? PrecioCosto { get; set; }
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaModificacion { get; set; }
         public bool Activo { get; set; }
