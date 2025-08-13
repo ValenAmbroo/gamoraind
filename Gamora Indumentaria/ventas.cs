@@ -44,7 +44,6 @@ namespace Gamora_Indumentaria
         }
 
         // Controles definidos manualmente
-        private Panel panel1;
         private Button button3;
         private GroupBox lblTitulo1;
         private Button btnAgregar1;
@@ -58,6 +57,9 @@ namespace Gamora_Indumentaria
         private Label label3;
         private Button ProcesarVentabtn;
         private ComboBox cmbMetodoPago1;
+        private Panel panelTop;
+        private Button btnCerrar;
+        private Label lblTitulo;
         private Label lblTotal;
         // Eliminado soporte de cliente (no se almacena)
 
@@ -487,10 +489,14 @@ namespace Gamora_Indumentaria
             this.cmbMetodoPago1 = new System.Windows.Forms.ComboBox();
             this.lblTotal = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.panelTop = new System.Windows.Forms.Panel();
+            this.btnCerrar = new System.Windows.Forms.Button();
+            this.lblTitulo = new System.Windows.Forms.Label();
             this.lblTitulo1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito1)).BeginInit();
             this.grpPago.SuspendLayout();
+            this.panelTop.SuspendLayout();
             this.SuspendLayout();
             // 
             // button3
@@ -566,7 +572,7 @@ namespace Gamora_Indumentaria
             // lblUltimoCodigo
             // 
             this.lblUltimoCodigo.AutoSize = true;
-            this.lblUltimoCodigo.Location = new System.Drawing.Point(690, 40);
+            this.lblUltimoCodigo.Location = new System.Drawing.Point(696, 37);
             this.lblUltimoCodigo.Name = "lblUltimoCodigo";
             this.lblUltimoCodigo.Size = new System.Drawing.Size(146, 20);
             this.lblUltimoCodigo.TabIndex = 5;
@@ -705,10 +711,48 @@ namespace Gamora_Indumentaria
             this.label3.TabIndex = 3;
             this.label3.Text = "Total:";
             // 
+            // panelTop
+            // 
+            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.Controls.Add(this.btnCerrar);
+            this.panelTop.Controls.Add(this.lblTitulo);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(889, 42);
+            this.panelTop.TabIndex = 6;
+            // 
+            // btnCerrar
+            // 
+            this.btnCerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCerrar.FlatAppearance.BorderSize = 0;
+            this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnCerrar.Location = new System.Drawing.Point(847, 3);
+            this.btnCerrar.Name = "btnCerrar";
+            this.btnCerrar.Size = new System.Drawing.Size(39, 34);
+            this.btnCerrar.TabIndex = 1;
+            this.btnCerrar.Text = "✕";
+            this.btnCerrar.UseVisualStyleBackColor = true;
+            this.btnCerrar.Click += new System.EventHandler(this.btnCerrar_Click);
+            // 
+            // lblTitulo
+            // 
+            this.lblTitulo.AutoSize = true;
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.lblTitulo.Location = new System.Drawing.Point(12, 8);
+            this.lblTitulo.Name = "lblTitulo";
+            this.lblTitulo.Size = new System.Drawing.Size(63, 25);
+            this.lblTitulo.TabIndex = 2;
+            this.lblTitulo.Text = "Venta";
+            // 
             // ventas
             // 
             this.ClientSize = new System.Drawing.Size(889, 512);
             this.ControlBox = false;
+            this.Controls.Add(this.panelTop);
             this.Controls.Add(this.grpPago);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.lblTitulo1);
@@ -720,6 +764,8 @@ namespace Gamora_Indumentaria
             ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito1)).EndInit();
             this.grpPago.ResumeLayout(false);
             this.grpPago.PerformLayout();
+            this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1007,6 +1053,11 @@ namespace Gamora_Indumentaria
         {
             bool puede = carrito != null && carrito.Count > 0 && cmbMetodoPago1 != null && cmbMetodoPago1.SelectedIndex >= 0;
             if (ProcesarVentabtn != null) ProcesarVentabtn.Enabled = puede;
+        }
+
+        private void btnCerrar_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

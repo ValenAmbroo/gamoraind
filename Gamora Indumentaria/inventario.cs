@@ -27,7 +27,7 @@ namespace Gamora_Indumentaria
           
             if (cboCategoria != null) cboCategoria.SelectedIndexChanged += (s, e) => { ActualizarCamposCategoria(); Filtrar(); };
             if (cboTalle != null) cboTalle.SelectedIndexChanged += (s, e) => Filtrar();
-            if (txtSabor != null) txtSabor.TextChanged += (s, e) => DebounceFiltrar();
+          
             if (chkSoloBajo != null) chkSoloBajo.CheckedChanged += (s, e) => Filtrar();
             if (nudStockMin != null) nudStockMin.ValueChanged += (s, e) => Filtrar();
             if (nudStockMax != null) nudStockMax.ValueChanged += (s, e) => Filtrar();
@@ -108,11 +108,11 @@ namespace Gamora_Indumentaria
                     cboTalle.Visible = lblTalle.Visible = false;
                 }
                 bool esVaper = EsCategoriaVaper(cat.Nombre);
-                txtSabor.Visible = lblSabor.Visible = esVaper;
+               
                 if (!esVaper)
                 {
                     // Limpiar texto para que no siga filtrando inadvertidamente
-                    txtSabor.Text = string.Empty;
+                    
                 }
             }
         }
@@ -121,7 +121,7 @@ namespace Gamora_Indumentaria
         {
             if (string.IsNullOrWhiteSpace(nombre)) return false;
             var n = nombre.Trim().ToUpperInvariant();
-            return n == "VAPER" || n == "VAPERS";
+            return n == "VAPER" ;
         }
 
         private void CargarInventario()
@@ -187,11 +187,7 @@ namespace Gamora_Indumentaria
                 string t = Escape(talle.TalleValor);
                 filtro += $" AND Talle = '{t}'";
             }
-            if (txtSabor.Visible && !string.IsNullOrWhiteSpace(txtSabor.Text))
-            {
-                string s = Escape(txtSabor.Text.Trim());
-                filtro += $" AND Sabor LIKE '%{s}%'";
-            }
+           
             if (chkSoloBajo.Checked)
             {
                 filtro += " AND Cantidad <= 10";
@@ -334,6 +330,11 @@ namespace Gamora_Indumentaria
         private void btnEliminar_Click_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void txtBuscar_TextChanged(object sender, EventArgs e)
+        {
+            Filtrar();
         }
     }
 }

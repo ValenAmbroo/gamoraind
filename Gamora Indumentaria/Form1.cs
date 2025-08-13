@@ -39,6 +39,9 @@ namespace Gamora_Indumentaria
             ConfigurarArrastre();
 
             AplicarPerfil();
+
+            // Configurar autocierre de submenús
+            ConfigurarAutocierreSubmenus();
         }
 
         /// <summary>
@@ -260,7 +263,7 @@ namespace Gamora_Indumentaria
                 btnsubadministracion.Visible = false;
                 //btnsubprincipal.Visible = false;
                 button10.Visible = false;
-                panel7.Visible = false;
+
 
                 // Ocultá acá cualquier otro botón que no querés que el empleado vea
             }
@@ -328,26 +331,120 @@ namespace Gamora_Indumentaria
             CargarFormularioHijo(new HistorialVentas());
         }
 
-        private void btnCierreCaja_Click(object sender, EventArgs e)
-        {
-            CargarFormularioHijo(new CierreCaja());
-        }
-
         private void panel5_Paint(object sender, PaintEventArgs e)
         {
 
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        // ================== AUTOCIERRE SUBMENUS ==================
+        private void ConfigurarAutocierreSubmenus()
         {
-            CargarFormularioHijo(new CierreCaja());
+            // Registrar clicks para botones dentro de cada submenú
+            RegistrarCerrarAlClickDentro(panelsubprincipal);
+            RegistrarCerrarAlClickDentro(panelsubadministracion);
 
+            // Registrar manejador global para click fuera
+            RegistrarMouseDownRecursivo(this);
+        }
+
+        private void RegistrarCerrarAlClickDentro(Panel panel)
+        {
+            if (panel == null) return;
+            foreach (Control c in panel.Controls)
+            {
+                if (c is Button btn)
+                {
+                    btn.Click -= BotonSubmenu_Cierra;
+                    btn.Click += BotonSubmenu_Cierra;
+                }
+            }
+        }
+
+        private void BotonSubmenu_Cierra(object sender, EventArgs e)
+        {
+            if (panelsubprincipal != null && panelsubprincipal.Visible)
+                panelsubprincipal.Visible = false;
+            if (panelsubadministracion != null && panelsubadministracion.Visible)
+                panelsubadministracion.Visible = false;
+        }
+
+        private void RegistrarMouseDownRecursivo(Control root)
+        {
+            if (root == null) return;
+            root.MouseDown -= GlobalMouseDownCerrarSubmenus;
+            root.MouseDown += GlobalMouseDownCerrarSubmenus;
+            foreach (Control child in root.Controls)
+            {
+                RegistrarMouseDownRecursivo(child);
+            }
+        }
+
+        private void GlobalMouseDownCerrarSubmenus(object sender, MouseEventArgs e)
+        {
+            // Si no hay submenús visibles, salir
+            bool algunoVisible = (panelsubprincipal != null && panelsubprincipal.Visible) ||
+                                 (panelsubadministracion != null && panelsubadministracion.Visible);
+            if (!algunoVisible) return;
+
+            Point screenPoint = Cursor.Position;
+
+            if (panelsubprincipal != null && panelsubprincipal.Visible)
+            {
+                if (!PuntoDentroDe(panelsubprincipal, screenPoint) && !PuntoDentroDe(btnsubprincipal, screenPoint))
+                {
+                    panelsubprincipal.Visible = false;
+                }
+            }
+            if (panelsubadministracion != null && panelsubadministracion.Visible)
+            {
+                if (!PuntoDentroDe(panelsubadministracion, screenPoint) && !PuntoDentroDe(btnsubadministracion, screenPoint))
+                {
+                    panelsubadministracion.Visible = false;
+                }
+            }
+        }
+
+        private bool PuntoDentroDe(Control ctrl, Point screenPoint)
+        {
+            if (ctrl == null) return false;
+            Point local = ctrl.PointToClient(screenPoint);
+            return local.X >= 0 && local.Y >= 0 && local.X < ctrl.Width && local.Y < ctrl.Height;
         }
 
         private void button5_Click_1(object sender, EventArgs e)
         {
-            CargarFormularioHijo(new inventario());
+            try
+            {
+                CargarFormularioHijo(new inventario());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir el inventario: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new EstadisticasVentas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new CierreCaja());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir Cierre De Caja: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

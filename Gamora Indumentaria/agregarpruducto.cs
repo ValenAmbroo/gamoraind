@@ -17,6 +17,7 @@ namespace Gamora_Indumentaria
         private InventarioDAL inventarioDAL;
         private Categoria categoriaSeleccionada;
         private List<TallePorCategoria> tallesDisponibles;
+        private ErrorProvider err; // proveedor de errores para validaciones en línea
         // Buffer y control de tiempo para capturar lecturas rápidas de un escáner
         private readonly StringBuilder scannerBuffer = new StringBuilder();
         private DateTime lastScannerCharTime = DateTime.MinValue;
@@ -30,6 +31,7 @@ namespace Gamora_Indumentaria
             // Activar vista previa de teclas para modo escáner
             this.KeyPreview = true;
             this.KeyPress += AgregarProducto_KeyPress_Global;
+            InicializarErrorProviderYValidaciones();
         }
 
         public agregarpruducto(string nombreCategoria) : this()
@@ -232,60 +234,41 @@ namespace Gamora_Indumentaria
         /// </summary>
         private bool ValidarFormulario()
         {
+            LimpiarErrores();
             if (categoriaSeleccionada == null)
             {
-                MessageBox.Show("Por favor, selecciona una categoría.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
+                SetErr(cboCategoria, "Seleccione una categoría");
             }
 
             if (string.IsNullOrWhiteSpace(txtNombre.Text))
             {
-                MessageBox.Show("Por favor, ingresa el nombre del producto.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtNombre.Focus();
-                return false;
+                SetErr(txtNombre, "Nombre requerido");
             }
 
             if (categoriaSeleccionada.TieneTalle && cboTalle.SelectedIndex == -1)
             {
-                MessageBox.Show("Por favor, selecciona un talle.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cboTalle.Focus();
-                return false;
+                SetErr(cboTalle, "Seleccione un talle");
             }
 
             if (EsCategoriaVaper(categoriaSeleccionada) && string.IsNullOrWhiteSpace(txtSabor.Text))
             {
-                MessageBox.Show("Por favor, ingresa el sabor del vaper.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtSabor.Focus();
-                return false;
+                SetErr(txtSabor, "Sabor requerido");
             }
 
             if (nudCantidad.Value <= 0)
             {
-                MessageBox.Show("La cantidad debe ser mayor a cero.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                nudCantidad.Focus();
-                return false;
+                SetErr(nudCantidad, "Cantidad > 0");
             }
 
             // Precios requeridos
             if (string.IsNullOrWhiteSpace(txtPrecio.Text))
             {
-                MessageBox.Show("Por favor, ingresa el precio de venta.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPrecio.Focus();
-                return false;
+                SetErr(txtPrecio, "Precio requerido");
             }
 
             if (string.IsNullOrWhiteSpace(txtPrecioCosto.Text))
             {
-                MessageBox.Show("Por favor, ingresa el precio de compra.", "Validación",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPrecioCosto.Focus();
-                return false;
+                SetErr(txtPrecioCosto, "Costo requerido");
             }
 
             // Validar precio si se ingresó
@@ -294,10 +277,7 @@ namespace Gamora_Indumentaria
                 decimal precio;
                 if (!decimal.TryParse(txtPrecio.Text, out precio) || precio < 0)
                 {
-                    MessageBox.Show("El precio debe ser un número válido mayor o igual a cero.", "Validación",
-                                  MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtPrecio.Focus();
-                    return false;
+                    SetErr(txtPrecio, "Precio inválido");
                 }
             }
 
@@ -306,9 +286,7 @@ namespace Gamora_Indumentaria
                 decimal precioC;
                 if (!decimal.TryParse(txtPrecioCosto.Text, out precioC) || precioC < 0)
                 {
-                    MessageBox.Show("El precio de compra debe ser un número válido >= 0.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    txtPrecioCosto.Focus();
-                    return false;
+                    SetErr(txtPrecioCosto, "Costo inválido");
                 }
             }
 
@@ -319,13 +297,16 @@ namespace Gamora_Indumentaria
                 {
                     if (pc > pv)
                     {
-                        var res = MessageBox.Show("El precio de compra es mayor que el de venta. ¿Desea continuar?", "Confirmación", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                        if (res == DialogResult.No) return false;
+                        // Advertir visualmente, pero permitir continuar si usuario insiste (doble clic Guardar)
+                        if (err.GetError(txtPrecioCosto) == string.Empty)
+                            SetErr(txtPrecioCosto, "Costo > Precio (verificar)");
                     }
                 }
             }
-
-            return true;
+            // Si hay algún error marcado retornar false
+            bool hayErrores = new Control[] { cboCategoria, txtNombre, cboTalle, txtSabor, nudCantidad, txtPrecio, txtPrecioCosto }
+                .Any(c => c != null && err.GetError(c) != string.Empty);
+            return !hayErrores;
         }
 
         /// <summary>
@@ -414,6 +395,104 @@ namespace Gamora_Indumentaria
             lastScannerCharTime = now;
             scannerBuffer.Append(e.KeyChar);
             e.Handled = true; // evitar que el caracter vaya a otro control
+        }
+
+        // =================== NUEVAS VALIDACIONES =====================
+        private void InicializarErrorProviderYValidaciones()
+        {
+            err = new ErrorProvider();
+            err.BlinkStyle = ErrorBlinkStyle.NeverBlink;
+            err.ContainerControl = this;
+
+            // Configurar límites y eventos si los controles existen
+            if (txtNombre != null)
+            {
+                txtNombre.MaxLength = 80;
+                txtNombre.Validating += (s, ev) => { if (string.IsNullOrWhiteSpace(txtNombre.Text)) SetErr(txtNombre, "Requerido"); else ClearErr(txtNombre); };
+                txtNombre.KeyPress += (s, ev) => { if (!char.IsControl(ev.KeyChar) && txtNombre.Text.Length >= txtNombre.MaxLength) ev.Handled = true; };
+            }
+            if (txtDescripcion != null)
+            {
+                txtDescripcion.MaxLength = 200;
+            }
+            if (txtCodigoBarra != null)
+            {
+                txtCodigoBarra.MaxLength = 60;
+                txtCodigoBarra.KeyPress += TxtCodigoBarra_KeyPress;
+                txtCodigoBarra.Validating += (s, ev) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(txtCodigoBarra.Text) && txtCodigoBarra.Text.Length < 4)
+                        SetErr(txtCodigoBarra, "Mínimo 4 caracteres");
+                    else ClearErr(txtCodigoBarra);
+                };
+            }
+            if (txtPrecio != null)
+            {
+                txtPrecio.KeyPress += TxtDecimal_KeyPress;
+                txtPrecio.Validating += (s, ev) => { if (!ValidarDecimalPositivo(txtPrecio.Text)) SetErr(txtPrecio, "Monto inválido"); else ClearErr(txtPrecio); };
+                txtPrecio.Leave += (s, ev) => FormatearDecimal(txtPrecio);
+            }
+            if (txtPrecioCosto != null)
+            {
+                txtPrecioCosto.KeyPress += TxtDecimal_KeyPress;
+                txtPrecioCosto.Validating += (s, ev) => { if (!ValidarDecimalPositivo(txtPrecioCosto.Text)) SetErr(txtPrecioCosto, "Monto inválido"); else ClearErr(txtPrecioCosto); };
+                txtPrecioCosto.Leave += (s, ev) => FormatearDecimal(txtPrecioCosto);
+            }
+            if (nudCantidad != null)
+            {
+                nudCantidad.Minimum = 0; // permitir 0 y validamos >0 aparte
+                nudCantidad.Maximum = 100000;
+                nudCantidad.ValueChanged += (s, ev) => { if (nudCantidad.Value <= 0) SetErr(nudCantidad, ">0"); else ClearErr(nudCantidad); };
+            }
+        }
+
+        private void TxtCodigoBarra_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar)) return;
+            // Permitir solo dígitos y letras, sin espacios
+            if (!char.IsLetterOrDigit(e.KeyChar)) e.Handled = true;
+        }
+
+        private void TxtDecimal_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (char.IsControl(e.KeyChar)) return;
+            var tb = sender as TextBox;
+            char sep = System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator[0];
+            if (char.IsDigit(e.KeyChar)) return;
+            if (e.KeyChar == sep && !tb.Text.Contains(sep)) return;
+            e.Handled = true;
+        }
+
+        private bool ValidarDecimalPositivo(string texto)
+        {
+            if (string.IsNullOrWhiteSpace(texto)) return false;
+            if (decimal.TryParse(texto, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture, out var val))
+                return val >= 0;
+            return false;
+        }
+
+        private void FormatearDecimal(TextBox tb)
+        {
+            if (tb == null) return;
+            if (decimal.TryParse(tb.Text, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.CurrentCulture, out var val))
+                tb.Text = val.ToString("0.00");
+        }
+
+        private void LimpiarErrores()
+        {
+            if (err == null) return;
+            err.Clear();
+        }
+
+        private void SetErr(Control c, string mensaje)
+        {
+            if (c != null && err != null)
+                err.SetError(c, mensaje);
+        }
+        private void ClearErr(Control c)
+        {
+            if (c != null && err != null)
+                err.SetError(c, string.Empty);
         }
     }
 }

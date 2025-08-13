@@ -30,15 +30,12 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panelTop = new System.Windows.Forms.Panel();
-            this.btnCerrar = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.panelFiltros = new System.Windows.Forms.Panel();
             this.chkSoloBajo = new System.Windows.Forms.CheckBox();
             this.nudStockMax = new System.Windows.Forms.NumericUpDown();
             this.nudStockMin = new System.Windows.Forms.NumericUpDown();
             this.lblStockRango = new System.Windows.Forms.Label();
-            this.txtSabor = new System.Windows.Forms.TextBox();
-            this.lblSabor = new System.Windows.Forms.Label();
             this.cboTalle = new System.Windows.Forms.ComboBox();
             this.lblTalle = new System.Windows.Forms.Label();
             this.cboCategoria = new System.Windows.Forms.ComboBox();
@@ -50,6 +47,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblResumen = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnCerrar = new System.Windows.Forms.Button();
             this.panelTop.SuspendLayout();
             this.panelFiltros.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudStockMax)).BeginInit();
@@ -69,20 +67,6 @@
             this.panelTop.Size = new System.Drawing.Size(1100, 42);
             this.panelTop.TabIndex = 0;
             // 
-            // btnCerrar
-            // 
-            this.btnCerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCerrar.FlatAppearance.BorderSize = 0;
-            this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnCerrar.Location = new System.Drawing.Point(1058, 3);
-            this.btnCerrar.Name = "btnCerrar";
-            this.btnCerrar.Size = new System.Drawing.Size(39, 34);
-            this.btnCerrar.TabIndex = 1;
-            this.btnCerrar.Text = "✕";
-            this.btnCerrar.UseVisualStyleBackColor = true;
-            // 
             // lblTitulo
             // 
             this.lblTitulo.AutoSize = true;
@@ -101,8 +85,6 @@
             this.panelFiltros.Controls.Add(this.nudStockMax);
             this.panelFiltros.Controls.Add(this.nudStockMin);
             this.panelFiltros.Controls.Add(this.lblStockRango);
-            this.panelFiltros.Controls.Add(this.txtSabor);
-            this.panelFiltros.Controls.Add(this.lblSabor);
             this.panelFiltros.Controls.Add(this.cboTalle);
             this.panelFiltros.Controls.Add(this.lblTalle);
             this.panelFiltros.Controls.Add(this.cboCategoria);
@@ -119,7 +101,7 @@
             // chkSoloBajo
             // 
             this.chkSoloBajo.AutoSize = true;
-            this.chkSoloBajo.Location = new System.Drawing.Point(950, 14);
+            this.chkSoloBajo.Location = new System.Drawing.Point(758, 13);
             this.chkSoloBajo.Name = "chkSoloBajo";
             this.chkSoloBajo.Size = new System.Drawing.Size(132, 17);
             this.chkSoloBajo.TabIndex = 11;
@@ -128,7 +110,7 @@
             // 
             // nudStockMax
             // 
-            this.nudStockMax.Location = new System.Drawing.Point(874, 50);
+            this.nudStockMax.Location = new System.Drawing.Point(769, 32);
             this.nudStockMax.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -145,7 +127,7 @@
             // 
             // nudStockMin
             // 
-            this.nudStockMin.Location = new System.Drawing.Point(798, 50);
+            this.nudStockMin.Location = new System.Drawing.Point(682, 32);
             this.nudStockMin.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -158,35 +140,17 @@
             // lblStockRango
             // 
             this.lblStockRango.AutoSize = true;
-            this.lblStockRango.Location = new System.Drawing.Point(795, 14);
+            this.lblStockRango.Location = new System.Drawing.Point(679, 13);
             this.lblStockRango.Name = "lblStockRango";
             this.lblStockRango.Size = new System.Drawing.Size(73, 13);
             this.lblStockRango.TabIndex = 8;
             this.lblStockRango.Text = "Rango Stock:";
             // 
-            // txtSabor
-            // 
-            this.txtSabor.Location = new System.Drawing.Point(650, 50);
-            this.txtSabor.Name = "txtSabor";
-            this.txtSabor.Size = new System.Drawing.Size(130, 20);
-            this.txtSabor.TabIndex = 7;
-            this.txtSabor.Visible = false;
-            // 
-            // lblSabor
-            // 
-            this.lblSabor.AutoSize = true;
-            this.lblSabor.Location = new System.Drawing.Point(647, 14);
-            this.lblSabor.Name = "lblSabor";
-            this.lblSabor.Size = new System.Drawing.Size(35, 13);
-            this.lblSabor.TabIndex = 6;
-            this.lblSabor.Text = "Sabor";
-            this.lblSabor.Visible = false;
-            // 
             // cboTalle
             // 
             this.cboTalle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboTalle.FormattingEnabled = true;
-            this.cboTalle.Location = new System.Drawing.Point(520, 50);
+            this.cboTalle.Location = new System.Drawing.Point(520, 30);
             this.cboTalle.Name = "cboTalle";
             this.cboTalle.Size = new System.Drawing.Size(120, 21);
             this.cboTalle.TabIndex = 5;
@@ -195,7 +159,7 @@
             // lblTalle
             // 
             this.lblTalle.AutoSize = true;
-            this.lblTalle.Location = new System.Drawing.Point(517, 14);
+            this.lblTalle.Location = new System.Drawing.Point(517, 12);
             this.lblTalle.Name = "lblTalle";
             this.lblTalle.Size = new System.Drawing.Size(30, 13);
             this.lblTalle.TabIndex = 4;
@@ -206,7 +170,7 @@
             // 
             this.cboCategoria.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboCategoria.FormattingEnabled = true;
-            this.cboCategoria.Location = new System.Drawing.Point(350, 50);
+            this.cboCategoria.Location = new System.Drawing.Point(350, 30);
             this.cboCategoria.Name = "cboCategoria";
             this.cboCategoria.Size = new System.Drawing.Size(160, 21);
             this.cboCategoria.TabIndex = 3;
@@ -214,7 +178,7 @@
             // lblCategoria
             // 
             this.lblCategoria.AutoSize = true;
-            this.lblCategoria.Location = new System.Drawing.Point(347, 14);
+            this.lblCategoria.Location = new System.Drawing.Point(347, 13);
             this.lblCategoria.Name = "lblCategoria";
             this.lblCategoria.Size = new System.Drawing.Size(54, 13);
             this.lblCategoria.TabIndex = 2;
@@ -222,15 +186,16 @@
             // 
             // txtBuscar
             // 
-            this.txtBuscar.Location = new System.Drawing.Point(13, 50);
+            this.txtBuscar.Location = new System.Drawing.Point(13, 31);
             this.txtBuscar.Name = "txtBuscar";
             this.txtBuscar.Size = new System.Drawing.Size(320, 20);
             this.txtBuscar.TabIndex = 1;
+            this.txtBuscar.TextChanged += new System.EventHandler(this.txtBuscar_TextChanged);
             // 
             // lblBuscar
             // 
             this.lblBuscar.AutoSize = true;
-            this.lblBuscar.Location = new System.Drawing.Point(10, 14);
+            this.lblBuscar.Location = new System.Drawing.Point(10, 13);
             this.lblBuscar.Name = "lblBuscar";
             this.lblBuscar.Size = new System.Drawing.Size(40, 13);
             this.lblBuscar.TabIndex = 0;
@@ -278,6 +243,20 @@
             this.lblResumen.Size = new System.Drawing.Size(120, 17);
             this.lblResumen.Text = "0 registros mostrados";
             // 
+            // btnCerrar
+            // 
+            this.btnCerrar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCerrar.FlatAppearance.BorderSize = 0;
+            this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
+            this.btnCerrar.Location = new System.Drawing.Point(1058, 3);
+            this.btnCerrar.Name = "btnCerrar";
+            this.btnCerrar.Size = new System.Drawing.Size(39, 34);
+            this.btnCerrar.TabIndex = 1;
+            this.btnCerrar.Text = "✕";
+            this.btnCerrar.UseVisualStyleBackColor = true;
+            // 
             // inventario
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -311,7 +290,6 @@
         #endregion
 
         private System.Windows.Forms.Panel panelTop;
-        private System.Windows.Forms.Button btnCerrar;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Panel panelFiltros;
         private System.Windows.Forms.TextBox txtBuscar;
@@ -320,8 +298,6 @@
         private System.Windows.Forms.Label lblCategoria;
         private System.Windows.Forms.ComboBox cboTalle;
         private System.Windows.Forms.Label lblTalle;
-        private System.Windows.Forms.TextBox txtSabor;
-        private System.Windows.Forms.Label lblSabor;
         private System.Windows.Forms.CheckBox chkSoloBajo;
         private System.Windows.Forms.NumericUpDown nudStockMax;
         private System.Windows.Forms.NumericUpDown nudStockMin;
@@ -331,5 +307,6 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblResumen;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnCerrar;
     }
 }
