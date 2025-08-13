@@ -17,12 +17,19 @@ namespace Gamora_Indumentaria
         private InventarioDAL inventarioDAL;
         private Categoria categoriaSeleccionada;
         private List<TallePorCategoria> tallesDisponibles;
+        // Buffer y control de tiempo para capturar lecturas rápidas de un escáner
+        private readonly StringBuilder scannerBuffer = new StringBuilder();
+        private DateTime lastScannerCharTime = DateTime.MinValue;
+        private const int SCAN_TIMEOUT_MS = 120; // ms máximos entre caracteres para considerarlo parte del mismo escaneo
 
         public agregarpruducto()
         {
             InitializeComponent();
             inventarioDAL = new InventarioDAL();
             CargarCategorias();
+            // Activar vista previa de teclas para modo escáner
+            this.KeyPreview = true;
+            this.KeyPress += AgregarProducto_KeyPress_Global;
         }
 
         public agregarpruducto(string nombreCategoria) : this()
@@ -372,6 +379,41 @@ namespace Gamora_Indumentaria
             if (cat == null || string.IsNullOrWhiteSpace(cat.Nombre)) return false;
             var nombre = cat.Nombre.Trim().ToUpperInvariant();
             return nombre == "VAPER" || nombre == "VAPERS"; // permitir ambas denominaciones
+        }
+
+        // Captura global de teclas para poblar txtCodigoBarra mediante un escáner cuando el modo está activo
+        private void AgregarProducto_KeyPress_Global(object sender, KeyPressEventArgs e)
+        {
+            // Buscar el checkbox (definido en el diseñador)
+            var chkModoScanner = this.Controls.Find("chkModoScanner", true).FirstOrDefault() as CheckBox;
+            if (chkModoScanner == null || !chkModoScanner.Checked) return; // no activo
+
+            // Si el foco ya está en el textbox dejamos que funcione normalmente
+            if (txtCodigoBarra != null && txtCodigoBarra.Focused) return;
+
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                if (scannerBuffer.Length > 0)
+                {
+                    txtCodigoBarra.Text = scannerBuffer.ToString();
+                    txtCodigoBarra.Focus();
+                    txtCodigoBarra.SelectAll();
+                    scannerBuffer.Clear();
+                    e.Handled = true; // consumir Enter del escáner
+                }
+                return;
+            }
+
+            if (char.IsControl(e.KeyChar)) return; // ignorar otros controles distintos de Enter
+
+            var now = DateTime.Now;
+            if ((now - lastScannerCharTime).TotalMilliseconds > SCAN_TIMEOUT_MS)
+            {
+                scannerBuffer.Clear(); // inicio de una nueva lectura
+            }
+            lastScannerCharTime = now;
+            scannerBuffer.Append(e.KeyChar);
+            e.Handled = true; // evitar que el caracter vaya a otro control
         }
     }
 }

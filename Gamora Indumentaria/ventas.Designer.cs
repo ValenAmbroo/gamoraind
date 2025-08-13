@@ -155,10 +155,13 @@
             this.dgvCarrito.Location = new System.Drawing.Point(20, 30);
             this.dgvCarrito.MultiSelect = false;
             this.dgvCarrito.Name = "dgvCarrito";
-            this.dgvCarrito.ReadOnly = true;
+            this.dgvCarrito.ReadOnly = false;
             this.dgvCarrito.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvCarrito.Size = new System.Drawing.Size(720, 200);
             this.dgvCarrito.TabIndex = 0;
+            this.dgvCarrito.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
+            this.dgvCarrito.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
+            this.dgvCarrito.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvCarrito_EditingControlShowing);
             // 
             // grpPago
             // 

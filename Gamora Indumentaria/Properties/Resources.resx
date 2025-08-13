@@ -154,4 +154,10 @@
   <data name="aa" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\aa.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ticket_logo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\bbcb4766-3d22-44f2-bd57-dcd1784d64d0.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="locoparaimprimir" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\locoparaimprimir.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

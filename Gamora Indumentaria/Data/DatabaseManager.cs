@@ -297,7 +297,7 @@ namespace Gamora_Indumentaria.Data
                             ALTER TABLE Ventas ADD Cliente NVARCHAR(200) NULL;
                         END
 
-                        -- Tabla DetalleVentas
+            -- Tabla DetalleVentas
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DetalleVentas')
                         BEGIN
                             CREATE TABLE DetalleVentas (
@@ -307,6 +307,7 @@ namespace Gamora_Indumentaria.Data
                                 Cantidad INT NOT NULL,
                                 PrecioUnitario DECIMAL(10,2) NOT NULL,
                                 Subtotal DECIMAL(10,2) NOT NULL,
+                Descuento DECIMAL(10,2) NULL DEFAULT 0,
                                 FOREIGN KEY (VentaId) REFERENCES Ventas(Id),
                                 FOREIGN KEY (ProductoId) REFERENCES Inventario(Id)
                             );
@@ -319,6 +320,14 @@ namespace Gamora_Indumentaria.Data
                             ALTER TABLE DetalleVentas ADD Subtotal DECIMAL(10,2);
                             -- Calcular subtotal para registros existentes
                             UPDATE DetalleVentas SET Subtotal = Cantidad * PrecioUnitario WHERE Subtotal IS NULL;
+                        END
+
+                        -- Agregar columna Descuento si no existe
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'DetalleVentas' AND COLUMN_NAME = 'Descuento')
+                        BEGIN
+                            ALTER TABLE DetalleVentas ADD Descuento DECIMAL(10,2) NULL DEFAULT 0;
+                            UPDATE DetalleVentas SET Descuento = 0 WHERE Descuento IS NULL;
                         END
 
                         -- Agregar columna CostoUnitario si no existe (para cálculo de ganancias históricas)
@@ -715,11 +724,11 @@ namespace Gamora_Indumentaria.Data
                             existeCostoUnitario = Convert.ToInt32(checkCosto.ExecuteScalar()) > 0;
                         }
                         string insertDetalle = existeCostoUnitario ? @"
-                            INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal, CostoUnitario)
-                            VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal, @CostoUnitario);
+                            INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal, CostoUnitario, Descuento)
+                            VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal, @CostoUnitario, @Descuento);
                             UPDATE Inventario SET Stock = Stock - @Cantidad WHERE Id = @ProductoId;" : @"
-                            INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal)
-                            VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal);
+                            INSERT INTO DetalleVentas (VentaId, ProductoId, Cantidad, PrecioUnitario, Subtotal, Descuento)
+                            VALUES (@VentaId, @ProductoId, @Cantidad, @PrecioUnitario, @Subtotal, @Descuento);
                             UPDATE Inventario SET Stock = Stock - @Cantidad WHERE Id = @ProductoId;";
 
                         foreach (var detalle in detalles)
@@ -753,6 +762,7 @@ namespace Gamora_Indumentaria.Data
                                         cmdDetalle.Parameters.AddWithValue("@CostoUnitario", costo);
                                     }
                                 }
+                                cmdDetalle.Parameters.AddWithValue("@Descuento", detalle.Descuento);
                                 cmdDetalle.ExecuteNonQuery();
                             }
                         }
@@ -779,7 +789,9 @@ namespace Gamora_Indumentaria.Data
                 ProductoId = item.ProductoId,
                 Cantidad = item.Cantidad,
                 PrecioUnitario = item.PrecioUnitario,
-                Subtotal = item.Subtotal
+                // Subtotal ya con el descuento aplicado
+                Subtotal = item.Subtotal * (1 - (item.Descuento / 100m)),
+                Descuento = item.Descuento
             }).ToList();
             return ProcesarVenta(totalVenta, metodoPago, detalles);
         }

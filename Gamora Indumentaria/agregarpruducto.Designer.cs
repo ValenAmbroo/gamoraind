@@ -54,6 +54,7 @@
             this.panelCodigoBarra = new System.Windows.Forms.Panel();
             this.lblCodigoBarra = new System.Windows.Forms.Label();
             this.txtCodigoBarra = new System.Windows.Forms.TextBox();
+            this.chkModoScanner = new System.Windows.Forms.CheckBox();
             this.panelDescripcion = new System.Windows.Forms.Panel();
             this.lblDescripcion = new System.Windows.Forms.Label();
             this.txtDescripcion = new System.Windows.Forms.TextBox();
@@ -216,7 +217,7 @@
             // 
             // txtPrecioCosto
             // 
-            this.txtPrecioCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtPrecioCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPrecioCosto.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtPrecioCosto.Location = new System.Drawing.Point(150, 8);
@@ -268,7 +269,7 @@
             // 
             // txtPrecio
             // 
-            this.txtPrecio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtPrecio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPrecio.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtPrecio.Location = new System.Drawing.Point(150, 8);
@@ -352,7 +353,7 @@
             // 
             // txtSabor
             // 
-            this.txtSabor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtSabor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSabor.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtSabor.Location = new System.Drawing.Point(150, 11);
@@ -400,6 +401,7 @@
             // 
             this.panelCodigoBarra.Controls.Add(this.lblCodigoBarra);
             this.panelCodigoBarra.Controls.Add(this.txtCodigoBarra);
+            this.panelCodigoBarra.Controls.Add(this.chkModoScanner);
             this.panelCodigoBarra.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelCodigoBarra.Location = new System.Drawing.Point(15, 179);
             this.panelCodigoBarra.Margin = new System.Windows.Forms.Padding(2);
@@ -422,7 +424,7 @@
             // 
             // txtCodigoBarra
             // 
-            this.txtCodigoBarra.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtCodigoBarra.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCodigoBarra.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtCodigoBarra.Location = new System.Drawing.Point(155, 10);
@@ -430,6 +432,17 @@
             this.txtCodigoBarra.Name = "txtCodigoBarra";
             this.txtCodigoBarra.Size = new System.Drawing.Size(443, 27);
             this.txtCodigoBarra.TabIndex = 1;
+            // 
+            // chkModoScanner
+            // 
+            this.chkModoScanner.AutoSize = true;
+            this.chkModoScanner.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkModoScanner.Location = new System.Drawing.Point(610, 13);
+            this.chkModoScanner.Name = "chkModoScanner";
+            this.chkModoScanner.Size = new System.Drawing.Size(121, 19);
+            this.chkModoScanner.TabIndex = 2;
+            this.chkModoScanner.Text = "🖨️ Modo escáner";
+            this.chkModoScanner.UseVisualStyleBackColor = true;
             // 
             // panelDescripcion
             // 
@@ -457,7 +470,7 @@
             // 
             // txtDescripcion
             // 
-            this.txtDescripcion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtDescripcion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDescripcion.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtDescripcion.Location = new System.Drawing.Point(150, 11);
@@ -492,7 +505,7 @@
             // 
             // txtNombre
             // 
-            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNombre.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtNombre.Location = new System.Drawing.Point(167, 11);
@@ -632,5 +645,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtPrecioCosto;
+        private System.Windows.Forms.CheckBox chkModoScanner;
     }
 }
