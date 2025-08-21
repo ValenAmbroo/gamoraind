@@ -66,7 +66,7 @@ namespace Gamora_Indumentaria
 
                 // Valor total del inventario (adaptar a columna existente)
                 string precioCol = DatabaseManager.ColumnExists("Inventario", "PrecioVenta") ? "PrecioVenta" :
-                                   (DatabaseManager.ColumnExists("Inventario", "Precio") ? "Precio" : null);
+                                   (DatabaseManager.ColumnExists("Inventario", "PrecioCompra") ? "PrecioCompra" : null);
                 object valorTotal = 0m;
                 if (precioCol != null)
                 {
@@ -140,14 +140,14 @@ namespace Gamora_Indumentaria
             try
             {
                 bool tienePrecioVenta = DatabaseManager.ColumnExists("Inventario", "PrecioVenta");
-                bool tienePrecioLegacy = !tienePrecioVenta && DatabaseManager.ColumnExists("Inventario", "Precio");
-                string exprPrecio = tienePrecioVenta ? "i.PrecioVenta" : (tienePrecioLegacy ? "i.Precio" : "0");
+                bool tienePrecioLegacy = !tienePrecioVenta && DatabaseManager.ColumnExists("Inventario", "PrecioCompra");
+                string exprPrecio = tienePrecioVenta ? "i.PrecioVenta" : (tienePrecioLegacy ? "i.PrecioCompra" : "0");
                 string query = $@"
                     SELECT 
                         c.Nombre AS Categoria,
                         i.Nombre AS Producto,
                         i.Stock,
-                        {exprPrecio} AS Precio
+                        {exprPrecio} AS PrecioCompra
                     FROM Inventario i
                     INNER JOIN Categorias c ON i.CategoriaId = c.Id
                     WHERE i.Stock <= 5 AND i.Stock > 0
@@ -165,10 +165,10 @@ namespace Gamora_Indumentaria
                         dgvStockBajo.Columns["Categoria"].HeaderText = "Categoría";
                         dgvStockBajo.Columns["Producto"].HeaderText = "Producto";
                         dgvStockBajo.Columns["Stock"].HeaderText = "Stock";
-                        if (dgvStockBajo.Columns.Contains("Precio"))
+                        if (dgvStockBajo.Columns.Contains("PrecioCompra"))
                         {
-                            dgvStockBajo.Columns["Precio"].HeaderText = "Precio";
-                            dgvStockBajo.Columns["Precio"].DefaultCellStyle.Format = "C2";
+                            dgvStockBajo.Columns["PrecioCompra"].HeaderText = "PrecioCompra";
+                            dgvStockBajo.Columns["PrecioCompra"].DefaultCellStyle.Format = "C2";
                         }
                     }
                 }
@@ -307,6 +307,11 @@ namespace Gamora_Indumentaria
                 MessageBox.Show("Error al cargar estadísticas iniciales: " + ex.Message,
                     "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

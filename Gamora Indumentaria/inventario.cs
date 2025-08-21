@@ -242,9 +242,32 @@ namespace Gamora_Indumentaria
 
         private void Inventario_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.F5) { CargarInventario(); e.Handled = true; }
             if (e.Control && e.KeyCode == Keys.E) { ExportarCsv(); e.Handled = true; }
+        }
+
+        private void txtBuscar_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Si el usuario presiona Enter, buscar por código de barras exacto
+            if (e.KeyCode == Keys.Enter && !string.IsNullOrWhiteSpace(txtBuscar.Text))
+            {
+                string codigo = txtBuscar.Text.Trim();
+                if (datos != null)
+                {
+                    // Buscar coincidencia exacta en CodigoBarras
+                    var rows = datos.Select($"CodigoBarras = '{Escape(codigo)}'");
+                    if (rows.Length > 0)
+                    {
+                        datos.DefaultView.RowFilter = $"CodigoBarras = '{Escape(codigo)}'";
+                        ActualizarResumen();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se encontró el producto con ese código de barras.", "Sin resultados", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                e.Handled = true;
+            }
         }
 
         private void ExportarCsv()
@@ -391,6 +414,9 @@ namespace Gamora_Indumentaria
                 txtBuscar.BackColor = inputBack;
                 txtBuscar.ForeColor = Color.Black;
                 txtBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                // Vincular evento para lector de barras
+                txtBuscar.KeyDown -= txtBuscar_KeyDown;
+                txtBuscar.KeyDown += txtBuscar_KeyDown;
             }
 
             void StyleCombo(ComboBox c)

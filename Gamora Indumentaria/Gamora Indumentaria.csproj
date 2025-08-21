@@ -108,9 +108,6 @@
     <Compile Include="EstadisticasVentas.Designer.cs">
       <DependentUpon>EstadisticasVentas.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListadoVentas.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="HistorialVentas.cs">
       <SubType>Form</SubType>
     </Compile>

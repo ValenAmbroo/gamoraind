@@ -453,5 +453,10 @@ namespace Gamora_Indumentaria
             if (c != null && err != null)
                 err.SetError(c, string.Empty);
         }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

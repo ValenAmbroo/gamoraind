@@ -171,7 +171,7 @@ namespace Gamora_Indumentaria
             // 
             this.btnDensidad.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnDensidad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDensidad.Location = new System.Drawing.Point(1130, 14);
+            this.btnDensidad.Location = new System.Drawing.Point(1085, 14);
             this.btnDensidad.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnDensidad.Name = "btnDensidad";
             this.btnDensidad.Size = new System.Drawing.Size(28, 32);
@@ -184,7 +184,7 @@ namespace Gamora_Indumentaria
             // 
             this.btnExportar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportar.Location = new System.Drawing.Point(1016, 14);
+            this.btnExportar.Location = new System.Drawing.Point(971, 14);
             this.btnExportar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnExportar.Name = "btnExportar";
             this.btnExportar.Size = new System.Drawing.Size(110, 32);
@@ -196,7 +196,7 @@ namespace Gamora_Indumentaria
             // 
             this.btnLimpiar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnLimpiar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLimpiar.Location = new System.Drawing.Point(932, 14);
+            this.btnLimpiar.Location = new System.Drawing.Point(887, 14);
             this.btnLimpiar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(80, 32);
@@ -208,7 +208,7 @@ namespace Gamora_Indumentaria
             // 
             this.btnFiltrar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnFiltrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFiltrar.Location = new System.Drawing.Point(848, 14);
+            this.btnFiltrar.Location = new System.Drawing.Point(803, 14);
             this.btnFiltrar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.btnFiltrar.Name = "btnFiltrar";
             this.btnFiltrar.Size = new System.Drawing.Size(80, 32);
@@ -218,10 +218,10 @@ namespace Gamora_Indumentaria
             // 
             // txtBuscar
             // 
-            this.txtBuscar.Location = new System.Drawing.Point(660, 14);
+            this.txtBuscar.Location = new System.Drawing.Point(615, 14);
             this.txtBuscar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(180, 27);
+            this.txtBuscar.Size = new System.Drawing.Size(180, 23);
             this.txtBuscar.TabIndex = 4;
             this.toolTip1.SetToolTip(this.txtBuscar, "Buscar por nombre o código de producto");
             // 
@@ -230,10 +230,10 @@ namespace Gamora_Indumentaria
             this.cboMetodo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboMetodo.Items.AddRange(new object[] {
             "(Todos)"});
-            this.cboMetodo.Location = new System.Drawing.Point(445, 14);
+            this.cboMetodo.Location = new System.Drawing.Point(410, 14);
             this.cboMetodo.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.cboMetodo.Name = "cboMetodo";
-            this.cboMetodo.Size = new System.Drawing.Size(140, 28);
+            this.cboMetodo.Size = new System.Drawing.Size(140, 23);
             this.cboMetodo.TabIndex = 3;
             this.toolTip1.SetToolTip(this.cboMetodo, "Filtrar por método de pago");
             // 
@@ -245,56 +245,56 @@ namespace Gamora_Indumentaria
             this.lblResumen.Margin = new System.Windows.Forms.Padding(8, 4, 0, 0);
             this.lblResumen.Name = "lblResumen";
             this.lblResumen.Padding = new System.Windows.Forms.Padding(10, 10, 0, 0);
-            this.lblResumen.Size = new System.Drawing.Size(296, 30);
+            this.lblResumen.Size = new System.Drawing.Size(234, 25);
             this.lblResumen.TabIndex = 8;
             this.lblResumen.Text = "Ventas: 0 | Importe: $0,00 | Unidades: 0";
             // 
             // lblBuscar
             // 
             this.lblBuscar.AutoSize = true;
-            this.lblBuscar.Location = new System.Drawing.Point(588, 6);
+            this.lblBuscar.Location = new System.Drawing.Point(553, 6);
             this.lblBuscar.Name = "lblBuscar";
             this.lblBuscar.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblBuscar.Size = new System.Drawing.Size(65, 32);
+            this.lblBuscar.Size = new System.Drawing.Size(55, 27);
             this.lblBuscar.TabIndex = 4;
             this.lblBuscar.Text = "Buscar:";
             // 
             // lblMetodo
             // 
             this.lblMetodo.AutoSize = true;
-            this.lblMetodo.Location = new System.Drawing.Point(363, 6);
+            this.lblMetodo.Location = new System.Drawing.Point(341, 6);
             this.lblMetodo.Name = "lblMetodo";
             this.lblMetodo.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblMetodo.Size = new System.Drawing.Size(75, 32);
+            this.lblMetodo.Size = new System.Drawing.Size(62, 27);
             this.lblMetodo.TabIndex = 3;
             this.lblMetodo.Text = "Método:";
             // 
             // dtpHasta
             // 
             this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpHasta.Location = new System.Drawing.Point(250, 14);
+            this.dtpHasta.Location = new System.Drawing.Point(228, 14);
             this.dtpHasta.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.dtpHasta.Name = "dtpHasta";
-            this.dtpHasta.Size = new System.Drawing.Size(110, 27);
+            this.dtpHasta.Size = new System.Drawing.Size(110, 23);
             this.dtpHasta.TabIndex = 2;
             // 
             // lblHasta
             // 
             this.lblHasta.AutoSize = true;
-            this.lblHasta.Location = new System.Drawing.Point(183, 6);
+            this.lblHasta.Location = new System.Drawing.Point(171, 6);
             this.lblHasta.Name = "lblHasta";
             this.lblHasta.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblHasta.Size = new System.Drawing.Size(60, 32);
+            this.lblHasta.Size = new System.Drawing.Size(50, 27);
             this.lblHasta.TabIndex = 2;
             this.lblHasta.Text = "Hasta:";
             // 
             // dtpDesde
             // 
             this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDesde.Location = new System.Drawing.Point(70, 14);
+            this.dtpDesde.Location = new System.Drawing.Point(58, 14);
             this.dtpDesde.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.dtpDesde.Name = "dtpDesde";
-            this.dtpDesde.Size = new System.Drawing.Size(110, 27);
+            this.dtpDesde.Size = new System.Drawing.Size(110, 23);
             this.dtpDesde.TabIndex = 1;
             // 
             // lblDesde
@@ -304,7 +304,7 @@ namespace Gamora_Indumentaria
             this.lblDesde.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
             this.lblDesde.Name = "lblDesde";
             this.lblDesde.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
-            this.lblDesde.Size = new System.Drawing.Size(54, 32);
+            this.lblDesde.Size = new System.Drawing.Size(42, 27);
             this.lblDesde.TabIndex = 0;
             this.lblDesde.Text = "Desde:";
             // 
@@ -352,7 +352,7 @@ namespace Gamora_Indumentaria
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
             this.lblTitulo.Location = new System.Drawing.Point(12, 10);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(220, 32);
+            this.lblTitulo.Size = new System.Drawing.Size(172, 25);
             this.lblTitulo.TabIndex = 4;
             this.lblTitulo.Text = "Historial De Venta";
             // 

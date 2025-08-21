@@ -29,8 +29,7 @@ namespace Gamora_Indumentaria
             this.FormBorderStyle = FormBorderStyle.None; // Quitar borde si querés
 
             perfilUsuario = perfil; // ← ahora sí existe la variable "perfil"
-            panelsubprincipal.Visible = false;
-            panelsubadministracion.Visible = false;
+         
 
             // Crear panel de contenido principal
             CrearPanelContenido();
@@ -38,10 +37,9 @@ namespace Gamora_Indumentaria
             // Configurar eventos para arrastrar el formulario desde panel1
             ConfigurarArrastre();
 
-            AplicarPerfil();
+         
 
-            // Configurar autocierre de submenús
-            ConfigurarAutocierreSubmenus();
+         
         }
 
         /// <summary>
@@ -183,190 +181,40 @@ namespace Gamora_Indumentaria
             loginForm.FormClosed += (s, args) => Application.Exit();
         }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            CargarFormularioHijo(new inventario(perfilUsuario == "administrador"));
-        }
+   
 
-        private void panel6_Paint(object sender, PaintEventArgs e)
-        {
-            button1.Text = "";
-            button1.FlatStyle = FlatStyle.Flat;
-            button1.FlatAppearance.BorderSize = 0;
-            button1.BackColor = this.BackColor; // o cualquier color del fondo
+      
 
-        }
-
-        private void btnsubprincipal_Click(object sender, EventArgs e)
-        {
-            // Alternar visibilidad del panel de operaciones
-            panelsubprincipal.Visible = !panelsubprincipal.Visible;
-
-            // Si se abre este panel, cerrar el de administración
-            if (panelsubprincipal.Visible)
-            {
-                panelsubadministracion.Visible = false;
-                // Traer el panel al frente
-                panelsubprincipal.BringToFront();
-            }
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            CargarFormularioHijo(new inventario(perfilUsuario == "administrador"));
-        }
-
-        private void panel7_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void btnsubadministracion_Click(object sender, EventArgs e)
-        {
-            // Alternar visibilidad del panel de administración
-            panelsubadministracion.Visible = !panelsubadministracion.Visible;
-
-            // Si se abre este panel, cerrar el de operaciones
-            if (panelsubadministracion.Visible)
-            {
-                panelsubprincipal.Visible = false;
-                // Traer el panel al frente
-                panelsubadministracion.BringToFront();
-            }
-        }
+      
+       
 
         private void lblHora_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void btnsubprincipal_MouseEnter(object sender, EventArgs e)
-        {
-            // Button btn = sender as Button;
-            //btn.BackColor = Color.FromArgb(0, 120, 215); // Color al pasar el mouse
-        }
+       
+     
 
-        private void btnsubprincipal_MouseLeave(object sender, EventArgs e)
-        {
-            // Button btn = sender as Button;
-            // btn.BackColor = Color.FromArgb(255, 255, 255); // Vuelve al color original
-        }
-        private void AplicarPerfil()
-        {
-            if (perfilUsuario == "empleado")
-            {
-                // Mostrar solo los botones necesarios para empleados
-                button5.Visible = true; // Ejemplo: Ventas
-               
-                btnsubprincipal.Visible = true;
-                // Ocultar el resto
-                btnsubadministracion.Visible = false;
-                //btnsubprincipal.Visible = false;
-                button10.Visible = false;
-
-
-                // Ocultá acá cualquier otro botón que no querés que el empleado vea
-            }
-            else if (perfilUsuario == "administrador")
-            {
-                // Mostrar todos los botones
-                button5.Visible = true;
-                
-                btnsubadministracion.Visible = true;
-                btnsubprincipal.Visible = true;
-                button10.Visible = true;
-                // Asegurate de que todos los botones estén visibles
-            }
-        }
-
-        private void button9_Click(object sender, EventArgs e)
-        {
-            CargarFormularioHijo(new agregarpruducto());
-        }
+      
 
         private void button4_Click(object sender, EventArgs e)
         {
             CargarFormularioHijo(new ventas());
         }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                MessageBox.Show("Abriendo estadísticas de ventas...", "Debug", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                CargarFormularioHijo(new EstadisticasVentas());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al abrir estadísticas de ventas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+      
+      
 
-        private void button13_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CargarFormularioHijo(new Estadisticas());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+       
 
-        private void btnListadoVentas_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CargarFormularioHijo(new ListadoVentas());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al abrir listado de ventas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
+     
 
-        private void button14_Click(object sender, EventArgs e)
-        {
-            CargarFormularioHijo(new HistorialVentas());
-        }
+      
 
-        private void panel5_Paint(object sender, PaintEventArgs e)
-        {
+      
 
-        }
-
-        // ================== AUTOCIERRE SUBMENUS ==================
-        private void ConfigurarAutocierreSubmenus()
-        {
-            // Registrar clicks para botones dentro de cada submenú
-            RegistrarCerrarAlClickDentro(panelsubprincipal);
-            RegistrarCerrarAlClickDentro(panelsubadministracion);
-
-            // Registrar manejador global para click fuera
-            RegistrarMouseDownRecursivo(this);
-        }
-
-        private void RegistrarCerrarAlClickDentro(Panel panel)
-        {
-            if (panel == null) return;
-            foreach (Control c in panel.Controls)
-            {
-                if (c is Button btn)
-                {
-                    btn.Click -= BotonSubmenu_Cierra;
-                    btn.Click += BotonSubmenu_Cierra;
-                }
-            }
-        }
-
-        private void BotonSubmenu_Cierra(object sender, EventArgs e)
-        {
-            if (panelsubprincipal != null && panelsubprincipal.Visible)
-                panelsubprincipal.Visible = false;
-            if (panelsubadministracion != null && panelsubadministracion.Visible)
-                panelsubadministracion.Visible = false;
-        }
+       
 
         private void RegistrarMouseDownRecursivo(Control root)
         {
@@ -381,27 +229,8 @@ namespace Gamora_Indumentaria
 
         private void GlobalMouseDownCerrarSubmenus(object sender, MouseEventArgs e)
         {
-            // Si no hay submenús visibles, salir
-            bool algunoVisible = (panelsubprincipal != null && panelsubprincipal.Visible) ||
-                                 (panelsubadministracion != null && panelsubadministracion.Visible);
-            if (!algunoVisible) return;
-
-            Point screenPoint = Cursor.Position;
-
-            if (panelsubprincipal != null && panelsubprincipal.Visible)
-            {
-                if (!PuntoDentroDe(panelsubprincipal, screenPoint) && !PuntoDentroDe(btnsubprincipal, screenPoint))
-                {
-                    panelsubprincipal.Visible = false;
-                }
-            }
-            if (panelsubadministracion != null && panelsubadministracion.Visible)
-            {
-                if (!PuntoDentroDe(panelsubadministracion, screenPoint) && !PuntoDentroDe(btnsubadministracion, screenPoint))
-                {
-                    panelsubadministracion.Visible = false;
-                }
-            }
+           
+        
         }
 
         private bool PuntoDentroDe(Control ctrl, Point screenPoint)
@@ -411,7 +240,18 @@ namespace Gamora_Indumentaria
             return local.X >= 0 && local.Y >= 0 && local.X < ctrl.Width && local.Y < ctrl.Height;
         }
 
-        private void button5_Click_1(object sender, EventArgs e)
+      
+
+     
+
+      
+
+      
+
+       
+
+      
+        private void btnConsultas_Click(object sender, EventArgs e)
         {
             try
             {
@@ -423,19 +263,7 @@ namespace Gamora_Indumentaria
             }
         }
 
-        private void button12_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                CargarFormularioHijo(new EstadisticasVentas());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void button8_Click(object sender, EventArgs e)
+        private void button19_Click(object sender, EventArgs e)
         {
             try
             {
@@ -447,7 +275,46 @@ namespace Gamora_Indumentaria
             }
         }
 
-        private void button7_Click_1(object sender, EventArgs e)
+        private void btnAltas_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new ventas());
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnModificaciones_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new HistorialVentas());
+        }
+
+        private void button20_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new Estadisticas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button21_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                CargarFormularioHijo(new EstadisticasVentas());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir estadísticas: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button22_Click(object sender, EventArgs e)
         {
             try
             {
@@ -458,6 +325,11 @@ namespace Gamora_Indumentaria
             {
                 MessageBox.Show("Error al abrir Cierre De Caja: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnAlta_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new agregarpruducto());
         }
     }
 }

@@ -78,5 +78,10 @@ namespace Gamora_Indumentaria
         {
 
         }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

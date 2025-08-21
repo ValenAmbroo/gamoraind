@@ -78,6 +78,7 @@ namespace Gamora_Indumentaria
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1200, 60);
             this.panel1.TabIndex = 0;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // lblTitulo
             // 
@@ -86,7 +87,7 @@ namespace Gamora_Indumentaria
             this.lblTitulo.ForeColor = System.Drawing.Color.White;
             this.lblTitulo.Location = new System.Drawing.Point(20, 15);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(334, 32);
+            this.lblTitulo.Size = new System.Drawing.Size(351, 32);
             this.lblTitulo.TabIndex = 0;
             this.lblTitulo.Text = "📊 Estadísticas del Inventario";
             // 
@@ -169,7 +170,7 @@ namespace Gamora_Indumentaria
             this.label1.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label1.Location = new System.Drawing.Point(3, 8);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 19);
+            this.label1.Size = new System.Drawing.Size(130, 19);
             this.label1.TabIndex = 0;
             this.label1.Text = "📦 Total Productos:";
             // 
@@ -192,7 +193,7 @@ namespace Gamora_Indumentaria
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label3.Location = new System.Drawing.Point(3, 43);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(122, 19);
+            this.label3.Size = new System.Drawing.Size(124, 19);
             this.label3.TabIndex = 2;
             this.label3.Text = "📊 Total Unidades:";
             // 
@@ -215,7 +216,7 @@ namespace Gamora_Indumentaria
             this.label5.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label5.Location = new System.Drawing.Point(3, 78);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(127, 19);
+            this.label5.Size = new System.Drawing.Size(133, 19);
             this.label5.TabIndex = 4;
             this.label5.Text = "🏷️ Total Categorías:";
             // 
@@ -238,7 +239,7 @@ namespace Gamora_Indumentaria
             this.label7.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label7.Location = new System.Drawing.Point(3, 113);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(105, 19);
+            this.label7.Size = new System.Drawing.Size(98, 19);
             this.label7.TabIndex = 6;
             this.label7.Text = "⚠️ Stock Bajo:";
             // 
@@ -261,7 +262,7 @@ namespace Gamora_Indumentaria
             this.label9.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.label9.Location = new System.Drawing.Point(3, 148);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(98, 19);
+            this.label9.Size = new System.Drawing.Size(96, 19);
             this.label9.TabIndex = 8;
             this.label9.Text = "💰 Valor Total:";
             // 
@@ -271,9 +272,9 @@ namespace Gamora_Indumentaria
             this.lblValorTotal.AutoSize = true;
             this.lblValorTotal.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblValorTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(43)))), ((int)(((byte)(226)))));
-            this.lblValorTotal.Location = new System.Drawing.Point(510, 147);
+            this.lblValorTotal.Location = new System.Drawing.Point(515, 147);
             this.lblValorTotal.Name = "lblValorTotal";
-            this.lblValorTotal.Size = new System.Drawing.Size(55, 21);
+            this.lblValorTotal.Size = new System.Drawing.Size(50, 21);
             this.lblValorTotal.TabIndex = 9;
             this.lblValorTotal.Text = "$0.00";
             // 
@@ -282,9 +283,9 @@ namespace Gamora_Indumentaria
             this.label11.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.label11.Location = new System.Drawing.Point(3, 186);
+            this.label11.Location = new System.Drawing.Point(3, 183);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(89, 19);
+            this.label11.Size = new System.Drawing.Size(90, 19);
             this.label11.TabIndex = 10;
             this.label11.Text = "❌ Sin Stock:";
             // 
@@ -294,7 +295,7 @@ namespace Gamora_Indumentaria
             this.lblSinStock.AutoSize = true;
             this.lblSinStock.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.lblSinStock.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.lblSinStock.Location = new System.Drawing.Point(546, 185);
+            this.lblSinStock.Location = new System.Drawing.Point(546, 182);
             this.lblSinStock.Name = "lblSinStock";
             this.lblSinStock.Size = new System.Drawing.Size(19, 21);
             this.lblSinStock.TabIndex = 11;

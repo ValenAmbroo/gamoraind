@@ -95,7 +95,6 @@
             this.groupBoxInformacion.Controls.Add(this.panel2);
             this.groupBoxInformacion.Controls.Add(this.panelPrecio);
             this.groupBoxInformacion.Controls.Add(this.panelCantidad);
-            // panelSabor eliminado
             this.groupBoxInformacion.Controls.Add(this.panelTalle);
             this.groupBoxInformacion.Controls.Add(this.panelCodigoBarra);
             this.groupBoxInformacion.Controls.Add(this.panelDescripcion);
@@ -120,7 +119,7 @@
             this.panel2.Controls.Add(this.txtPrecioCosto);
             this.panel2.Controls.Add(this.btnGuardar);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(15, 414);
+            this.panel2.Location = new System.Drawing.Point(15, 367);
             this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
@@ -175,7 +174,7 @@
             // 
             // txtPrecioCosto
             // 
-            this.txtPrecioCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtPrecioCosto.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPrecioCosto.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtPrecioCosto.Location = new System.Drawing.Point(150, 8);
@@ -206,7 +205,7 @@
             this.panelPrecio.Controls.Add(this.lblPrecio);
             this.panelPrecio.Controls.Add(this.txtPrecio);
             this.panelPrecio.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelPrecio.Location = new System.Drawing.Point(15, 367);
+            this.panelPrecio.Location = new System.Drawing.Point(15, 320);
             this.panelPrecio.Margin = new System.Windows.Forms.Padding(2);
             this.panelPrecio.Name = "panelPrecio";
             this.panelPrecio.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
@@ -227,7 +226,7 @@
             // 
             // txtPrecio
             // 
-            this.txtPrecio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtPrecio.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtPrecio.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtPrecio.Location = new System.Drawing.Point(150, 8);
@@ -241,7 +240,7 @@
             this.panelCantidad.Controls.Add(this.lblCantidad);
             this.panelCantidad.Controls.Add(this.nudCantidad);
             this.panelCantidad.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelCantidad.Location = new System.Drawing.Point(15, 320);
+            this.panelCantidad.Location = new System.Drawing.Point(15, 273);
             this.panelCantidad.Margin = new System.Windows.Forms.Padding(2);
             this.panelCantidad.Name = "panelCantidad";
             this.panelCantidad.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
@@ -283,8 +282,6 @@
             0,
             0,
             0});
-            // 
-            // (panelSabor removido)
             // 
             // panelTalle
             // 
@@ -348,7 +345,7 @@
             // 
             // txtCodigoBarra
             // 
-            this.txtCodigoBarra.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtCodigoBarra.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCodigoBarra.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtCodigoBarra.Location = new System.Drawing.Point(155, 10);
@@ -394,7 +391,7 @@
             // 
             // txtDescripcion
             // 
-            this.txtDescripcion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtDescripcion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDescripcion.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtDescripcion.Location = new System.Drawing.Point(150, 11);
@@ -429,7 +426,7 @@
             // 
             // txtNombre
             // 
-            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.txtNombre.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNombre.Font = new System.Drawing.Font("Segoe UI", 11F);
             this.txtNombre.Location = new System.Drawing.Point(167, 11);
@@ -513,6 +510,7 @@
             this.button1.TabIndex = 2;
             this.button1.Text = "✕";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // lblTitulo
             // 

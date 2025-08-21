@@ -25,7 +25,6 @@ namespace Gamora_Indumentaria
         private StringBuilder scannerBuffer = new StringBuilder();
         private DateTime lastScannerCharTime = DateTime.MinValue;
         private const int SCAN_TIMEOUT_MS = 120; // intervalo máximo entre caracteres de un escaneo
-        private CheckBox chkModoScanner;
         private Label lblUltimoCodigo;
         // Impresión de ticket
         private PrintDocument printDoc;
@@ -476,7 +475,6 @@ namespace Gamora_Indumentaria
             this.btnAgregar1 = new System.Windows.Forms.Button();
             this.txtCodigoBarras1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.chkModoScanner = new System.Windows.Forms.CheckBox();
             this.lblUltimoCodigo = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
@@ -514,15 +512,19 @@ namespace Gamora_Indumentaria
             // 
             // lblTitulo1
             // 
+            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitulo1.Controls.Add(this.btnAgregar1);
+            this.lblTitulo1.Controls.Add(this.grpPago);
             this.lblTitulo1.Controls.Add(this.txtCodigoBarras1);
+            this.lblTitulo1.Controls.Add(this.groupBox2);
             this.lblTitulo1.Controls.Add(this.label1);
-            this.lblTitulo1.Controls.Add(this.chkModoScanner);
             this.lblTitulo1.Controls.Add(this.lblUltimoCodigo);
             this.lblTitulo1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitulo1.Location = new System.Drawing.Point(12, 50);
             this.lblTitulo1.Name = "lblTitulo1";
-            this.lblTitulo1.Size = new System.Drawing.Size(848, 88);
+            this.lblTitulo1.Size = new System.Drawing.Size(1181, 547);
             this.lblTitulo1.TabIndex = 3;
             this.lblTitulo1.TabStop = false;
             this.lblTitulo1.Text = "Escáner de Código de Barras";
@@ -559,20 +561,10 @@ namespace Gamora_Indumentaria
             this.label1.TabIndex = 0;
             this.label1.Text = "Código de barras:";
             // 
-            // chkModoScanner
-            // 
-            this.chkModoScanner.AutoSize = true;
-            this.chkModoScanner.Location = new System.Drawing.Point(550, 36);
-            this.chkModoScanner.Name = "chkModoScanner";
-            this.chkModoScanner.Size = new System.Drawing.Size(141, 24);
-            this.chkModoScanner.TabIndex = 4;
-            this.chkModoScanner.Text = "Modo escáner";
-            this.chkModoScanner.UseVisualStyleBackColor = true;
-            // 
             // lblUltimoCodigo
             // 
             this.lblUltimoCodigo.AutoSize = true;
-            this.lblUltimoCodigo.Location = new System.Drawing.Point(696, 37);
+            this.lblUltimoCodigo.Location = new System.Drawing.Point(548, 35);
             this.lblUltimoCodigo.Name = "lblUltimoCodigo";
             this.lblUltimoCodigo.Size = new System.Drawing.Size(146, 20);
             this.lblUltimoCodigo.TabIndex = 5;
@@ -580,23 +572,27 @@ namespace Gamora_Indumentaria
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.dgvCarrito1);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(12, 168);
+            this.groupBox2.Location = new System.Drawing.Point(25, 72);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(631, 287);
+            this.groupBox2.Size = new System.Drawing.Size(1141, 255);
             this.groupBox2.TabIndex = 4;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Carrito de compras";
             // 
             // button4
             // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button4.BackColor = System.Drawing.Color.Orange;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button4.Location = new System.Drawing.Point(184, 254);
+            this.button4.Location = new System.Drawing.Point(178, 216);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(131, 27);
             this.button4.TabIndex = 4;
@@ -606,10 +602,11 @@ namespace Gamora_Indumentaria
             // 
             // button2
             // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button2.BackColor = System.Drawing.Color.Firebrick;
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.button2.Location = new System.Drawing.Point(25, 254);
+            this.button2.Location = new System.Drawing.Point(25, 216);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(135, 27);
             this.button2.TabIndex = 3;
@@ -619,10 +616,14 @@ namespace Gamora_Indumentaria
             // 
             // dgvCarrito1
             // 
+            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCarrito1.Location = new System.Drawing.Point(25, 42);
             this.dgvCarrito1.Name = "dgvCarrito1";
-            this.dgvCarrito1.Size = new System.Drawing.Size(576, 206);
+            this.dgvCarrito1.Size = new System.Drawing.Size(1084, 168);
             this.dgvCarrito1.TabIndex = 0;
             this.dgvCarrito1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
             this.dgvCarrito1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
@@ -630,6 +631,7 @@ namespace Gamora_Indumentaria
             // 
             // grpPago
             // 
+            this.grpPago.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.grpPago.Controls.Add(this.ProcesarVentabtn);
             this.grpPago.Controls.Add(this.chkImprimirTicket);
             this.grpPago.Controls.Add(this.btnVistaPrevia);
@@ -637,9 +639,9 @@ namespace Gamora_Indumentaria
             this.grpPago.Controls.Add(this.lblTotal);
             this.grpPago.Controls.Add(this.label3);
             this.grpPago.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpPago.Location = new System.Drawing.Point(649, 168);
+            this.grpPago.Location = new System.Drawing.Point(776, 372);
             this.grpPago.Name = "grpPago";
-            this.grpPago.Size = new System.Drawing.Size(211, 287);
+            this.grpPago.Size = new System.Drawing.Size(390, 169);
             this.grpPago.TabIndex = 5;
             this.grpPago.TabStop = false;
             this.grpPago.Text = "Procedimiento de Pago";
@@ -649,7 +651,7 @@ namespace Gamora_Indumentaria
             this.ProcesarVentabtn.BackColor = System.Drawing.Color.LawnGreen;
             this.ProcesarVentabtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ProcesarVentabtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ProcesarVentabtn.Location = new System.Drawing.Point(9, 254);
+            this.ProcesarVentabtn.Location = new System.Drawing.Point(176, 138);
             this.ProcesarVentabtn.Name = "ProcesarVentabtn";
             this.ProcesarVentabtn.Size = new System.Drawing.Size(196, 27);
             this.ProcesarVentabtn.TabIndex = 3;
@@ -662,18 +664,19 @@ namespace Gamora_Indumentaria
             this.chkImprimirTicket.AutoSize = true;
             this.chkImprimirTicket.Checked = true;
             this.chkImprimirTicket.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkImprimirTicket.Location = new System.Drawing.Point(9, 200);
+            this.chkImprimirTicket.Location = new System.Drawing.Point(6, 102);
             this.chkImprimirTicket.Name = "chkImprimirTicket";
             this.chkImprimirTicket.Size = new System.Drawing.Size(141, 24);
             this.chkImprimirTicket.TabIndex = 6;
             this.chkImprimirTicket.Text = "Imprimir ticket";
             this.chkImprimirTicket.UseVisualStyleBackColor = true;
+            this.chkImprimirTicket.CheckedChanged += new System.EventHandler(this.chkImprimirTicket_CheckedChanged);
             // 
             // btnVistaPrevia
             // 
             this.btnVistaPrevia.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnVistaPrevia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.btnVistaPrevia.Location = new System.Drawing.Point(9, 230);
+            this.btnVistaPrevia.Location = new System.Drawing.Point(176, 114);
             this.btnVistaPrevia.Name = "btnVistaPrevia";
             this.btnVistaPrevia.Size = new System.Drawing.Size(196, 24);
             this.btnVistaPrevia.TabIndex = 7;
@@ -684,7 +687,7 @@ namespace Gamora_Indumentaria
             // cmbMetodoPago1
             // 
             this.cmbMetodoPago1.FormattingEnabled = true;
-            this.cmbMetodoPago1.Location = new System.Drawing.Point(9, 83);
+            this.cmbMetodoPago1.Location = new System.Drawing.Point(233, 58);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
             this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 28);
             this.cmbMetodoPago1.TabIndex = 5;
@@ -694,7 +697,7 @@ namespace Gamora_Indumentaria
             this.lblTotal.AutoSize = true;
             this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotal.ForeColor = System.Drawing.Color.Green;
-            this.lblTotal.Location = new System.Drawing.Point(63, 42);
+            this.lblTotal.Location = new System.Drawing.Point(75, 62);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(60, 24);
             this.lblTotal.TabIndex = 4;
@@ -705,7 +708,7 @@ namespace Gamora_Indumentaria
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Green;
-            this.label3.Location = new System.Drawing.Point(6, 42);
+            this.label3.Location = new System.Drawing.Point(6, 66);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 18);
             this.label3.TabIndex = 3;
@@ -719,7 +722,7 @@ namespace Gamora_Indumentaria
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(889, 42);
+            this.panelTop.Size = new System.Drawing.Size(1222, 42);
             this.panelTop.TabIndex = 6;
             // 
             // btnCerrar
@@ -729,7 +732,7 @@ namespace Gamora_Indumentaria
             this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnCerrar.Location = new System.Drawing.Point(847, 3);
+            this.btnCerrar.Location = new System.Drawing.Point(1180, 3);
             this.btnCerrar.Name = "btnCerrar";
             this.btnCerrar.Size = new System.Drawing.Size(39, 34);
             this.btnCerrar.TabIndex = 1;
@@ -750,11 +753,9 @@ namespace Gamora_Indumentaria
             // 
             // ventas
             // 
-            this.ClientSize = new System.Drawing.Size(889, 512);
+            this.ClientSize = new System.Drawing.Size(1222, 609);
             this.ControlBox = false;
             this.Controls.Add(this.panelTop);
-            this.Controls.Add(this.grpPago);
-            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.lblTitulo1);
             this.Name = "ventas";
             this.Load += new System.EventHandler(this.ventas_Load_1);
@@ -876,7 +877,7 @@ namespace Gamora_Indumentaria
         // Captura global de tecla para escáner cuando no se está en el textbox
         private void Ventas_KeyPress_Global(object sender, KeyPressEventArgs e)
         {
-            if (chkModoScanner == null || !chkModoScanner.Checked) return;
+            
             // Si el foco está ya en el textbox dejamos que el flujo normal actúe
             if (txtCodigoBarras1 != null && txtCodigoBarras1.Focused) return;
 
@@ -1058,6 +1059,11 @@ namespace Gamora_Indumentaria
         private void btnCerrar_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void chkImprimirTicket_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
