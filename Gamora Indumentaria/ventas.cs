@@ -108,8 +108,8 @@ namespace Gamora_Indumentaria
             string codigoBarras = txtCodigoBarras1?.Text?.Trim();
             if (string.IsNullOrEmpty(codigoBarras))
             {
-                MessageBox.Show("Ingrese un código de barras", "Atención",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Ingrese un código de barras", "Atención",
+                 //   MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -544,10 +544,11 @@ namespace Gamora_Indumentaria
             // 
             // txtCodigoBarras1
             // 
-            this.txtCodigoBarras1.Location = new System.Drawing.Point(166, 33);
+            this.txtCodigoBarras1.Location = new System.Drawing.Point(201, 32);
             this.txtCodigoBarras1.Name = "txtCodigoBarras1";
-            this.txtCodigoBarras1.Size = new System.Drawing.Size(219, 26);
+            this.txtCodigoBarras1.Size = new System.Drawing.Size(219, 35);
             this.txtCodigoBarras1.TabIndex = 1;
+         
             this.txtCodigoBarras1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtCodigoBarras1_KeyDown);
             this.txtCodigoBarras1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCodigoBarras1_KeyPress);
             // 
@@ -557,16 +558,19 @@ namespace Gamora_Indumentaria
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(22, 38);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(138, 17);
+            this.label1.Size = new System.Drawing.Size(185, 25);
             this.label1.TabIndex = 0;
             this.label1.Text = "Código de barras:";
-            // 
+          
+         
+
+           
             // lblUltimoCodigo
             // 
             this.lblUltimoCodigo.AutoSize = true;
             this.lblUltimoCodigo.Location = new System.Drawing.Point(548, 35);
             this.lblUltimoCodigo.Name = "lblUltimoCodigo";
-            this.lblUltimoCodigo.Size = new System.Drawing.Size(146, 20);
+            this.lblUltimoCodigo.Size = new System.Drawing.Size(213, 29);
             this.lblUltimoCodigo.TabIndex = 5;
             this.lblUltimoCodigo.Text = "Último: (ninguno)";
             // 
@@ -623,7 +627,12 @@ namespace Gamora_Indumentaria
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCarrito1.Location = new System.Drawing.Point(25, 42);
             this.dgvCarrito1.Name = "dgvCarrito1";
+<<<<<<< HEAD
             this.dgvCarrito1.Size = new System.Drawing.Size(1084, 168);
+=======
+            this.dgvCarrito1.RowHeadersWidth = 62;
+            this.dgvCarrito1.Size = new System.Drawing.Size(576, 206);
+>>>>>>> d71326fd4fc3c981c332b4c74ef57aa65e3e6cb1
             this.dgvCarrito1.TabIndex = 0;
             this.dgvCarrito1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
             this.dgvCarrito1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
@@ -666,7 +675,7 @@ namespace Gamora_Indumentaria
             this.chkImprimirTicket.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkImprimirTicket.Location = new System.Drawing.Point(6, 102);
             this.chkImprimirTicket.Name = "chkImprimirTicket";
-            this.chkImprimirTicket.Size = new System.Drawing.Size(141, 24);
+            this.chkImprimirTicket.Size = new System.Drawing.Size(204, 33);
             this.chkImprimirTicket.TabIndex = 6;
             this.chkImprimirTicket.Text = "Imprimir ticket";
             this.chkImprimirTicket.UseVisualStyleBackColor = true;
@@ -689,7 +698,7 @@ namespace Gamora_Indumentaria
             this.cmbMetodoPago1.FormattingEnabled = true;
             this.cmbMetodoPago1.Location = new System.Drawing.Point(233, 58);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
-            this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 28);
+            this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 37);
             this.cmbMetodoPago1.TabIndex = 5;
             // 
             // lblTotal
@@ -699,7 +708,7 @@ namespace Gamora_Indumentaria
             this.lblTotal.ForeColor = System.Drawing.Color.Green;
             this.lblTotal.Location = new System.Drawing.Point(75, 62);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(60, 24);
+            this.lblTotal.Size = new System.Drawing.Size(91, 32);
             this.lblTotal.TabIndex = 4;
             this.lblTotal.Text = "$0,00";
             // 
@@ -710,7 +719,7 @@ namespace Gamora_Indumentaria
             this.label3.ForeColor = System.Drawing.Color.Green;
             this.label3.Location = new System.Drawing.Point(6, 66);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 18);
+            this.label3.Size = new System.Drawing.Size(71, 26);
             this.label3.TabIndex = 3;
             this.label3.Text = "Total:";
             // 
@@ -747,7 +756,7 @@ namespace Gamora_Indumentaria
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.lblTitulo.Location = new System.Drawing.Point(12, 8);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(63, 25);
+            this.lblTitulo.Size = new System.Drawing.Size(92, 38);
             this.lblTitulo.TabIndex = 2;
             this.lblTitulo.Text = "Venta";
             // 
@@ -1061,7 +1070,16 @@ namespace Gamora_Indumentaria
             this.Close();
         }
 
+<<<<<<< HEAD
         private void chkImprimirTicket_CheckedChanged(object sender, EventArgs e)
+=======
+        private void txtCodigoBarras1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+>>>>>>> d71326fd4fc3c981c332b4c74ef57aa65e3e6cb1
         {
 
         }
