@@ -16,10 +16,10 @@ namespace Gamora_Indumentaria.Data
         // Flag para controlar si se cargan datos de ejemplo (desactivado para usar solo datos reales)
         private const bool CARGAR_DATOS_EJEMPLO = false;
         // Cadena de conexión principal para la aplicación
-        public static readonly string ConnectionString = @"Data Source=DESKTOP-2J2A83N;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+        public static readonly string ConnectionString = @"Data Source=DESKTOP-8860VEA;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
 
         // Cadena de conexión para operaciones en master (crear BD)
-        private static readonly string MasterConnectionString = @"Data Source=DESKTOP-2J2A83N;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+        private static readonly string MasterConnectionString = @"Data Source=DESKTOP-8860VEA;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
 
         /// <summary>
         /// Obtiene una nueva conexión a la base de datos

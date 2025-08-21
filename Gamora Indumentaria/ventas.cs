@@ -627,12 +627,9 @@ namespace Gamora_Indumentaria
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvCarrito1.Location = new System.Drawing.Point(25, 42);
             this.dgvCarrito1.Name = "dgvCarrito1";
-<<<<<<< HEAD
             this.dgvCarrito1.Size = new System.Drawing.Size(1084, 168);
-=======
             this.dgvCarrito1.RowHeadersWidth = 62;
             this.dgvCarrito1.Size = new System.Drawing.Size(576, 206);
->>>>>>> d71326fd4fc3c981c332b4c74ef57aa65e3e6cb1
             this.dgvCarrito1.TabIndex = 0;
             this.dgvCarrito1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
             this.dgvCarrito1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
@@ -679,7 +676,6 @@ namespace Gamora_Indumentaria
             this.chkImprimirTicket.TabIndex = 6;
             this.chkImprimirTicket.Text = "Imprimir ticket";
             this.chkImprimirTicket.UseVisualStyleBackColor = true;
-            this.chkImprimirTicket.CheckedChanged += new System.EventHandler(this.chkImprimirTicket_CheckedChanged);
             // 
             // btnVistaPrevia
             // 
@@ -1070,18 +1066,12 @@ namespace Gamora_Indumentaria
             this.Close();
         }
 
-<<<<<<< HEAD
-        private void chkImprimirTicket_CheckedChanged(object sender, EventArgs e)
-=======
+     
         private void txtCodigoBarras1_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void label1_Click(object sender, EventArgs e)
->>>>>>> d71326fd4fc3c981c332b4c74ef57aa65e3e6cb1
-        {
-
-        }
+       
     }
 }

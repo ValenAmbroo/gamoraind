@@ -92,6 +92,9 @@
             // 
             // groupBoxInformacion
             // 
+            this.groupBoxInformacion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxInformacion.Controls.Add(this.panel2);
             this.groupBoxInformacion.Controls.Add(this.panelPrecio);
             this.groupBoxInformacion.Controls.Add(this.panelCantidad);
@@ -151,9 +154,9 @@
             this.label1.Location = new System.Drawing.Point(2, 11);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 19);
+            this.label1.Size = new System.Drawing.Size(131, 19);
             this.label1.TabIndex = 0;
-            this.label1.Text = "💰 Precio Venta*";
+            this.label1.Text = "💰 Precio Compra";
             // 
             // btnLimpiar
             // 

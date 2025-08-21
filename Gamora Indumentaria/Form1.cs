@@ -331,6 +331,11 @@ namespace Gamora_Indumentaria
         {
             CargarFormularioHijo(new agregarpruducto());
         }
+
+        private void panelClientes_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
 
