@@ -18,16 +18,20 @@ namespace Gamora_Indumentaria
         private Font fuenteCompacta;
         private System.Windows.Forms.Timer debounceTimer;
 
-        public inventario()
+        private bool esAdmin;
+
+        public inventario(bool esAdmin = false)
         {
             InitializeComponent();
+            this.esAdmin = esAdmin;
+            ApplyFilterStyles();
             this.Load += Inventario_Load;
             this.KeyDown += Inventario_KeyDown;
             if (btnCerrar != null) btnCerrar.Click += (s, e) => this.Close();
-          
+
             if (cboCategoria != null) cboCategoria.SelectedIndexChanged += (s, e) => { ActualizarCamposCategoria(); Filtrar(); };
             if (cboTalle != null) cboTalle.SelectedIndexChanged += (s, e) => Filtrar();
-          
+
             if (chkSoloBajo != null) chkSoloBajo.CheckedChanged += (s, e) => Filtrar();
             if (nudStockMin != null) nudStockMin.ValueChanged += (s, e) => Filtrar();
             if (nudStockMax != null) nudStockMax.ValueChanged += (s, e) => Filtrar();
@@ -108,11 +112,11 @@ namespace Gamora_Indumentaria
                     cboTalle.Visible = lblTalle.Visible = false;
                 }
                 bool esVaper = EsCategoriaVaper(cat.Nombre);
-               
+
                 if (!esVaper)
                 {
                     // Limpiar texto para que no siga filtrando inadvertidamente
-                    
+
                 }
             }
         }
@@ -121,7 +125,7 @@ namespace Gamora_Indumentaria
         {
             if (string.IsNullOrWhiteSpace(nombre)) return false;
             var n = nombre.Trim().ToUpperInvariant();
-            return n == "VAPER" ;
+            return n == "VAPER";
         }
 
         private void CargarInventario()
@@ -145,7 +149,12 @@ namespace Gamora_Indumentaria
             if (dgvInventario.Columns.Contains("PrecioVenta"))
                 dgvInventario.Columns["PrecioVenta"].DefaultCellStyle.Format = "C2";
             if (dgvInventario.Columns.Contains("PrecioCompra"))
-                dgvInventario.Columns["PrecioCompra"].DefaultCellStyle.Format = "C2";
+            {
+                // Mostrar costo solo si es admin
+                dgvInventario.Columns["PrecioCompra"].Visible = esAdmin;
+                if (esAdmin)
+                    dgvInventario.Columns["PrecioCompra"].DefaultCellStyle.Format = "C2";
+            }
             if (dgvInventario.Columns.Contains("FechaCreacion"))
                 dgvInventario.Columns["FechaCreacion"].DefaultCellStyle.Format = "dd/MM/yyyy";
             var ocultar = new[] { "CategoriaId", "TalleId", "Activo" };
@@ -187,7 +196,7 @@ namespace Gamora_Indumentaria
                 string t = Escape(talle.TalleValor);
                 filtro += $" AND Talle = '{t}'";
             }
-           
+
             if (chkSoloBajo.Checked)
             {
                 filtro += " AND Cantidad <= 10";
@@ -228,12 +237,12 @@ namespace Gamora_Indumentaria
             fuenteCompacta = new Font(fuenteNormal.FontFamily, Math.Max(8f, fuenteNormal.Size - 1.2f), fuenteNormal.Style);
         }
 
-      
-      
+
+
 
         private void Inventario_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
             if (e.KeyCode == Keys.F5) { CargarInventario(); e.Handled = true; }
             if (e.Control && e.KeyCode == Keys.E) { ExportarCsv(); e.Handled = true; }
         }
@@ -255,7 +264,9 @@ namespace Gamora_Indumentaria
                     {
                         var sb = new StringBuilder();
                         // Encabezados visibles
-                        var cols = dgvInventario.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).ToList();
+                        var cols = dgvInventario.Columns.Cast<DataGridViewColumn>()
+                            .Where(c => c.Visible && !string.Equals(c.DataPropertyName, "PrecioCompra", StringComparison.OrdinalIgnoreCase))
+                            .ToList();
                         sb.AppendLine(string.Join(",", cols.Select(c => '"' + c.HeaderText.Replace("\"", "''") + '"')));
                         foreach (DataRowView rv in datos.DefaultView)
                         {
@@ -295,7 +306,13 @@ namespace Gamora_Indumentaria
         {
             if (dgvInventario.CurrentRow == null) return;
             int id = Convert.ToInt32(dgvInventario.CurrentRow.Cells["Id"].Value);
-            MessageBox.Show("Editar producto ID: " + id + " (implementación pendiente)");
+            using (var f = new editarproducto(id))
+            {
+                if (f.ShowDialog(this) == DialogResult.OK)
+                {
+                    CargarInventario();
+                }
+            }
         }
 
         private void BtnEliminar_Click(object sender, EventArgs e)
@@ -335,6 +352,78 @@ namespace Gamora_Indumentaria
         private void txtBuscar_TextChanged(object sender, EventArgs e)
         {
             Filtrar();
+        }
+
+        private void ApplyFilterStyles()
+        {
+            // Colores base
+            Color panelBg = Color.White;
+            Color border = Color.FromArgb(230, 236, 240);
+            Color label = Color.FromArgb(55, 71, 90);
+            Color inputBack = Color.White;
+            Color inputBorder = Color.FromArgb(206, 212, 218);
+            Color inputFocus = Color.FromArgb(0, 123, 255);
+
+            if (panelFiltros != null)
+            {
+                panelFiltros.BackColor = panelBg;
+                panelFiltros.Padding = new Padding(10, 8, 10, 6);
+                // Borde inferior suave
+                panelFiltros.Paint += (s, e) =>
+                {
+                    using (var p = new Pen(border))
+                        e.Graphics.DrawLine(p, 0, panelFiltros.Height - 1, panelFiltros.Width, panelFiltros.Height - 1);
+                };
+                panelFiltros.Resize += (s, e) => panelFiltros.Invalidate();
+            }
+
+            foreach (var lbl in new[] { lblBuscar, lblCategoria, lblTalle })
+            {
+                if (lbl == null) continue;
+                lbl.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                lbl.ForeColor = label;
+            }
+
+            // Estilo básico del cuadro de búsqueda (sin placeholder)
+            if (txtBuscar != null)
+            {
+                txtBuscar.BorderStyle = BorderStyle.FixedSingle;
+                txtBuscar.BackColor = inputBack;
+                txtBuscar.ForeColor = Color.Black;
+                txtBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            }
+
+            void StyleCombo(ComboBox c)
+            {
+                if (c == null) return;
+                c.FlatStyle = FlatStyle.Flat;
+                c.BackColor = inputBack;
+                c.ForeColor = Color.Black;
+                c.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                c.DrawMode = DrawMode.OwnerDrawFixed;
+                c.DrawItem += (s, e) =>
+                {
+                    e.DrawBackground();
+                    if (e.Index >= 0)
+                    {
+                        var txt = c.GetItemText(c.Items[e.Index]);
+                        using (var br = new SolidBrush(e.ForeColor))
+                        {
+                            e.Graphics.DrawString(txt, c.Font, br, e.Bounds);
+                        }
+                    }
+                    e.DrawFocusRectangle();
+                };
+            }
+            StyleCombo(cboCategoria);
+            StyleCombo(cboTalle);
+
+            // Check y numeric
+            foreach (var ctrl in new Control[] { chkSoloBajo, nudStockMin, nudStockMax })
+            {
+                if (ctrl == null) continue;
+                ctrl.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            }
         }
     }
 }

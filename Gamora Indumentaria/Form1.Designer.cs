@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
+            this.lblHora = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
@@ -40,16 +41,15 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.button9 = new System.Windows.Forms.Button();
             this.btnsubprincipal = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.lblHora = new System.Windows.Forms.Label();
             this.timerHora = new System.Windows.Forms.Timer(this.components);
             this.panelsubprincipal = new System.Windows.Forms.Panel();
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panelsubadministracion = new System.Windows.Forms.Panel();
+            this.button7 = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
@@ -74,7 +74,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1188, 35);
+            this.panel1.Size = new System.Drawing.Size(1196, 35);
             this.panel1.TabIndex = 0;
             // 
             // button3
@@ -83,13 +83,27 @@
             this.button3.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.cerrrar_;
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button3.Dock = System.Windows.Forms.DockStyle.Right;
-            this.button3.Location = new System.Drawing.Point(1155, 0);
+            this.button3.Location = new System.Drawing.Point(1163, 0);
             this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(33, 35);
             this.button3.TabIndex = 2;
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // lblHora
+            // 
+            this.lblHora.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHora.AutoSize = true;
+            this.lblHora.BackColor = System.Drawing.Color.White;
+            this.lblHora.Font = new System.Drawing.Font("Impact", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHora.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.lblHora.Location = new System.Drawing.Point(704, 5);
+            this.lblHora.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblHora.Name = "lblHora";
+            this.lblHora.Size = new System.Drawing.Size(0, 27);
+            this.lblHora.TabIndex = 1;
+            this.lblHora.Click += new System.EventHandler(this.lblHora_Click);
             // 
             // label1
             // 
@@ -108,7 +122,7 @@
             this.button1.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button1.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.nuevo_minimized_;
             this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button1.Location = new System.Drawing.Point(1075, 0);
+            this.button1.Location = new System.Drawing.Point(1083, 0);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(33, 32);
@@ -122,7 +136,7 @@
             this.button2.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.button2.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.maximized_n;
             this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button2.Location = new System.Drawing.Point(1118, 1);
+            this.button2.Location = new System.Drawing.Point(1126, 1);
             this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(33, 32);
@@ -137,13 +151,12 @@
             this.panel3.Controls.Add(this.panel2);
             this.panel3.Controls.Add(this.button9);
             this.panel3.Controls.Add(this.btnsubprincipal);
-            this.panel3.Controls.Add(this.button6);
             this.panel3.Controls.Add(this.button10);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel3.Location = new System.Drawing.Point(0, 35);
             this.panel3.Margin = new System.Windows.Forms.Padding(2);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(206, 556);
+            this.panel3.Size = new System.Drawing.Size(206, 558);
             this.panel3.TabIndex = 2;
             // 
             // btnsubadministracion
@@ -204,22 +217,11 @@
             this.btnsubprincipal.MouseEnter += new System.EventHandler(this.btnsubprincipal_MouseEnter);
             this.btnsubprincipal.MouseLeave += new System.EventHandler(this.btnsubprincipal_MouseLeave);
             // 
-            // button6
-            // 
-            this.button6.Location = new System.Drawing.Point(11, 209);
-            this.button6.Margin = new System.Windows.Forms.Padding(2);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(140, 45);
-            this.button6.TabIndex = 2;
-            this.button6.Text = "📦 GESTIÓN DE STOCK";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            // 
             // button10
             // 
             this.button10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.button10.BackColor = System.Drawing.Color.DarkRed;
-            this.button10.Location = new System.Drawing.Point(12, 478);
+            this.button10.Location = new System.Drawing.Point(12, 480);
             this.button10.Margin = new System.Windows.Forms.Padding(2);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(61, 31);
@@ -239,20 +241,6 @@
             this.button4.Text = "💰 PUNTO DE VENTA";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // lblHora
-            // 
-            this.lblHora.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHora.AutoSize = true;
-            this.lblHora.BackColor = System.Drawing.Color.White;
-            this.lblHora.Font = new System.Drawing.Font("Impact", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblHora.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lblHora.Location = new System.Drawing.Point(696, 5);
-            this.lblHora.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblHora.Name = "lblHora";
-            this.lblHora.Size = new System.Drawing.Size(0, 27);
-            this.lblHora.TabIndex = 1;
-            this.lblHora.Click += new System.EventHandler(this.lblHora_Click);
             // 
             // timerHora
             // 
@@ -307,17 +295,30 @@
             // panelsubadministracion
             // 
             this.panelsubadministracion.BackColor = System.Drawing.Color.Gainsboro;
+            this.panelsubadministracion.Controls.Add(this.button7);
             this.panelsubadministracion.Controls.Add(this.button12);
             this.panelsubadministracion.Controls.Add(this.button13);
             this.panelsubadministracion.Controls.Add(this.button14);
             this.panelsubadministracion.Controls.Add(this.button15);
             this.panelsubadministracion.Controls.Add(this.btnListadoVentas);
-            this.panelsubadministracion.Location = new System.Drawing.Point(203, 369);
+            this.panelsubadministracion.Location = new System.Drawing.Point(205, 344);
             this.panelsubadministracion.Margin = new System.Windows.Forms.Padding(2);
             this.panelsubadministracion.Name = "panelsubadministracion";
-            this.panelsubadministracion.Size = new System.Drawing.Size(159, 194);
+            this.panelsubadministracion.Size = new System.Drawing.Size(159, 245);
             this.panelsubadministracion.TabIndex = 8;
             this.panelsubadministracion.Visible = false;
+            // 
+            // button7
+            // 
+            this.button7.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button7.Location = new System.Drawing.Point(2, 197);
+            this.button7.Margin = new System.Windows.Forms.Padding(2);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(155, 45);
+            this.button7.TabIndex = 6;
+            this.button7.Text = "📊 MODIFICAR PRODUCTOS";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click_1);
             // 
             // button12
             // 
@@ -385,7 +386,7 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
             this.BackColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1188, 591);
+            this.ClientSize = new System.Drawing.Size(1196, 593);
             this.Controls.Add(this.panelsubadministracion);
             this.Controls.Add(this.panelsubprincipal);
             this.Controls.Add(this.panel3);
@@ -420,7 +421,6 @@
         private System.Windows.Forms.Label lblHora;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Panel panelsubprincipal;
         private System.Windows.Forms.Button btnsubprincipal;
@@ -434,6 +434,7 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
+        private System.Windows.Forms.Button button7;
     }
 }
 

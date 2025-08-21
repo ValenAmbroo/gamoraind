@@ -64,8 +64,15 @@ namespace Gamora_Indumentaria
                 if (lblStockBajo != null)
                     lblStockBajo.Text = stockBajo.ToString();
 
-                // Valor total del inventario
-                object valorTotal = DatabaseManager.ExecuteScalar("SELECT ISNULL(SUM(Stock * Precio), 0) FROM Inventario");
+                // Valor total del inventario (adaptar a columna existente)
+                string precioCol = DatabaseManager.ColumnExists("Inventario", "PrecioVenta") ? "PrecioVenta" :
+                                   (DatabaseManager.ColumnExists("Inventario", "Precio") ? "Precio" : null);
+                object valorTotal = 0m;
+                if (precioCol != null)
+                {
+                    string sqlValor = $"SELECT ISNULL(SUM(Stock * {precioCol}), 0) FROM Inventario";
+                    valorTotal = DatabaseManager.ExecuteScalar(sqlValor);
+                }
                 if (lblValorTotal != null)
                     lblValorTotal.Text = "$" + Convert.ToDecimal(valorTotal).ToString("N2");
 
@@ -132,12 +139,15 @@ namespace Gamora_Indumentaria
         {
             try
             {
-                string query = @"
+                bool tienePrecioVenta = DatabaseManager.ColumnExists("Inventario", "PrecioVenta");
+                bool tienePrecioLegacy = !tienePrecioVenta && DatabaseManager.ColumnExists("Inventario", "Precio");
+                string exprPrecio = tienePrecioVenta ? "i.PrecioVenta" : (tienePrecioLegacy ? "i.Precio" : "0");
+                string query = $@"
                     SELECT 
                         c.Nombre AS Categoria,
                         i.Nombre AS Producto,
                         i.Stock,
-                        COALESCE(i.PrecioVenta, i.Precio) AS Precio
+                        {exprPrecio} AS Precio
                     FROM Inventario i
                     INNER JOIN Categorias c ON i.CategoriaId = c.Id
                     WHERE i.Stock <= 5 AND i.Stock > 0
@@ -155,8 +165,11 @@ namespace Gamora_Indumentaria
                         dgvStockBajo.Columns["Categoria"].HeaderText = "Categoría";
                         dgvStockBajo.Columns["Producto"].HeaderText = "Producto";
                         dgvStockBajo.Columns["Stock"].HeaderText = "Stock";
-                        dgvStockBajo.Columns["Precio"].HeaderText = "Precio";
-                        dgvStockBajo.Columns["Precio"].DefaultCellStyle.Format = "C2";
+                        if (dgvStockBajo.Columns.Contains("Precio"))
+                        {
+                            dgvStockBajo.Columns["Precio"].HeaderText = "Precio";
+                            dgvStockBajo.Columns["Precio"].DefaultCellStyle.Format = "C2";
+                        }
                     }
                 }
             }

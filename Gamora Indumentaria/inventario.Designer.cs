@@ -95,7 +95,7 @@
             this.panelFiltros.Location = new System.Drawing.Point(0, 42);
             this.panelFiltros.Name = "panelFiltros";
             this.panelFiltros.Padding = new System.Windows.Forms.Padding(10, 8, 10, 8);
-            this.panelFiltros.Size = new System.Drawing.Size(1100, 82);
+            this.panelFiltros.Size = new System.Drawing.Size(1100, 96);
             this.panelFiltros.TabIndex = 1;
             // 
             // chkSoloBajo

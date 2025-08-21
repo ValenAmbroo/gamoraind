@@ -33,12 +33,12 @@ namespace Gamora_Indumentaria
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvVentas = new System.Windows.Forms.DataGridView();
             this.dgvDetalles = new System.Windows.Forms.DataGridView();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
@@ -58,8 +58,8 @@ namespace Gamora_Indumentaria
             this.lblDesde = new System.Windows.Forms.Label();
             this.panelFiltros = new System.Windows.Forms.FlowLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvVentas)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDetalles)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
@@ -73,35 +73,37 @@ namespace Gamora_Indumentaria
             // dgvVentas
             // 
             this.dgvVentas.AllowUserToAddRows = false;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.dgvVentas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.dgvVentas.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvVentas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvVentas.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvVentas.BackgroundColor = System.Drawing.Color.White;
             this.dgvVentas.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvVentas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle9.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvVentas.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvVentas.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            this.dgvVentas.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvVentas.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgvVentas.EnableHeadersVisualStyles = false;
             this.dgvVentas.Location = new System.Drawing.Point(0, 57);
             this.dgvVentas.MultiSelect = false;
             this.dgvVentas.Name = "dgvVentas";
             this.dgvVentas.ReadOnly = true;
             this.dgvVentas.RowHeadersVisible = false;
+            this.dgvVentas.RowHeadersWidth = 51;
             this.dgvVentas.RowTemplate.Height = 20;
             this.dgvVentas.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvVentas.Size = new System.Drawing.Size(1125, 418);
@@ -110,27 +112,28 @@ namespace Gamora_Indumentaria
             // dgvDetalles
             // 
             this.dgvDetalles.AllowUserToAddRows = false;
-            dataGridViewCellStyle10.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.dgvDetalles.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
+            this.dgvDetalles.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.dgvDetalles.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvDetalles.BackgroundColor = System.Drawing.Color.White;
             this.dgvDetalles.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvDetalles.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Segoe UI", 9F);
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvDetalles.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvDetalles.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            this.dgvDetalles.ColumnHeadersHeight = 29;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 9F);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(230)))), ((int)(((byte)(255)))));
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvDetalles.DefaultCellStyle = dataGridViewCellStyle6;
             this.dgvDetalles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvDetalles.EnableHeadersVisualStyles = false;
             this.dgvDetalles.Location = new System.Drawing.Point(0, 0);
@@ -138,6 +141,7 @@ namespace Gamora_Indumentaria
             this.dgvDetalles.Name = "dgvDetalles";
             this.dgvDetalles.ReadOnly = true;
             this.dgvDetalles.RowHeadersVisible = false;
+            this.dgvDetalles.RowHeadersWidth = 51;
             this.dgvDetalles.RowTemplate.Height = 18;
             this.dgvDetalles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvDetalles.Size = new System.Drawing.Size(1125, 137);
@@ -167,10 +171,10 @@ namespace Gamora_Indumentaria
             // 
             this.btnDensidad.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnDensidad.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnDensidad.Location = new System.Drawing.Point(1085, 14);
+            this.btnDensidad.Location = new System.Drawing.Point(1130, 14);
             this.btnDensidad.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnDensidad.Name = "btnDensidad";
-            this.btnDensidad.Size = new System.Drawing.Size(28, 23);
+            this.btnDensidad.Size = new System.Drawing.Size(28, 32);
             this.btnDensidad.TabIndex = 8;
             this.btnDensidad.Text = "≡";
             this.toolTip1.SetToolTip(this.btnDensidad, "Cambiar densidad (Ctrl+D)");
@@ -180,10 +184,10 @@ namespace Gamora_Indumentaria
             // 
             this.btnExportar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnExportar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnExportar.Location = new System.Drawing.Point(971, 14);
+            this.btnExportar.Location = new System.Drawing.Point(1016, 14);
             this.btnExportar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnExportar.Name = "btnExportar";
-            this.btnExportar.Size = new System.Drawing.Size(110, 23);
+            this.btnExportar.Size = new System.Drawing.Size(110, 32);
             this.btnExportar.TabIndex = 7;
             this.btnExportar.Text = "Exportar CSV";
             this.toolTip1.SetToolTip(this.btnExportar, "Exportar resultados a CSV");
@@ -192,10 +196,10 @@ namespace Gamora_Indumentaria
             // 
             this.btnLimpiar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnLimpiar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnLimpiar.Location = new System.Drawing.Point(887, 14);
+            this.btnLimpiar.Location = new System.Drawing.Point(932, 14);
             this.btnLimpiar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.btnLimpiar.Name = "btnLimpiar";
-            this.btnLimpiar.Size = new System.Drawing.Size(80, 23);
+            this.btnLimpiar.Size = new System.Drawing.Size(80, 32);
             this.btnLimpiar.TabIndex = 6;
             this.btnLimpiar.Text = "Limpiar";
             this.toolTip1.SetToolTip(this.btnLimpiar, "Restablecer filtros");
@@ -204,20 +208,20 @@ namespace Gamora_Indumentaria
             // 
             this.btnFiltrar.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.btnFiltrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnFiltrar.Location = new System.Drawing.Point(803, 14);
+            this.btnFiltrar.Location = new System.Drawing.Point(848, 14);
             this.btnFiltrar.Margin = new System.Windows.Forms.Padding(8, 8, 0, 0);
             this.btnFiltrar.Name = "btnFiltrar";
-            this.btnFiltrar.Size = new System.Drawing.Size(80, 23);
+            this.btnFiltrar.Size = new System.Drawing.Size(80, 32);
             this.btnFiltrar.TabIndex = 5;
             this.btnFiltrar.Text = "Filtrar";
             this.toolTip1.SetToolTip(this.btnFiltrar, "Aplicar filtros (Enter)");
             // 
             // txtBuscar
             // 
-            this.txtBuscar.Location = new System.Drawing.Point(615, 14);
+            this.txtBuscar.Location = new System.Drawing.Point(660, 14);
             this.txtBuscar.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.txtBuscar.Name = "txtBuscar";
-            this.txtBuscar.Size = new System.Drawing.Size(180, 23);
+            this.txtBuscar.Size = new System.Drawing.Size(180, 27);
             this.txtBuscar.TabIndex = 4;
             this.toolTip1.SetToolTip(this.txtBuscar, "Buscar por nombre o código de producto");
             // 
@@ -226,10 +230,10 @@ namespace Gamora_Indumentaria
             this.cboMetodo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboMetodo.Items.AddRange(new object[] {
             "(Todos)"});
-            this.cboMetodo.Location = new System.Drawing.Point(410, 14);
+            this.cboMetodo.Location = new System.Drawing.Point(445, 14);
             this.cboMetodo.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.cboMetodo.Name = "cboMetodo";
-            this.cboMetodo.Size = new System.Drawing.Size(140, 23);
+            this.cboMetodo.Size = new System.Drawing.Size(140, 28);
             this.cboMetodo.TabIndex = 3;
             this.toolTip1.SetToolTip(this.cboMetodo, "Filtrar por método de pago");
             // 
@@ -237,60 +241,60 @@ namespace Gamora_Indumentaria
             // 
             this.lblResumen.AutoSize = true;
             this.lblResumen.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblResumen.Location = new System.Drawing.Point(1121, 10);
+            this.lblResumen.Location = new System.Drawing.Point(407, 10);
             this.lblResumen.Margin = new System.Windows.Forms.Padding(8, 4, 0, 0);
             this.lblResumen.Name = "lblResumen";
             this.lblResumen.Padding = new System.Windows.Forms.Padding(10, 10, 0, 0);
-            this.lblResumen.Size = new System.Drawing.Size(234, 25);
+            this.lblResumen.Size = new System.Drawing.Size(296, 30);
             this.lblResumen.TabIndex = 8;
             this.lblResumen.Text = "Ventas: 0 | Importe: $0,00 | Unidades: 0";
             // 
             // lblBuscar
             // 
             this.lblBuscar.AutoSize = true;
-            this.lblBuscar.Location = new System.Drawing.Point(553, 6);
+            this.lblBuscar.Location = new System.Drawing.Point(588, 6);
             this.lblBuscar.Name = "lblBuscar";
             this.lblBuscar.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblBuscar.Size = new System.Drawing.Size(55, 27);
+            this.lblBuscar.Size = new System.Drawing.Size(65, 32);
             this.lblBuscar.TabIndex = 4;
             this.lblBuscar.Text = "Buscar:";
             // 
             // lblMetodo
             // 
             this.lblMetodo.AutoSize = true;
-            this.lblMetodo.Location = new System.Drawing.Point(341, 6);
+            this.lblMetodo.Location = new System.Drawing.Point(363, 6);
             this.lblMetodo.Name = "lblMetodo";
             this.lblMetodo.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblMetodo.Size = new System.Drawing.Size(62, 27);
+            this.lblMetodo.Size = new System.Drawing.Size(75, 32);
             this.lblMetodo.TabIndex = 3;
             this.lblMetodo.Text = "Método:";
             // 
             // dtpHasta
             // 
             this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpHasta.Location = new System.Drawing.Point(228, 14);
+            this.dtpHasta.Location = new System.Drawing.Point(250, 14);
             this.dtpHasta.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.dtpHasta.Name = "dtpHasta";
-            this.dtpHasta.Size = new System.Drawing.Size(110, 23);
+            this.dtpHasta.Size = new System.Drawing.Size(110, 27);
             this.dtpHasta.TabIndex = 2;
             // 
             // lblHasta
             // 
             this.lblHasta.AutoSize = true;
-            this.lblHasta.Location = new System.Drawing.Point(171, 6);
+            this.lblHasta.Location = new System.Drawing.Point(183, 6);
             this.lblHasta.Name = "lblHasta";
             this.lblHasta.Padding = new System.Windows.Forms.Padding(10, 12, 0, 0);
-            this.lblHasta.Size = new System.Drawing.Size(50, 27);
+            this.lblHasta.Size = new System.Drawing.Size(60, 32);
             this.lblHasta.TabIndex = 2;
             this.lblHasta.Text = "Hasta:";
             // 
             // dtpDesde
             // 
             this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDesde.Location = new System.Drawing.Point(58, 14);
+            this.dtpDesde.Location = new System.Drawing.Point(70, 14);
             this.dtpDesde.Margin = new System.Windows.Forms.Padding(4, 8, 0, 0);
             this.dtpDesde.Name = "dtpDesde";
-            this.dtpDesde.Size = new System.Drawing.Size(110, 23);
+            this.dtpDesde.Size = new System.Drawing.Size(110, 27);
             this.dtpDesde.TabIndex = 1;
             // 
             // lblDesde
@@ -300,7 +304,7 @@ namespace Gamora_Indumentaria
             this.lblDesde.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
             this.lblDesde.Name = "lblDesde";
             this.lblDesde.Padding = new System.Windows.Forms.Padding(0, 12, 0, 0);
-            this.lblDesde.Size = new System.Drawing.Size(42, 27);
+            this.lblDesde.Size = new System.Drawing.Size(54, 32);
             this.lblDesde.TabIndex = 0;
             this.lblDesde.Text = "Desde:";
             // 
@@ -322,11 +326,10 @@ namespace Gamora_Indumentaria
             this.panelFiltros.Controls.Add(this.btnLimpiar);
             this.panelFiltros.Controls.Add(this.btnExportar);
             this.panelFiltros.Controls.Add(this.btnDensidad);
-            this.panelFiltros.Controls.Add(this.lblResumen);
             this.panelFiltros.Location = new System.Drawing.Point(0, 38);
             this.panelFiltros.Name = "panelFiltros";
             this.panelFiltros.Padding = new System.Windows.Forms.Padding(8, 6, 8, 6);
-            this.panelFiltros.Size = new System.Drawing.Size(1127, 59);
+            this.panelFiltros.Size = new System.Drawing.Size(1127, 70);
             this.panelFiltros.TabIndex = 1;
             this.panelFiltros.WrapContents = false;
             // 
@@ -335,12 +338,23 @@ namespace Gamora_Indumentaria
             this.panel1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.panel1.Controls.Add(this.lblTitulo);
             this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.lblResumen);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1127, 42);
             this.panel1.TabIndex = 2;
+            // 
+            // lblTitulo
+            // 
+            this.lblTitulo.AutoSize = true;
+            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.Location = new System.Drawing.Point(12, 10);
+            this.lblTitulo.Name = "lblTitulo";
+            this.lblTitulo.Size = new System.Drawing.Size(220, 32);
+            this.lblTitulo.TabIndex = 4;
+            this.lblTitulo.Text = "Historial De Venta";
             // 
             // button1
             // 
@@ -356,16 +370,6 @@ namespace Gamora_Indumentaria
             this.button1.Text = "✕";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // lblTitulo
-            // 
-            this.lblTitulo.AutoSize = true;
-            this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.Location = new System.Drawing.Point(12, 10);
-            this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(172, 25);
-            this.lblTitulo.TabIndex = 4;
-            this.lblTitulo.Text = "Historial De Venta";
             // 
             // HistorialVentas
             // 

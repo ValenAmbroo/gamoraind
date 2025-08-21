@@ -97,7 +97,7 @@ namespace Gamora_Indumentaria
             // Limpiar campos - usar DataSource = null para limpiar ComboBox con DataSource
             cboTalle.DataSource = null;
             cboTalle.Items.Clear();
-            txtSabor.Text = "";
+            // txtSabor eliminado
 
             // Mostrar/ocultar campos según la categoría
             bool tieneCategoria = categoriaSeleccionada != null;
@@ -111,8 +111,8 @@ namespace Gamora_Indumentaria
                 lblTalle.Visible = esTalleVisible;
                 cboTalle.Visible = esTalleVisible;
 
-                lblSabor.Visible = esVaper;
-                txtSabor.Visible = esVaper;
+                // El campo Sabor ya no se utiliza: el sabor se ingresa dentro del Nombre del producto
+                // lblSabor / txtSabor eliminados
 
                 // Cargar talles si la categoría los tiene
                 if (esTalleVisible)
@@ -120,11 +120,7 @@ namespace Gamora_Indumentaria
                     CargarTallesPorCategoria(categoriaSeleccionada.Id);
                 }
 
-                if (esVaper)
-                {
-                    CargarSaboresVaper();
-                    ConfigurarAutocompleteSabor();
-                }
+                // Se omite carga de sabores/autocomplete porque sabor va en el nombre
             }
         }
 
@@ -170,8 +166,8 @@ namespace Gamora_Indumentaria
                     CodigoBarra = string.IsNullOrWhiteSpace(txtCodigoBarra.Text) ? null : txtCodigoBarra.Text.Trim(),
                     TalleId = categoriaSeleccionada.TieneTalle && cboTalle.SelectedValue != null ?
                              (int?)cboTalle.SelectedValue : null,
-                    Sabor = EsCategoriaVaper(categoriaSeleccionada) && !string.IsNullOrWhiteSpace(txtSabor.Text) ?
-                           txtSabor.Text.Trim() : null,
+                    // Sabor no se guarda por separado (va incluido en Nombre)
+                    Sabor = null,
                     Cantidad = (int)nudCantidad.Value,
                     PrecioVenta = string.IsNullOrWhiteSpace(txtPrecio.Text) ? null :
                                  (decimal?)Convert.ToDecimal(txtPrecio.Text)
@@ -193,41 +189,7 @@ namespace Gamora_Indumentaria
             }
         }
 
-        private void CargarSaboresVaper()
-        {
-            try
-            {
-                string q = "SELECT DISTINCT Sabor FROM Inventario WHERE Sabor IS NOT NULL AND LTRIM(RTRIM(Sabor)) <> '' ORDER BY Sabor";
-                DataTable dt = DatabaseManager.ExecuteQuery(q);
-                List<string> sabores = new List<string>();
-                foreach (DataRow r in dt.Rows)
-                {
-                    sabores.Add(r["Sabor"].ToString());
-                }
-                // Si existe un ComboBox cboSabor lo llenamos; si solo TextBox, usamos AutoComplete
-                if (this.Controls.Find("cboSabor", true).FirstOrDefault() is ComboBox cboSabor)
-                {
-                    cboSabor.Items.Clear();
-                    cboSabor.Items.AddRange(sabores.ToArray());
-                }
-                saboresVaper = sabores;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Error cargando sabores: " + ex.Message);
-            }
-        }
-
-        private List<string> saboresVaper = new List<string>();
-        private void ConfigurarAutocompleteSabor()
-        {
-            if (txtSabor == null) return;
-            var source = new AutoCompleteStringCollection();
-            source.AddRange(saboresVaper.ToArray());
-            txtSabor.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            txtSabor.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-            txtSabor.AutoCompleteCustomSource = source;
-        }
+        // Métodos de sabores eliminados: el sabor se ingresa directamente en el nombre del producto para Vapers
 
         /// <summary>
         /// Valida que todos los campos requeridos estén completos
@@ -250,10 +212,7 @@ namespace Gamora_Indumentaria
                 SetErr(cboTalle, "Seleccione un talle");
             }
 
-            if (EsCategoriaVaper(categoriaSeleccionada) && string.IsNullOrWhiteSpace(txtSabor.Text))
-            {
-                SetErr(txtSabor, "Sabor requerido");
-            }
+            // Validación de sabor eliminada (el sabor se incorpora al nombre)
 
             if (nudCantidad.Value <= 0)
             {
@@ -304,7 +263,7 @@ namespace Gamora_Indumentaria
                 }
             }
             // Si hay algún error marcado retornar false
-            bool hayErrores = new Control[] { cboCategoria, txtNombre, cboTalle, txtSabor, nudCantidad, txtPrecio, txtPrecioCosto }
+            bool hayErrores = new Control[] { cboCategoria, txtNombre, cboTalle, nudCantidad, txtPrecio, txtPrecioCosto }
                 .Any(c => c != null && err.GetError(c) != string.Empty);
             return !hayErrores;
         }
@@ -317,7 +276,7 @@ namespace Gamora_Indumentaria
             txtNombre.Text = "";
             txtDescripcion.Text = "";
             txtCodigoBarra.Text = "";
-            txtSabor.Text = "";
+            // txtSabor eliminado
             txtPrecio.Text = "";
             txtPrecioCosto.Text = "";
             nudCantidad.Value = 1;

@@ -199,6 +199,84 @@ namespace Gamora_Indumentaria.Data
             DatabaseManager.ExecuteNonQuery(query, new SqlParameter("@Id", inventarioId));
         }
 
+        /// <summary>
+        /// Obtiene un producto por su Id
+        /// </summary>
+        public ProductoInventario ObtenerProductoPorId(int id)
+        {
+            string query = @"SELECT TOP 1 * FROM Inventario WHERE Id = @Id";
+            DataTable dt = DatabaseManager.ExecuteQuery(query, new SqlParameter("@Id", id));
+            if (dt.Rows.Count == 0) return null;
+            DataRow r = dt.Rows[0];
+            return new ProductoInventario
+            {
+                Id = id,
+                CategoriaId = Convert.ToInt32(r["CategoriaId"]),
+                Nombre = r["Nombre"].ToString(),
+                Descripcion = r["Descripcion"] == DBNull.Value ? null : r["Descripcion"].ToString(),
+                CodigoBarra = r.Table.Columns.Contains("CodigoBarras") && r["CodigoBarras"] != DBNull.Value ? r["CodigoBarras"].ToString() : null,
+                TalleId = r.Table.Columns.Contains("TalleId") && r["TalleId"] != DBNull.Value ? (int?)Convert.ToInt32(r["TalleId"]) : null,
+                Sabor = r.Table.Columns.Contains("Sabor") && r["Sabor"] != DBNull.Value ? r["Sabor"].ToString() : null,
+                Cantidad = r.Table.Columns.Contains("Stock") ? Convert.ToInt32(r["Stock"]) : 0,
+                PrecioVenta = r.Table.Columns.Contains("PrecioVenta") ? (r["PrecioVenta"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(r["PrecioVenta"]))
+                              : (r.Table.Columns.Contains("Precio") ? (decimal?)Convert.ToDecimal(r["Precio"]) : null),
+                PrecioCosto = r.Table.Columns.Contains("PrecioCompra") && r["PrecioCompra"] != DBNull.Value ? (decimal?)Convert.ToDecimal(r["PrecioCompra"]) : null,
+                FechaCreacion = r.Table.Columns.Contains("FechaCreacion") && r["FechaCreacion"] != DBNull.Value ? Convert.ToDateTime(r["FechaCreacion"]) : DateTime.MinValue,
+                FechaModificacion = r.Table.Columns.Contains("FechaModificacion") && r["FechaModificacion"] != DBNull.Value ? Convert.ToDateTime(r["FechaModificacion"]) : DateTime.MinValue,
+                Activo = r.Table.Columns.Contains("Activo") && r["Activo"] != DBNull.Value ? Convert.ToBoolean(r["Activo"]) : true
+            };
+        }
+
+        /// <summary>
+        /// Actualiza un producto (sin afectar stock si no se pasa cambio explícito)
+        /// </summary>
+        public void ActualizarProducto(ProductoInventario producto, bool actualizarStock = true)
+        {
+            // Construimos query adaptando a columnas existentes: algunos esquemas usan PrecioVenta/PrecioCompra, otros Precio
+            bool tienePrecioVenta = DatabaseManager.ColumnExists("Inventario", "PrecioVenta");
+            bool tienePrecioCompra = DatabaseManager.ColumnExists("Inventario", "PrecioCompra");
+            bool tienePrecioSimple = DatabaseManager.ColumnExists("Inventario", "Precio");
+            bool tieneSabor = DatabaseManager.ColumnExists("Inventario", "Sabor");
+            bool tieneTalle = DatabaseManager.ColumnExists("Inventario", "TalleId");
+
+            var setParts = new List<string> {
+                "CategoriaId = @CategoriaId",
+                "Nombre = @Nombre",
+                "Descripcion = @Descripcion",
+                "CodigoBarras = @CodigoBarras"
+            };
+            if (tieneTalle) setParts.Add("TalleId = @TalleId");
+            if (tieneSabor) setParts.Add("Sabor = @Sabor");
+            if (actualizarStock) setParts.Add("Stock = @Stock");
+            if (tienePrecioVenta) setParts.Add("PrecioVenta = @PrecioVenta");
+            if (tienePrecioCompra) setParts.Add("PrecioCompra = @PrecioCompra");
+            if (tienePrecioSimple) setParts.Add("Precio = @PrecioSimple");
+            setParts.Add("FechaModificacion = GETDATE()");
+
+            string query = "UPDATE Inventario SET " + string.Join(", ", setParts) + " WHERE Id = @Id";
+
+            var parametros = new List<SqlParameter>
+            {
+                new SqlParameter("@Id", producto.Id),
+                new SqlParameter("@CategoriaId", producto.CategoriaId),
+                new SqlParameter("@Nombre", producto.Nombre),
+                new SqlParameter("@Descripcion", (object)producto.Descripcion ?? DBNull.Value),
+                new SqlParameter("@CodigoBarras", (object)producto.CodigoBarra ?? DBNull.Value)
+            };
+            if (tieneTalle) parametros.Add(new SqlParameter("@TalleId", (object)producto.TalleId ?? DBNull.Value));
+            if (tieneSabor) parametros.Add(new SqlParameter("@Sabor", (object)producto.Sabor ?? DBNull.Value));
+            if (actualizarStock) parametros.Add(new SqlParameter("@Stock", producto.Cantidad));
+            if (tienePrecioVenta) parametros.Add(new SqlParameter("@PrecioVenta", (object)producto.PrecioVenta ?? DBNull.Value));
+            if (tienePrecioCompra) parametros.Add(new SqlParameter("@PrecioCompra", (object)producto.PrecioCosto ?? DBNull.Value));
+            if (tienePrecioSimple)
+            {
+                decimal? precioSimple = producto.PrecioVenta ?? producto.PrecioCosto; // fallback
+                parametros.Add(new SqlParameter("@PrecioSimple", (object)precioSimple ?? DBNull.Value));
+            }
+
+            DatabaseManager.ExecuteNonQuery(query, parametros.ToArray());
+        }
+
         #endregion
     }
 

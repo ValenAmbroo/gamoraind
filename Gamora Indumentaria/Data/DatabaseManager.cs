@@ -31,6 +31,20 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
+        /// Verifica si una columna existe en una tabla dada.
+        /// </summary>
+        public static bool ColumnExists(string tableName, string columnName)
+        {
+            try
+            {
+                string q = @"SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = @t AND COLUMN_NAME = @c";
+                var dt = ExecuteQuery(q, new SqlParameter("@t", tableName), new SqlParameter("@c", columnName));
+                return dt.Rows.Count > 0;
+            }
+            catch { return false; }
+        }
+
+        /// <summary>
         /// Inicializa la base de datos completa (crea BD, tablas y datos de ejemplo)
         /// </summary>
         public static void InitializeDatabase()

@@ -16,6 +16,7 @@ namespace Gamora_Indumentaria
         public HistorialVentas()
         {
             InitializeComponent();
+            ApplyStyles();
             this.Load += HistorialVentas_Load;
             this.txtBuscar.GotFocus += (s, e) => RemovePlaceholder();
             this.txtBuscar.LostFocus += (s, e) => ApplyPlaceholder();
@@ -391,12 +392,142 @@ namespace Gamora_Indumentaria
 
         }
 
-      
+
 
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();
 
+        }
+
+        private void ApplyStyles()
+        {
+            // Colores y fuentes base
+            Color panelTopColor = Color.White;
+            Color bg = Color.FromArgb(245, 247, 250);
+            Color label = Color.FromArgb(55, 71, 90);
+            Color accent = Color.FromArgb(52, 152, 219);
+            Color success = Color.FromArgb(46, 204, 113);
+            Color danger = Color.FromArgb(231, 76, 60);
+            Color neutralBtn = Color.FromArgb(149, 165, 166);
+            this.BackColor = bg;
+
+            // Panel superior si existe (panel1 en este formulario)
+            if (panel1 != null)
+            {
+                panel1.BackColor = panelTopColor;
+                panel1.Padding = new Padding(10, 6, 10, 4);
+                panel1.Paint += (s, e) =>
+                {
+                    using (var p = new Pen(Color.FromArgb(230, 236, 240)))
+                        e.Graphics.DrawLine(p, 0, panel1.Height - 1, panel1.Width, panel1.Height - 1);
+                };
+            }
+            if (lblTitulo != null)
+            {
+                lblTitulo.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+                lblTitulo.ForeColor = Color.FromArgb(40, 40, 40);
+            }
+
+            // Labels estándar
+            foreach (var ctrl in this.Controls)
+            {
+                if (ctrl is Label l && l != lblTitulo)
+                {
+                    l.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                    l.ForeColor = label;
+                }
+            }
+
+            // TextBox búsqueda
+            if (txtBuscar != null)
+            {
+                txtBuscar.BorderStyle = BorderStyle.FixedSingle;
+                txtBuscar.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+                txtBuscar.BackColor = Color.White;
+                txtBuscar.ForeColor = Color.Black;
+            }
+
+            // DateTimePickers
+            foreach (var dtp in new[] { dtpDesde, dtpHasta })
+            {
+                if (dtp == null) continue;
+                dtp.CalendarMonthBackground = Color.White;
+                dtp.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            }
+
+            // ComboBox método
+            if (cboMetodo != null)
+            {
+                cboMetodo.FlatStyle = FlatStyle.Flat;
+                cboMetodo.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            }
+
+            // Botones comunes
+            void StyleButton(Button b, Color back)
+            {
+                if (b == null) return;
+                b.FlatStyle = FlatStyle.Flat;
+                b.FlatAppearance.BorderSize = 0;
+                b.BackColor = back;
+                b.ForeColor = Color.White;
+                b.Font = new Font("Segoe UI", 9F, FontStyle.Bold); // SemiBold no existe en .NET Framework clásico
+                b.Cursor = Cursors.Hand;
+                b.Padding = new Padding(6, 3, 6, 3);
+            }
+            StyleButton(btnFiltrar, accent);
+            StyleButton(btnLimpiar, neutralBtn);
+            StyleButton(btnExportar, success);
+            StyleButton(btnDensidad, Color.FromArgb(52, 73, 94));
+            StyleButton(button1, danger);
+
+            // Hovers
+            if (btnFiltrar != null)
+            {
+                btnFiltrar.MouseEnter += (s, e) => btnFiltrar.BackColor = Color.FromArgb(41, 128, 185);
+                btnFiltrar.MouseLeave += (s, e) => btnFiltrar.BackColor = accent;
+            }
+            if (btnLimpiar != null)
+            {
+                btnLimpiar.MouseEnter += (s, e) => btnLimpiar.BackColor = Color.FromArgb(127, 140, 141);
+                btnLimpiar.MouseLeave += (s, e) => btnLimpiar.BackColor = neutralBtn;
+            }
+            if (btnExportar != null)
+            {
+                btnExportar.MouseEnter += (s, e) => btnExportar.BackColor = Color.FromArgb(39, 174, 96);
+                btnExportar.MouseLeave += (s, e) => btnExportar.BackColor = success;
+            }
+            if (button1 != null)
+            {
+                button1.MouseEnter += (s, e) => button1.BackColor = Color.FromArgb(192, 57, 43);
+                button1.MouseLeave += (s, e) => button1.BackColor = danger;
+            }
+
+            // DataGridViews estilo
+            void StyleGrid(DataGridView g)
+            {
+                if (g == null) return;
+                g.BackgroundColor = Color.White;
+                g.BorderStyle = BorderStyle.None;
+                g.EnableHeadersVisualStyles = false;
+                g.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.None;
+                g.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(245, 245, 245);
+                g.ColumnHeadersDefaultCellStyle.ForeColor = label;
+                g.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+                g.DefaultCellStyle.BackColor = Color.White;
+                g.DefaultCellStyle.SelectionBackColor = Color.FromArgb(210, 230, 255);
+                g.DefaultCellStyle.SelectionForeColor = Color.Black;
+                g.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(248, 250, 252);
+                g.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+                g.GridColor = Color.FromArgb(230, 236, 240);
+                g.RowHeadersVisible = false;
+            }
+            StyleGrid(dgvVentas);
+            StyleGrid(dgvDetalles);
+
+            // Tooltip densidad
+            if (toolTip1 != null && btnDensidad != null)
+                toolTip1.SetToolTip(btnDensidad, "Modo compacto (Ctrl+D)");
         }
     }
 }

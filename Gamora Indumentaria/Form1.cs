@@ -185,7 +185,7 @@ namespace Gamora_Indumentaria
 
         private void button5_Click(object sender, EventArgs e)
         {
-            CargarFormularioHijo(new inventario());
+            CargarFormularioHijo(new inventario(perfilUsuario == "administrador"));
         }
 
         private void panel6_Paint(object sender, PaintEventArgs e)
@@ -213,7 +213,7 @@ namespace Gamora_Indumentaria
 
         private void button6_Click(object sender, EventArgs e)
         {
-            CargarFormularioHijo(new inventario());
+            CargarFormularioHijo(new inventario(perfilUsuario == "administrador"));
         }
 
         private void panel7_Paint(object sender, PaintEventArgs e)
@@ -257,7 +257,7 @@ namespace Gamora_Indumentaria
             {
                 // Mostrar solo los botones necesarios para empleados
                 button5.Visible = true; // Ejemplo: Ventas
-                button6.Visible = true; // Ejemplo: Perfil
+               
                 btnsubprincipal.Visible = true;
                 // Ocultar el resto
                 btnsubadministracion.Visible = false;
@@ -271,7 +271,7 @@ namespace Gamora_Indumentaria
             {
                 // Mostrar todos los botones
                 button5.Visible = true;
-                button6.Visible = true;
+                
                 btnsubadministracion.Visible = true;
                 btnsubprincipal.Visible = true;
                 button10.Visible = true;
@@ -415,7 +415,7 @@ namespace Gamora_Indumentaria
         {
             try
             {
-                CargarFormularioHijo(new inventario());
+                CargarFormularioHijo(new inventario(perfilUsuario == "administrador"));
             }
             catch (Exception ex)
             {
@@ -440,6 +440,19 @@ namespace Gamora_Indumentaria
             try
             {
                 CargarFormularioHijo(new CierreCaja());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error al abrir Cierre De Caja: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void button7_Click_1(object sender, EventArgs e)
+        {
+            try
+            {
+                // Abrir formulario de edición con selector integrado
+                CargarFormularioHijo(new editarproducto());
             }
             catch (Exception ex)
             {

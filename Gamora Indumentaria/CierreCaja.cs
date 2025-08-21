@@ -23,8 +23,7 @@ namespace Gamora_Indumentaria
             dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "VentaId", HeaderText = "Venta" });
             dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Hora", HeaderText = "Hora" });
             dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Total", HeaderText = "Total", DefaultCellStyle = { Format = "C2" } });
-            dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Costo", HeaderText = "Costo", DefaultCellStyle = { Format = "C2" } });
-            dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Ganancia", HeaderText = "Ganancia", DefaultCellStyle = { Format = "C2" } });
+            // Columnas de costo y ganancia removidas para no mostrar precio de costo
             dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Items", HeaderText = "Items" });
             dgvDetalles.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Metodo", HeaderText = "Pago" });
             dgvDetalles.EnableHeadersVisualStyles = false;
@@ -76,18 +75,14 @@ namespace Gamora_Indumentaria
                 VentaId = g.Key,
                 Hora = g.Min(r => r.Field<DateTime>("FechaVenta")).ToString("HH:mm"),
                 Total = g.First().Field<decimal>("Total"),
-                Costo = g.Sum(r => r.Field<decimal>("CostoUnitario") * r.Field<int>("Cantidad")),
-                Ganancia = g.First().Field<decimal>("Total") - g.Sum(r => r.Field<decimal>("CostoUnitario") * r.Field<int>("Cantidad")),
                 Items = g.Sum(r => r.Field<int>("Cantidad")),
                 Metodo = g.First().Field<string>("MetodoPago")
             }).OrderBy(x => x.Hora).ToList();
             dgvDetalles.DataSource = agrupado;
             decimal total = agrupado.Sum(a => a.Total);
-            decimal costo = agrupado.Sum(a => a.Costo);
-            decimal gan = agrupado.Sum(a => a.Ganancia);
             int ventas = agrupado.Count;
             int items = agrupado.Sum(a => a.Items);
-            lblResumen.Text = $"Ventas: {ventas} | Items: {items} | Total: {total:C2} | Costo: {costo:C2} | Ganancia: {gan:C2}";
+            lblResumen.Text = $"Ventas: {ventas} | Items: {items} | Total: {total:C2}";
             if (trasCierre) lblResumen.Text += " (Cierre registrado)";
         }
 
