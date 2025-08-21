@@ -29,7 +29,15 @@ namespace Gamora_Indumentaria
             this.FormBorderStyle = FormBorderStyle.None; // Quitar borde si querés
 
             perfilUsuario = perfil; // ← ahora sí existe la variable "perfil"
-         
+            // Ocultar menú de administración si el usuario es empleado
+            if (perfilUsuario != null && perfilUsuario.ToLower() == "empleado")
+            {
+                if (btnAdministracion != null)
+                    btnAdministracion.Visible = false;
+                if (panelClientes != null)
+                    panelClientes.Visible = false;
+            }
+
 
             // Crear panel de contenido principal
             CrearPanelContenido();
@@ -37,9 +45,9 @@ namespace Gamora_Indumentaria
             // Configurar eventos para arrastrar el formulario desde panel1
             ConfigurarArrastre();
 
-         
 
-         
+
+
         }
 
         /// <summary>
@@ -181,40 +189,40 @@ namespace Gamora_Indumentaria
             loginForm.FormClosed += (s, args) => Application.Exit();
         }
 
-   
 
-      
 
-      
-       
+
+
+
+
 
         private void lblHora_Click(object sender, EventArgs e)
         {
 
         }
 
-       
-     
 
-      
+
+
+
 
         private void button4_Click(object sender, EventArgs e)
         {
             CargarFormularioHijo(new ventas());
         }
 
-      
-      
 
-       
 
-     
 
-      
 
-      
 
-       
+
+
+
+
+
+
+
 
         private void RegistrarMouseDownRecursivo(Control root)
         {
@@ -229,8 +237,8 @@ namespace Gamora_Indumentaria
 
         private void GlobalMouseDownCerrarSubmenus(object sender, MouseEventArgs e)
         {
-           
-        
+
+
         }
 
         private bool PuntoDentroDe(Control ctrl, Point screenPoint)
@@ -240,17 +248,17 @@ namespace Gamora_Indumentaria
             return local.X >= 0 && local.Y >= 0 && local.X < ctrl.Width && local.Y < ctrl.Height;
         }
 
-      
 
-     
 
-      
 
-      
 
-       
 
-      
+
+
+
+
+
+
         private void btnConsultas_Click(object sender, EventArgs e)
         {
             try
