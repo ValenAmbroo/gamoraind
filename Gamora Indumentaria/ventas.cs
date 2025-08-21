@@ -473,13 +473,6 @@ namespace Gamora_Indumentaria
             this.button3 = new System.Windows.Forms.Button();
             this.lblTitulo1 = new System.Windows.Forms.GroupBox();
             this.btnAgregar1 = new System.Windows.Forms.Button();
-            this.txtCodigoBarras1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lblUltimoCodigo = new System.Windows.Forms.Label();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.dgvCarrito1 = new System.Windows.Forms.DataGridView();
             this.grpPago = new System.Windows.Forms.GroupBox();
             this.ProcesarVentabtn = new System.Windows.Forms.Button();
             this.chkImprimirTicket = new System.Windows.Forms.CheckBox();
@@ -487,13 +480,20 @@ namespace Gamora_Indumentaria
             this.cmbMetodoPago1 = new System.Windows.Forms.ComboBox();
             this.lblTotal = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.txtCodigoBarras1 = new System.Windows.Forms.TextBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button4 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.dgvCarrito1 = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblUltimoCodigo = new System.Windows.Forms.Label();
             this.panelTop = new System.Windows.Forms.Panel();
             this.btnCerrar = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.lblTitulo1.SuspendLayout();
+            this.grpPago.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito1)).BeginInit();
-            this.grpPago.SuspendLayout();
             this.panelTop.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -542,99 +542,6 @@ namespace Gamora_Indumentaria
             this.btnAgregar1.UseVisualStyleBackColor = false;
             this.btnAgregar1.Click += new System.EventHandler(this.btnAgregar1_Click);
             // 
-            // txtCodigoBarras1
-            // 
-            this.txtCodigoBarras1.Location = new System.Drawing.Point(201, 32);
-            this.txtCodigoBarras1.Name = "txtCodigoBarras1";
-            this.txtCodigoBarras1.Size = new System.Drawing.Size(219, 35);
-            this.txtCodigoBarras1.TabIndex = 1;
-         
-            this.txtCodigoBarras1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtCodigoBarras1_KeyDown);
-            this.txtCodigoBarras1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCodigoBarras1_KeyPress);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(22, 38);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(185, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Código de barras:";
-          
-         
-
-           
-            // lblUltimoCodigo
-            // 
-            this.lblUltimoCodigo.AutoSize = true;
-            this.lblUltimoCodigo.Location = new System.Drawing.Point(548, 35);
-            this.lblUltimoCodigo.Name = "lblUltimoCodigo";
-            this.lblUltimoCodigo.Size = new System.Drawing.Size(213, 29);
-            this.lblUltimoCodigo.TabIndex = 5;
-            this.lblUltimoCodigo.Text = "Último: (ninguno)";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.button4);
-            this.groupBox2.Controls.Add(this.button2);
-            this.groupBox2.Controls.Add(this.dgvCarrito1);
-            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(25, 72);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1141, 255);
-            this.groupBox2.TabIndex = 4;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Carrito de compras";
-            // 
-            // button4
-            // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button4.BackColor = System.Drawing.Color.Orange;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.button4.Location = new System.Drawing.Point(178, 216);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(131, 27);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "Limpiar Todo";
-            this.button4.UseVisualStyleBackColor = false;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button2.BackColor = System.Drawing.Color.Firebrick;
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.ForeColor = System.Drawing.SystemColors.ButtonFace;
-            this.button2.Location = new System.Drawing.Point(25, 216);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(135, 27);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "- Eliminar Item";
-            this.button2.UseVisualStyleBackColor = false;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // dgvCarrito1
-            // 
-            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCarrito1.Location = new System.Drawing.Point(25, 42);
-            this.dgvCarrito1.Name = "dgvCarrito1";
-            this.dgvCarrito1.Size = new System.Drawing.Size(1084, 168);
-            this.dgvCarrito1.RowHeadersWidth = 62;
-            this.dgvCarrito1.Size = new System.Drawing.Size(576, 206);
-            this.dgvCarrito1.TabIndex = 0;
-            this.dgvCarrito1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
-            this.dgvCarrito1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
-            this.dgvCarrito1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvCarrito_EditingControlShowing);
-            // 
             // grpPago
             // 
             this.grpPago.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -672,7 +579,7 @@ namespace Gamora_Indumentaria
             this.chkImprimirTicket.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkImprimirTicket.Location = new System.Drawing.Point(6, 102);
             this.chkImprimirTicket.Name = "chkImprimirTicket";
-            this.chkImprimirTicket.Size = new System.Drawing.Size(204, 33);
+            this.chkImprimirTicket.Size = new System.Drawing.Size(141, 24);
             this.chkImprimirTicket.TabIndex = 6;
             this.chkImprimirTicket.Text = "Imprimir ticket";
             this.chkImprimirTicket.UseVisualStyleBackColor = true;
@@ -694,7 +601,7 @@ namespace Gamora_Indumentaria
             this.cmbMetodoPago1.FormattingEnabled = true;
             this.cmbMetodoPago1.Location = new System.Drawing.Point(233, 58);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
-            this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 37);
+            this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 28);
             this.cmbMetodoPago1.TabIndex = 5;
             // 
             // lblTotal
@@ -704,7 +611,7 @@ namespace Gamora_Indumentaria
             this.lblTotal.ForeColor = System.Drawing.Color.Green;
             this.lblTotal.Location = new System.Drawing.Point(75, 62);
             this.lblTotal.Name = "lblTotal";
-            this.lblTotal.Size = new System.Drawing.Size(91, 32);
+            this.lblTotal.Size = new System.Drawing.Size(60, 24);
             this.lblTotal.TabIndex = 4;
             this.lblTotal.Text = "$0,00";
             // 
@@ -715,9 +622,97 @@ namespace Gamora_Indumentaria
             this.label3.ForeColor = System.Drawing.Color.Green;
             this.label3.Location = new System.Drawing.Point(6, 66);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(71, 26);
+            this.label3.Size = new System.Drawing.Size(51, 18);
             this.label3.TabIndex = 3;
             this.label3.Text = "Total:";
+            // 
+            // txtCodigoBarras1
+            // 
+            this.txtCodigoBarras1.Location = new System.Drawing.Point(201, 32);
+            this.txtCodigoBarras1.Name = "txtCodigoBarras1";
+            this.txtCodigoBarras1.Size = new System.Drawing.Size(219, 26);
+            this.txtCodigoBarras1.TabIndex = 1;
+            this.txtCodigoBarras1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtCodigoBarras1_KeyDown);
+            this.txtCodigoBarras1.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtCodigoBarras1_KeyPress);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.button4);
+            this.groupBox2.Controls.Add(this.button2);
+            this.groupBox2.Controls.Add(this.dgvCarrito1);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox2.Location = new System.Drawing.Point(25, 72);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(1141, 294);
+            this.groupBox2.TabIndex = 4;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Carrito de compras";
+            // 
+            // button4
+            // 
+            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button4.BackColor = System.Drawing.Color.Orange;
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.button4.Location = new System.Drawing.Point(25, 261);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(131, 27);
+            this.button4.TabIndex = 4;
+            this.button4.Text = "Limpiar Todo";
+            this.button4.UseVisualStyleBackColor = false;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button2.BackColor = System.Drawing.Color.Firebrick;
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.SystemColors.ButtonFace;
+            this.button2.Location = new System.Drawing.Point(176, 261);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(135, 27);
+            this.button2.TabIndex = 3;
+            this.button2.Text = "- Eliminar Item";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // dgvCarrito1
+            // 
+            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvCarrito1.Location = new System.Drawing.Point(25, 42);
+            this.dgvCarrito1.Name = "dgvCarrito1";
+            this.dgvCarrito1.RowHeadersWidth = 62;
+            this.dgvCarrito1.Size = new System.Drawing.Size(576, 207);
+            this.dgvCarrito1.TabIndex = 0;
+            this.dgvCarrito1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellDoubleClick);
+            this.dgvCarrito1.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCarrito_CellEndEdit);
+            this.dgvCarrito1.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgvCarrito_EditingControlShowing);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(22, 38);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(138, 17);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Código de barras:";
+            // 
+            // lblUltimoCodigo
+            // 
+            this.lblUltimoCodigo.AutoSize = true;
+            this.lblUltimoCodigo.Location = new System.Drawing.Point(548, 35);
+            this.lblUltimoCodigo.Name = "lblUltimoCodigo";
+            this.lblUltimoCodigo.Size = new System.Drawing.Size(146, 20);
+            this.lblUltimoCodigo.TabIndex = 5;
+            this.lblUltimoCodigo.Text = "Último: (ninguno)";
             // 
             // panelTop
             // 
@@ -752,7 +747,7 @@ namespace Gamora_Indumentaria
             this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.lblTitulo.Location = new System.Drawing.Point(12, 8);
             this.lblTitulo.Name = "lblTitulo";
-            this.lblTitulo.Size = new System.Drawing.Size(92, 38);
+            this.lblTitulo.Size = new System.Drawing.Size(63, 25);
             this.lblTitulo.TabIndex = 2;
             this.lblTitulo.Text = "Venta";
             // 
@@ -766,10 +761,10 @@ namespace Gamora_Indumentaria
             this.Load += new System.EventHandler(this.ventas_Load_1);
             this.lblTitulo1.ResumeLayout(false);
             this.lblTitulo1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito1)).EndInit();
             this.grpPago.ResumeLayout(false);
             this.grpPago.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dgvCarrito1)).EndInit();
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
             this.ResumeLayout(false);
