@@ -109,7 +109,7 @@ namespace Gamora_Indumentaria
             if (string.IsNullOrEmpty(codigoBarras))
             {
                 //MessageBox.Show("Ingrese un código de barras", "Atención",
-                 //   MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //   MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -132,19 +132,57 @@ namespace Gamora_Indumentaria
 
                 if (dt.Rows.Count > 0)
                 {
-                    DataRow row = dt.Rows[0];
-                    var producto = new Producto
+                    if (dt.Rows.Count == 1)
                     {
-                        Id = Convert.ToInt32(row["Id"]),
-                        Nombre = row["Nombre"].ToString(),
-                        Precio = Convert.ToDecimal(row["Precio"]),
-                        Stock = Convert.ToInt32(row["Stock"]),
-                        Categoria = row["Categoria"].ToString()
-                    };
+                        DataRow row = dt.Rows[0];
+                        var producto = new Producto
+                        {
+                            Id = Convert.ToInt32(row["Id"]),
+                            Nombre = row["Nombre"].ToString(),
+                            Precio = Convert.ToDecimal(row["Precio"]),
+                            Stock = Convert.ToInt32(row["Stock"]),
+                            Categoria = row["Categoria"].ToString(),
+                            CodigoBarras = codigoBarras
+                        };
 
-                    AgregarAlCarrito(producto);
-                    txtCodigoBarras1.Clear();
-                    txtCodigoBarras1.Focus();
+                        AgregarAlCarrito(producto);
+                        txtCodigoBarras1.Clear();
+                        txtCodigoBarras1.Focus();
+                    }
+                    else
+                    {
+                        // Construir lista de productos y pedir selección al usuario
+                        var lista = new System.Collections.Generic.List<Producto>();
+                        foreach (System.Data.DataRow row in dt.Rows)
+                        {
+                            lista.Add(new Producto
+                            {
+                                Id = Convert.ToInt32(row["Id"]),
+                                Nombre = row["Nombre"].ToString(),
+                                Precio = Convert.ToDecimal(row["Precio"]),
+                                Stock = Convert.ToInt32(row["Stock"]),
+                                Categoria = row["Categoria"].ToString(),
+                                CodigoBarras = codigoBarras
+                            });
+                        }
+
+                        using (var f = new SeleccionarProductoForm(lista))
+                        {
+                            var dr = f.ShowDialog(this);
+                            if (dr == System.Windows.Forms.DialogResult.OK && f.ProductoSeleccionado != null)
+                            {
+                                AgregarAlCarrito(f.ProductoSeleccionado);
+                                txtCodigoBarras1.Clear();
+                                txtCodigoBarras1.Focus();
+                            }
+                            else
+                            {
+                                // Si el usuario cancela, volver a seleccionar el textbox
+                                txtCodigoBarras1.SelectAll();
+                                txtCodigoBarras1.Focus();
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -512,8 +550,8 @@ namespace Gamora_Indumentaria
             // 
             // lblTitulo1
             // 
-            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitulo1.Controls.Add(this.btnAgregar1);
             this.lblTitulo1.Controls.Add(this.grpPago);
@@ -637,8 +675,8 @@ namespace Gamora_Indumentaria
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.button2);
@@ -681,8 +719,8 @@ namespace Gamora_Indumentaria
             // 
             // dgvCarrito1
             // 
-            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -877,7 +915,7 @@ namespace Gamora_Indumentaria
         // Captura global de tecla para escáner cuando no se está en el textbox
         private void Ventas_KeyPress_Global(object sender, KeyPressEventArgs e)
         {
-            
+
             // Si el foco está ya en el textbox dejamos que el flujo normal actúe
             if (txtCodigoBarras1 != null && txtCodigoBarras1.Focused) return;
 
@@ -1061,12 +1099,12 @@ namespace Gamora_Indumentaria
             this.Close();
         }
 
-     
+
         private void txtCodigoBarras1_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-       
+
     }
 }
