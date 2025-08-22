@@ -55,6 +55,25 @@ namespace Gamora_Indumentaria.Data
             return categorias;
         }
 
+        /// <summary>
+        /// Agrega una nueva categoría y devuelve su Id (SCOPE_IDENTITY)
+        /// </summary>
+        public int AgregarCategoria(string nombre)
+        {
+            if (string.IsNullOrWhiteSpace(nombre)) throw new ArgumentException("El nombre de la categoría no puede estar vacío.", nameof(nombre));
+
+            try
+            {
+                string query = @"INSERT INTO Categorias (Nombre) VALUES (@Nombre); SELECT SCOPE_IDENTITY();";
+                object result = DatabaseManager.ExecuteScalar(query, new SqlParameter("@Nombre", nombre.Trim()));
+                return Convert.ToInt32(result);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error al agregar categoría: {0}", ex.Message), ex);
+            }
+        }
+
         // Determina si una categoría maneja talles (heurística basada en nombre)
         private bool EsCategoriaConTalle(string nombre)
         {

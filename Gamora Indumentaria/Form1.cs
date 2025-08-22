@@ -344,6 +344,12 @@ namespace Gamora_Indumentaria
         {
 
         }
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new agregarcategoria());
+
+        }
     }
 }
 

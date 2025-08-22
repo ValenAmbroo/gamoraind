@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="agregarpruducto.cs">
+  <Compile Include="agregarpruducto.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="agregarpruducto.Designer.cs">
@@ -126,6 +126,15 @@
     <Compile Include="editarproducto.Designer.cs">
       <DependentUpon>editarproducto.cs</DependentUpon>
     </Compile>
+    <Compile Include="agregarcategoria.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="agregarcategoria.Designer.cs">
+      <DependentUpon>agregarcategoria.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="agregarcategoria.resx">
+      <DependentUpon>agregarcategoria.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="agregarpruducto.resx">
       <DependentUpon>agregarpruducto.cs</DependentUpon>
     </EmbeddedResource>

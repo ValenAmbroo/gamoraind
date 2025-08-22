@@ -52,8 +52,9 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.button10 = new System.Windows.Forms.Button();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panelSideMenu.SuspendLayout();
             this.panelClientes.SuspendLayout();
@@ -161,6 +162,7 @@
             // panelClientes
             // 
             this.panelClientes.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(32)))), ((int)(((byte)(39)))));
+            this.panelClientes.Controls.Add(this.button4);
             this.panelClientes.Controls.Add(this.btnModificarProductos);
             this.panelClientes.Controls.Add(this.btnEstadisticaVenta);
             this.panelClientes.Controls.Add(this.btnEstadisticaInventario);
@@ -169,7 +171,7 @@
             this.panelClientes.Location = new System.Drawing.Point(0, 257);
             this.panelClientes.Margin = new System.Windows.Forms.Padding(1);
             this.panelClientes.Name = "panelClientes";
-            this.panelClientes.Size = new System.Drawing.Size(215, 163);
+            this.panelClientes.Size = new System.Drawing.Size(215, 195);
             this.panelClientes.TabIndex = 4;
             this.panelClientes.Paint += new System.Windows.Forms.PaintEventHandler(this.panelClientes_Paint);
             // 
@@ -392,6 +394,17 @@
             this.panel3.Size = new System.Drawing.Size(217, 734);
             this.panel3.TabIndex = 1;
             // 
+            // panel5
+            // 
+            this.panel5.Controls.Add(this.button10);
+            this.panel5.Controls.Add(this.panelSideMenu);
+            this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
+            this.panel5.Location = new System.Drawing.Point(0, 142);
+            this.panel5.Margin = new System.Windows.Forms.Padding(2);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(215, 592);
+            this.panel5.TabIndex = 2;
+            // 
             // button10
             // 
             this.button10.BackColor = System.Drawing.Color.DarkRed;
@@ -406,16 +419,22 @@
             this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
-            // panel5
+            // button4
             // 
-            this.panel5.Controls.Add(this.button10);
-            this.panel5.Controls.Add(this.panelSideMenu);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Left;
-            this.panel5.Location = new System.Drawing.Point(0, 142);
-            this.panel5.Margin = new System.Windows.Forms.Padding(2);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(215, 592);
-            this.panel5.TabIndex = 2;
+            this.button4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button4.FlatAppearance.BorderSize = 0;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.ForeColor = System.Drawing.Color.LightGray;
+            this.button4.Location = new System.Drawing.Point(0, 156);
+            this.button4.Margin = new System.Windows.Forms.Padding(1);
+            this.button4.Name = "button4";
+            this.button4.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.button4.Size = new System.Drawing.Size(215, 39);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "Agregar Categoria";
+            this.button4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // Form1
             // 
@@ -479,6 +498,7 @@
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Button button4;
     }
 }
 
