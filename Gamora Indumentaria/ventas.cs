@@ -990,6 +990,7 @@ namespace Gamora_Indumentaria
                         NombreProducto = i.NombreProducto,
                         PrecioUnitario = i.PrecioUnitario,
                         Cantidad = i.Cantidad,
+                        Descuento = i.Descuento,
                         Subtotal = i.Subtotal
                     }).ToList()
                 };
@@ -1046,17 +1047,27 @@ namespace Gamora_Indumentaria
             DrawCenter("DETALLE", fBold);
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
 
-            // Cada item centrado: Nombre xCant PUnit=Subtotal
+            // Cada item centrado: Nombre xCant PUnit (-Desc%) = Subtotal
+            decimal totalDescuento = 0m;
             foreach (var it in lastTicketData.Items)
             {
                 string nombre = it.NombreProducto.Trim();
                 if (nombre.Length > 22) nombre = nombre.Substring(0, 22);
-                string linea = $"{nombre} x{it.Cantidad} {it.PrecioUnitario:0.00}->{it.Subtotal:0.00}";
+                decimal bruto = it.PrecioUnitario * it.Cantidad;
+                decimal descuentoValor = Math.Round(bruto * (it.Descuento / 100m), 2);
+                totalDescuento += descuentoValor;
+                string descText = it.Descuento > 0 ? $" (-{it.Descuento:0.##}% {descuentoValor.ToString("C")})" : "";
+                string linea = $"{nombre} x{it.Cantidad} {it.PrecioUnitario.ToString("C")} {descText} = {it.Subtotal.ToString("C")}";
                 DrawCenter(linea, fNormal);
             }
             y += 2;
+            if (totalDescuento > 0)
+            {
+                DrawCenter($"Total descuento: {totalDescuento.ToString("C")}", fNormal);
+            }
+            y += 2;
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
-            string totalTxt = "TOTAL: " + lastTicketData.Total.ToString("0.00");
+            string totalTxt = "TOTAL: " + lastTicketData.Total.ToString("C");
             DrawCenter(totalTxt, fBold);
             y += 4;
             DrawCenter("Gracias por su compra", fNormal);
