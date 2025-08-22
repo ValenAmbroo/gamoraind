@@ -916,16 +916,21 @@ namespace Gamora_Indumentaria
         private void Ventas_KeyPress_Global(object sender, KeyPressEventArgs e)
         {
 
-            // Si el foco está ya en el textbox dejamos que el flujo normal actúe
-            if (txtCodigoBarras1 != null && txtCodigoBarras1.Focused) return;
+            // If user is actively typing in the barcode textbox or editing a grid cell (e.g. descuento), don't intercept
+            if ((txtCodigoBarras1 != null && txtCodigoBarras1.Focused)
+                || (descuentoEditor != null && descuentoEditor.Focused)
+                || (dgvCarrito1 != null && dgvCarrito1.IsCurrentCellInEditMode))
+            {
+                return;
+            }
 
-            // Caracter de control diferente de Enter: ignorar salvo que sea dígito/letra
+            // Character of control different from Enter: handle scanner input
             if (e.KeyChar == (char)Keys.Enter)
             {
                 if (scannerBuffer.Length > 0)
                 {
                     txtCodigoBarras1.Text = scannerBuffer.ToString();
-                    lblUltimoCodigo.Text = "Último: " + txtCodigoBarras1.Text;
+                    if (lblUltimoCodigo != null) lblUltimoCodigo.Text = "Último: " + txtCodigoBarras1.Text;
                     AgregarProductoPorCodigo();
                     scannerBuffer.Clear();
                     e.Handled = true;
@@ -933,16 +938,17 @@ namespace Gamora_Indumentaria
                 return;
             }
 
+            // Ignore other control keys
             if (char.IsControl(e.KeyChar)) return;
 
-            var now = DateTime.Now;
-            if ((now - lastScannerCharTime).TotalMilliseconds > SCAN_TIMEOUT_MS)
+            var now2 = DateTime.Now;
+            if ((now2 - lastScannerCharTime).TotalMilliseconds > SCAN_TIMEOUT_MS)
             {
                 scannerBuffer.Clear();
             }
-            lastScannerCharTime = now;
+            lastScannerCharTime = now2;
             scannerBuffer.Append(e.KeyChar);
-            e.Handled = true; // evitar que caiga en otros controles
+            e.Handled = true; // prevent falling through to other controls when treating input as scanner data
         }
 
         private void ConfigurarImpresion()
