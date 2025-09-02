@@ -73,5 +73,17 @@ namespace Gamora_Indumentaria
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // SeleccionarProductoForm
+            // 
+            this.ClientSize = new System.Drawing.Size(457, 343);
+            this.Name = "SeleccionarProductoForm";
+            this.ResumeLayout(false);
+
+        }
     }
 }

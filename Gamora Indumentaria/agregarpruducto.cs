@@ -28,10 +28,34 @@ namespace Gamora_Indumentaria
             InitializeComponent();
             inventarioDAL = new InventarioDAL();
             CargarCategorias();
+            // Suscribirse a eventos de aplicación para recargar categorías dinámicamente
+            AppEvents.CategoryAdded += OnCategoryAdded;
             // Activar vista previa de teclas para modo escáner
             this.KeyPreview = true;
             this.KeyPress += AgregarProducto_KeyPress_Global;
             InicializarErrorProviderYValidaciones();
+        }
+
+        private void OnCategoryAdded(int newCategoryId)
+        {
+            if (this.IsHandleCreated)
+            {
+                this.BeginInvoke(new Action(() =>
+                {
+                    // recargar categorías y seleccionar la nueva si existe
+                    var prev = cboCategoria.SelectedItem as Categoria;
+                    CargarCategorias();
+                    for (int i = 0; i < cboCategoria.Items.Count; i++)
+                    {
+                        var c = (Categoria)cboCategoria.Items[i];
+                        if (c.Id == newCategoryId)
+                        {
+                            cboCategoria.SelectedIndex = i;
+                            return;
+                        }
+                    }
+                }));
+            }
         }
 
         public agregarpruducto(string nombreCategoria) : this()
@@ -95,8 +119,7 @@ namespace Gamora_Indumentaria
         private void ActualizarCamposPorCategoria()
         {
             // Limpiar campos - usar DataSource = null para limpiar ComboBox con DataSource
-            cboTalle.DataSource = null;
-            cboTalle.Items.Clear();
+
             // txtSabor eliminado
 
             // Mostrar/ocultar campos según la categoría
@@ -109,7 +132,7 @@ namespace Gamora_Indumentaria
                 bool esVaper = EsCategoriaVaper(categoriaSeleccionada);
 
                 lblTalle.Visible = esTalleVisible;
-                cboTalle.Visible = esTalleVisible;
+
 
                 // El campo Sabor ya no se utiliza: el sabor se ingresa dentro del Nombre del producto
                 // lblSabor / txtSabor eliminados
@@ -118,6 +141,22 @@ namespace Gamora_Indumentaria
                 if (esTalleVisible)
                 {
                     CargarTallesPorCategoria(categoriaSeleccionada.Id);
+                    // cargar talles; `CargarTallesPorCategoria` decidirá si muestra u oculta el panel según existan talles
+                }
+                else
+                {
+                    // Si la categoría no tiene talle, ocultar y limpiar el panel de variantes
+                    var panel = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+                    if (panel != null)
+                    {
+                        // Eliminar únicamente los checkboxes dinámicos para no borrar controles fijos (por ejemplo panel1 con botones)
+                        foreach (var cbOld in panel.Controls.OfType<CheckBox>().ToList())
+                        {
+                            panel.Controls.Remove(cbOld);
+                        }
+                        panel.Visible = false;
+                    }
+                    lblTalle.Visible = false;
                 }
 
                 // Se omite carga de sabores/autocomplete porque sabor va en el nombre
@@ -132,15 +171,67 @@ namespace Gamora_Indumentaria
             try
             {
                 tallesDisponibles = inventarioDAL.ObtenerTallesPorCategoria(categoriaId);
-
-                cboTalle.DataSource = tallesDisponibles;
-                cboTalle.DisplayMember = "TalleValor";
-                cboTalle.ValueMember = "Id";
-
-                if (tallesDisponibles.Count > 0)
+                // Crear checkboxes dinámicos para talles (hasta 6) en panelVariantes
+                try
                 {
-                    cboTalle.SelectedIndex = 0;
+                    var panel = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+                    if (panel != null)
+                    {
+                        // No eliminar el lblTalle si ya existe en el panel; eliminar solo checkboxes previos
+                        var existingLabel = panel.Controls.OfType<Label>().FirstOrDefault(l => l.Name == "lblTalle");
+                        foreach (var cbOld in panel.Controls.OfType<CheckBox>().ToList())
+                        {
+                            panel.Controls.Remove(cbOld);
+                        }
+                        if (existingLabel == null)
+                        {
+                            // asegurarse que el label esté en el panel
+                            panel.Controls.Add(lblTalle);
+                        }
+
+                        bool tieneTalles = tallesDisponibles != null && tallesDisponibles.Count > 0;
+                        panel.Visible = tieneTalles;
+                        lblTalle.Visible = tieneTalles; // mostrar/ocultar etiqueta según corresponda
+                        if (tieneTalles)
+                        {
+                            // encabezado claro
+                            lblTalle.Text = "📏 Talles — marque los talles";
+
+                            int x = 4;
+                            int y = 30; // colocar checboxes por debajo del label
+                            int spacingX = 120;
+                            int spacingY = 30;
+                            int maxWidth = panel.ClientSize.Width - 20;
+                            for (int i = 0; i < tallesDisponibles.Count; i++)
+                            {
+                                var t = tallesDisponibles[i];
+                                var chk = new CheckBox();
+                                chk.AutoSize = true;
+                                chk.Font = new System.Drawing.Font("Segoe UI", 9F);
+                                chk.Location = new System.Drawing.Point(x, y);
+                                chk.Name = "chkTalle_" + t.Id;
+                                chk.Size = new System.Drawing.Size(100, 22);
+                                chk.TabIndex = 100 + i;
+                                chk.Text = t.TalleValor;
+                                chk.Tag = t; // almacenar objeto talle
+                                chk.UseVisualStyleBackColor = true;
+                                panel.Controls.Add(chk);
+
+                                x += spacingX;
+                                if (x + spacingX > maxWidth)
+                                {
+                                    x = 4;
+                                    y += spacingY;
+                                }
+                            }
+                            // ajustar altura del panel para mostrar varias filas si es necesario
+                            int rows = (int)Math.Ceiling((double)tallesDisponibles.Count * spacingX / Math.Max(1, maxWidth));
+                            panel.Height = Math.Min(200, Math.Max(50, rows * spacingY + 40));
+                            panel.AutoScroll = true;
+                        }
+                    }
                 }
+                catch { /* no bloquear si falla la UI dinámica */ }
             }
             catch (Exception ex)
             {
@@ -156,37 +247,160 @@ namespace Gamora_Indumentaria
         {
             if (!ValidarFormulario()) return;
 
+            // Recolectar la lista de productos a crear: el principal + variantes marcadas
+            var productosACrear = new List<ProductoInventario>();
+
+            // Función local para parsear decimal seguro
+            decimal? ParseDec(string s)
+            {
+                if (string.IsNullOrWhiteSpace(s)) return null;
+                if (decimal.TryParse(s, out var v)) return v;
+                return null;
+            }
+
             try
             {
-                var producto = new ProductoInventario
+                var baseProducto = new ProductoInventario
                 {
                     CategoriaId = categoriaSeleccionada.Id,
                     Nombre = txtNombre.Text.Trim(),
                     Descripcion = string.IsNullOrWhiteSpace(txtDescripcion.Text) ? null : txtDescripcion.Text.Trim(),
                     CodigoBarra = string.IsNullOrWhiteSpace(txtCodigoBarra.Text) ? null : txtCodigoBarra.Text.Trim(),
-                    TalleId = categoriaSeleccionada.TieneTalle && cboTalle.SelectedValue != null ?
-                             (int?)cboTalle.SelectedValue : null,
-                    // Sabor no se guarda por separado (va incluido en Nombre)
+                    // TalleId se asigna cuando se crean productos por talle seleccionado
+                    TalleId = null,
                     Sabor = null,
                     Cantidad = (int)nudCantidad.Value,
-                    PrecioVenta = string.IsNullOrWhiteSpace(txtPrecio.Text) ? null :
-                                 (decimal?)Convert.ToDecimal(txtPrecio.Text)
-                    ,
-                    PrecioCosto = string.IsNullOrWhiteSpace(txtPrecioCosto.Text) ? null : (decimal?)Convert.ToDecimal(txtPrecioCosto.Text)
+                    PrecioVenta = ParseDec(txtPrecio.Text),
+                    PrecioCosto = ParseDec(txtPrecioCosto.Text)
                 };
 
-                int nuevoId = inventarioDAL.AgregarProducto(producto);
+                // Si no hay talles disponibles, crear el producto base; si existen talles, se crearán
+                // solo los productos por talles seleccionados.
+                var panelChecks = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+                bool hayChecks = panelChecks != null && panelChecks.Controls.OfType<CheckBox>().Any();
+                if (!hayChecks)
+                {
+                    productosACrear.Add(baseProducto);
+                }
 
-                MessageBox.Show(string.Format("Producto agregado exitosamente con ID: {0}", nuevoId), "Éxito",
+                // Si hay checkboxes de talles creados en panelVariantes, crear un producto por cada uno marcado
+                try
+                {
+                    var panel = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+                    if (panel != null)
+                    {
+                        var checks = panel.Controls.OfType<CheckBox>().Where(c => c.Checked).ToList();
+                        if (checks.Count == 0 && hayChecks)
+                        {
+                            // Si hay talles y no se seleccionó ninguno, ofrecer crear por todos los talles disponibles
+                            var dr = MessageBox.Show("No seleccionaste ningún talle. ¿Crear productos para TODOS los talles disponibles?", "Crear todos los talles", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                            if (dr == DialogResult.Yes)
+                            {
+                                // crear para todos los talles disponibles
+                                if (tallesDisponibles != null)
+                                {
+                                    foreach (var talle in tallesDisponibles)
+                                    {
+                                        var pAll = CloneProducto(baseProducto);
+                                        pAll.TalleId = talle.Id;
+                                        pAll.Nombre = string.Format("{0} - {1}", baseProducto.Nombre, talle.TalleValor);
+                                        productosACrear.Add(pAll);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Operación cancelada: seleccione al menos un talle.");
+                            }
+                        }
+                        foreach (var c in checks)
+                        {
+                            var talle = c.Tag as TallePorCategoria;
+                            if (talle != null)
+                            {
+                                var p = CloneProducto(baseProducto);
+                                // Añadir el talle al nombre para diferenciarlos si procede
+                                p.TalleId = talle.Id;
+                                p.Nombre = string.Format("{0} - {1}", baseProducto.Nombre, talle.TalleValor);
+                                productosACrear.Add(p);
+                            }
+                        }
+                    }
+                }
+                catch { }
+
+                // Si vamos a crear más de un producto, pedir cantidades por talle en una tabla editable
+                var creados = new List<int>();
+                if (productosACrear.Count > 1)
+                {
+                    // Preparar lista de talles seleccionados para el formulario: (TalleId, TalleValor, cantidadInicial)
+                    var listas = new List<Tuple<int?, string, int>>();
+                    foreach (var p in productosACrear)
+                    {
+                        string talleVal = p.TalleId.HasValue ? (tallesDisponibles.FirstOrDefault(t => t.Id == p.TalleId)?.TalleValor ?? "") : "";
+                        listas.Add(Tuple.Create(p.TalleId, talleVal, (int)nudCantidad.Value));
+                    }
+
+                    using (var f = new AgregarCantidadPorTalleForm(listas))
+                    {
+                        var dr = f.ShowDialog(this);
+                        if (dr != DialogResult.OK)
+                        {
+                            MessageBox.Show("Operación cancelada por el usuario.", "Cancelado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                        var cantidades = f.Quantities;
+                        if (cantidades == null || cantidades.Count != productosACrear.Count)
+                        {
+                            MessageBox.Show("Error en las cantidades ingresadas.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+
+                        for (int i = 0; i < productosACrear.Count; i++)
+                        {
+                            productosACrear[i].Cantidad = cantidades[i];
+                            int id = inventarioDAL.AgregarProducto(productosACrear[i]);
+                            creados.Add(id);
+                        }
+                    }
+                }
+                else
+                {
+                    // único producto: usar la cantidad del numeric up-down
+                    int cantidadAsignada = (int)nudCantidad.Value;
+                    foreach (var prod in productosACrear)
+                    {
+                        prod.Cantidad = cantidadAsignada;
+                        int id = inventarioDAL.AgregarProducto(prod);
+                        creados.Add(id);
+                    }
+                }
+
+                MessageBox.Show(string.Format("{0} producto(s) agregados exitosamente. IDs: {1}", creados.Count, string.Join(",", creados)), "Éxito",
                               MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 LimpiarFormulario();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(string.Format("Error al guardar el producto: {0}", ex.Message), "Error",
+                MessageBox.Show(string.Format("Error al guardar el/los producto(s): {0}", ex.Message), "Error",
                               MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private ProductoInventario CloneProducto(ProductoInventario original)
+        {
+            return new ProductoInventario
+            {
+                CategoriaId = original.CategoriaId,
+                Descripcion = original.Descripcion,
+                CodigoBarra = original.CodigoBarra,
+                TalleId = original.TalleId,
+                Sabor = original.Sabor,
+                Cantidad = original.Cantidad,
+                PrecioVenta = original.PrecioVenta,
+                PrecioCosto = original.PrecioCosto
+            };
         }
 
         // Métodos de sabores eliminados: el sabor se ingresa directamente en el nombre del producto para Vapers
@@ -207,10 +421,7 @@ namespace Gamora_Indumentaria
                 SetErr(txtNombre, "Nombre requerido");
             }
 
-            if (categoriaSeleccionada.TieneTalle && cboTalle.SelectedIndex == -1)
-            {
-                SetErr(cboTalle, "Seleccione un talle");
-            }
+
 
             // Validación de sabor eliminada (el sabor se incorpora al nombre)
 
@@ -263,7 +474,7 @@ namespace Gamora_Indumentaria
                 }
             }
             // Si hay algún error marcado retornar false
-            bool hayErrores = new Control[] { cboCategoria, txtNombre, cboTalle, nudCantidad, txtPrecio, txtPrecioCosto }
+            bool hayErrores = new Control[] { cboCategoria, txtNombre, nudCantidad, txtPrecio, txtPrecioCosto }
                 .Any(c => c != null && err.GetError(c) != string.Empty);
             return !hayErrores;
         }
@@ -281,8 +492,7 @@ namespace Gamora_Indumentaria
             txtPrecioCosto.Text = "";
             nudCantidad.Value = 1;
 
-            if (cboTalle.Items.Count > 0)
-                cboTalle.SelectedIndex = 0;
+
 
             txtNombre.Focus();
         }
@@ -457,6 +667,20 @@ namespace Gamora_Indumentaria
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnMarcarTodos_Click(object sender, EventArgs e)
+        {
+            var panel = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+            if (panel == null) return;
+            foreach (var chk in panel.Controls.OfType<CheckBox>()) chk.Checked = true;
+        }
+
+        private void btnDesmarcarTodos_Click(object sender, EventArgs e)
+        {
+            var panel = this.Controls.Find("panelVariantes", true).FirstOrDefault() as Panel;
+            if (panel == null) return;
+            foreach (var chk in panel.Controls.OfType<CheckBox>()) chk.Checked = false;
         }
     }
 }

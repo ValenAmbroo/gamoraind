@@ -125,8 +125,16 @@ namespace Gamora_Indumentaria
                 if (decimal.TryParse(txtPrecioCosto.Text, out var pc)) producto.PrecioCosto = pc; else producto.PrecioCosto = null;
                 dal.ActualizarProducto(producto, actualizarStock: true);
                 MessageBox.Show("Producto actualizado", "Editar", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                DialogResult = DialogResult.OK;
-                Close();
+                // No cerrar el formulario: refrescar la lista y re-seleccionar el producto para continuar editando
+                try
+                {
+                    CargarListaProductos();
+                    if (producto != null && producto.Id != 0)
+                    {
+                        SeleccionarProductoEnGrid(producto.Id);
+                    }
+                }
+                catch { /* no bloquear en refresco */ }
             }
             catch (Exception ex)
             {
@@ -253,6 +261,11 @@ namespace Gamora_Indumentaria
                         row.DefaultCellStyle.BackColor = Color.FromArgb(224, 238, 252);
                 }
             };
+        }
+
+        private void panelTop_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

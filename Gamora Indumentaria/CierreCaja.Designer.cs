@@ -65,7 +65,7 @@ namespace Gamora_Indumentaria
             // 
             // btnCerrarCaja
             // 
-            this.btnCerrarCaja.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(123)))), ((int)(((byte)(255)))));
+            this.btnCerrarCaja.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.btnCerrarCaja.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCerrarCaja.ForeColor = System.Drawing.Color.White;
             this.btnCerrarCaja.Location = new System.Drawing.Point(250, 16);
@@ -123,6 +123,7 @@ namespace Gamora_Indumentaria
             // 
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.lblTitulo.Location = new System.Drawing.Point(12, 9);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(134, 25);
@@ -131,7 +132,7 @@ namespace Gamora_Indumentaria
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panelTop.Controls.Add(this.button1);
             this.panelTop.Controls.Add(this.lblTitulo);
             this.panelTop.Controls.Add(this.btnCerrar);

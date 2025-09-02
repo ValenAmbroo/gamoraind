@@ -550,8 +550,8 @@ namespace Gamora_Indumentaria
             // 
             // lblTitulo1
             // 
-            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitulo1.Controls.Add(this.btnAgregar1);
             this.lblTitulo1.Controls.Add(this.grpPago);
@@ -675,8 +675,8 @@ namespace Gamora_Indumentaria
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.button2);
@@ -719,8 +719,8 @@ namespace Gamora_Indumentaria
             // 
             // dgvCarrito1
             // 
-            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -754,7 +754,7 @@ namespace Gamora_Indumentaria
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panelTop.Controls.Add(this.btnCerrar);
             this.panelTop.Controls.Add(this.lblTitulo);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
@@ -782,7 +782,7 @@ namespace Gamora_Indumentaria
             // 
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
-            this.lblTitulo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.lblTitulo.ForeColor = System.Drawing.Color.White;
             this.lblTitulo.Location = new System.Drawing.Point(12, 8);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(63, 25);
@@ -795,6 +795,7 @@ namespace Gamora_Indumentaria
             this.ControlBox = false;
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.lblTitulo1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "ventas";
             this.Load += new System.EventHandler(this.ventas_Load_1);
             this.lblTitulo1.ResumeLayout(false);
@@ -1008,16 +1009,58 @@ namespace Gamora_Indumentaria
             }
 
             int y = 5;
-            int left = e.MarginBounds.Left; // usar margen real de la página
+            int left = e.MarginBounds.Left;
             int width = e.MarginBounds.Width > 0 ? e.MarginBounds.Width : 280;
+
             Font fHeader = new Font("Segoe UI", 9, FontStyle.Bold);
             Font fNormal = new Font("Consolas", 8);
             Font fBold = new Font("Consolas", 8, FontStyle.Bold);
+            Font fTotal = new Font("Consolas", 10, FontStyle.Bold);
 
-            // Logo
+            // --- Helper: centrar texto ---
+            void DrawCenter(string text, Font f)
+            {
+                e.Graphics.DrawString(text, f, Brushes.Black, CenterText(e.Graphics, text, f, width, left), y);
+                y += (int)e.Graphics.MeasureString(text, f).Height + 2;
+            }
+
+            // --- Helper: medir ancho (TextRenderer) ---
+            int TR_Width(string s, Font f) =>
+                TextRenderer.MeasureText(s ?? string.Empty, f, new Size(int.MaxValue, int.MaxValue),
+                    TextFormatFlags.NoPadding).Width;
+
+            int lineH = TextRenderer.MeasureText("Ay", fNormal, new Size(int.MaxValue, int.MaxValue),
+                    TextFormatFlags.NoPadding).Height;
+
+            // --- Helper: dividir texto en líneas que entren en un ancho ---
+            string[] WrapLeft(string text, Font font, int maxWidth)
+            {
+                var words = (text ?? string.Empty).Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var lines = new List<string>();
+                var cur = new StringBuilder();
+                foreach (var w in words)
+                {
+                    string test = cur.Length == 0 ? w : cur + " " + w;
+                    if (TR_Width(test, font) > maxWidth)
+                    {
+                        if (cur.Length > 0) { lines.Add(cur.ToString()); cur.Clear(); }
+                        cur.Append(w);
+                    }
+                    else
+                    {
+                        if (cur.Length > 0) cur.Append(' ');
+                        cur.Append(w);
+                    }
+                }
+                if (cur.Length > 0) lines.Add(cur.ToString());
+                if (lines.Count == 0) lines.Add(string.Empty);
+                return lines.ToArray();
+            }
+
+            // --- Logo ---
             try
             {
-                var logo = Gamora_Indumentaria.Properties.Resources.locoparaimprimir; // logo actualizado
+                var logo = Gamora_Indumentaria.Properties.Resources.locoparaimprimir;
                 if (logo != null)
                 {
                     int logoW = 60;
@@ -1028,60 +1071,90 @@ namespace Gamora_Indumentaria
             }
             catch { }
 
-            // Encabezado totalmente centrado
-            void DrawCenter(string text, Font f)
-            {
-                e.Graphics.DrawString(text, f, Brushes.Black, CenterText(e.Graphics, text, f, width, left), y);
-                y += (int)e.Graphics.MeasureString(text, f).Height + 2;
-            }
-
+            // --- Encabezado ---
             DrawCenter("GAMORA INDUMENTARIA", fHeader);
-            DrawCenter("Ticket de venta", fNormal);
-            DrawCenter($"Fecha: {lastTicketData.Fecha:dd/MM/yyyy HH:mm}", fNormal);
-            DrawCenter($"Venta ID: {lastTicketData.VentaId}", fNormal);
-            DrawCenter($"Pago: {lastTicketData.MetodoPago}", fNormal);
+            DrawCenter("Av. Siempre Viva 123 - San Vicente", fNormal);
+            DrawCenter("CUIT: 20-12345678-9  |  Tel: (011) 5555-5555", fNormal);
+            DrawCenter("Instagram: @GamoraIndumentaria", fNormal);
             y += 2;
+            DrawCenter($"Fecha: {lastTicketData.Fecha:dd/MM/yyyy HH:mm}", fNormal);
+            DrawCenter($"Venta ID: {lastTicketData.VentaId}   Pago: {lastTicketData.MetodoPago}", fNormal);
 
-            // Separador
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
             DrawCenter("DETALLE", fBold);
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
 
-            // Cada item centrado: Nombre xCant PUnit (-Desc%) = Subtotal
-            decimal totalDescuento = 0m;
+            int padding = 6;
+            int usableWidth = width - padding * 2;
+            int leftCol = left + padding;
+
+            decimal totalBruto = 0m;
+            decimal totalDesc = 0m;
+
+            // --- Ítems ---
             foreach (var it in lastTicketData.Items)
             {
-                string nombre = it.NombreProducto.Trim();
-                if (nombre.Length > 22) nombre = nombre.Substring(0, 22);
+                string nombre = (it.NombreProducto ?? "").Trim();
                 decimal bruto = it.PrecioUnitario * it.Cantidad;
-                decimal descuentoValor = Math.Round(bruto * (it.Descuento / 100m), 2);
-                totalDescuento += descuentoValor;
-                string descText = it.Descuento > 0 ? $" (-{it.Descuento:0.##}% {descuentoValor.ToString("C")})" : "";
-                string linea = $"{nombre} x{it.Cantidad} {it.PrecioUnitario.ToString("C")} {descText} = {it.Subtotal.ToString("C")}";
-                DrawCenter(linea, fNormal);
+                decimal descValor = Math.Round(bruto * (it.Descuento / 100m), 2);
+                decimal neto = it.Subtotal;
+
+                totalBruto += bruto;
+                totalDesc += descValor;
+
+                // Nombre multilínea
+                var nameLines = WrapLeft(nombre, fNormal, usableWidth);
+                foreach (var ln in nameLines)
+                {
+                    e.Graphics.DrawString(ln, fNormal, Brushes.Black, leftCol, y);
+                    y += lineH;
+                }
+
+                // Cantidad x Precio = Bruto
+                string detalle = $"{it.Cantidad} x {it.PrecioUnitario:C} = {bruto:C}";
+                e.Graphics.DrawString(detalle, fNormal, Brushes.Black, leftCol, y);
+                y += lineH;
+
+                // Descuento
+                if (it.Descuento > 0)
+                {
+                    string descTxt = $"-{it.Descuento:0.##}%  (-{descValor:C})";
+                    e.Graphics.DrawString(descTxt, fNormal, Brushes.Black, leftCol, y);
+                    y += lineH;
+                }
+
+                // Total del ítem (alineado a la derecha en su propia línea)
+                string netoTxt = neto.ToString("C");
+                e.Graphics.DrawString(netoTxt, fBold, Brushes.Black,
+                    left + width - TR_Width(netoTxt, fBold) - padding, y);
+                y += lineH + 6;
             }
-            y += 2;
-            if (totalDescuento > 0)
-            {
-                DrawCenter($"Total descuento: {totalDescuento.ToString("C")}", fNormal);
-            }
-            y += 2;
+
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
+
+            // --- Totales ---
+            DrawCenter($"Subtotal: {totalBruto:C}", fNormal);
+            if (totalDesc > 0) DrawCenter($"Descuentos: -{totalDesc:C}", fNormal);
+
             string totalTxt = "TOTAL: " + lastTicketData.Total.ToString("C");
-            DrawCenter(totalTxt, fBold);
-            y += 4;
-            DrawCenter("Gracias por su compra", fNormal);
+            e.Graphics.DrawString(totalTxt, fTotal, Brushes.Black, CenterText(e.Graphics, totalTxt, fTotal, width, left), y);
+            y += (int)e.Graphics.MeasureString(totalTxt, fTotal).Height + 4;
+
+            y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
+
+            // --- Pie ---
+            DrawCenter("Cambio válido dentro de 15 días con ticket", fNormal);
+            DrawCenter("¡Gracias por su compra!", fNormal);
             DrawCenter("No válido como factura", fNormal);
 
-            // Ajustar para no pedir más páginas
             e.HasMorePages = false;
         }
 
-        private int DibujarSeparador(Graphics g, int y, int width, int left)
-        {
-            g.DrawLine(Pens.Black, left, y, left + width - 10, y);
-            return y + 4;
-        }
+
+
+
+
+
         private int DibujarSeparadorCentrado(Graphics g, int y, int width, int left)
         {
             int usable = width - 10;

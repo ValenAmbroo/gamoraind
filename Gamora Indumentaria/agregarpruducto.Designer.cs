@@ -42,13 +42,14 @@
             this.panelCantidad = new System.Windows.Forms.Panel();
             this.lblCantidad = new System.Windows.Forms.Label();
             this.nudCantidad = new System.Windows.Forms.NumericUpDown();
-            this.panelTalle = new System.Windows.Forms.Panel();
-            this.lblTalle = new System.Windows.Forms.Label();
-            this.cboTalle = new System.Windows.Forms.ComboBox();
             this.panelCodigoBarra = new System.Windows.Forms.Panel();
             this.lblCodigoBarra = new System.Windows.Forms.Label();
             this.txtCodigoBarra = new System.Windows.Forms.TextBox();
-            this.chkModoScanner = new System.Windows.Forms.CheckBox();
+            this.panelVariantes = new System.Windows.Forms.Panel();
+            this.lblTalle = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.btnDesmarcarTodos = new System.Windows.Forms.Button();
+            this.btnMarcarTodos = new System.Windows.Forms.Button();
             this.panelDescripcion = new System.Windows.Forms.Panel();
             this.lblDescripcion = new System.Windows.Forms.Label();
             this.txtDescripcion = new System.Windows.Forms.TextBox();
@@ -69,8 +70,9 @@
             this.panelPrecio.SuspendLayout();
             this.panelCantidad.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).BeginInit();
-            this.panelTalle.SuspendLayout();
             this.panelCodigoBarra.SuspendLayout();
+            this.panelVariantes.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.panelDescripcion.SuspendLayout();
             this.panelNombre.SuspendLayout();
             this.panelCategoria.SuspendLayout();
@@ -87,7 +89,7 @@
             this.panelPrincipal.Margin = new System.Windows.Forms.Padding(2);
             this.panelPrincipal.Name = "panelPrincipal";
             this.panelPrincipal.Padding = new System.Windows.Forms.Padding(22, 24, 22, 24);
-            this.panelPrincipal.Size = new System.Drawing.Size(891, 565);
+            this.panelPrincipal.Size = new System.Drawing.Size(984, 650);
             this.panelPrincipal.TabIndex = 1;
             // 
             // groupBoxInformacion
@@ -98,8 +100,8 @@
             this.groupBoxInformacion.Controls.Add(this.panel2);
             this.groupBoxInformacion.Controls.Add(this.panelPrecio);
             this.groupBoxInformacion.Controls.Add(this.panelCantidad);
-            this.groupBoxInformacion.Controls.Add(this.panelTalle);
             this.groupBoxInformacion.Controls.Add(this.panelCodigoBarra);
+            this.groupBoxInformacion.Controls.Add(this.panelVariantes);
             this.groupBoxInformacion.Controls.Add(this.panelDescripcion);
             this.groupBoxInformacion.Controls.Add(this.panelNombre);
             this.groupBoxInformacion.Controls.Add(this.panelCategoria);
@@ -109,7 +111,7 @@
             this.groupBoxInformacion.Margin = new System.Windows.Forms.Padding(2);
             this.groupBoxInformacion.Name = "groupBoxInformacion";
             this.groupBoxInformacion.Padding = new System.Windows.Forms.Padding(15, 16, 15, 16);
-            this.groupBoxInformacion.Size = new System.Drawing.Size(847, 484);
+            this.groupBoxInformacion.Size = new System.Drawing.Size(940, 569);
             this.groupBoxInformacion.TabIndex = 1;
             this.groupBoxInformacion.TabStop = false;
             this.groupBoxInformacion.Text = "📋 Información del Producto";
@@ -122,11 +124,11 @@
             this.panel2.Controls.Add(this.txtPrecioCosto);
             this.panel2.Controls.Add(this.btnGuardar);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(15, 367);
+            this.panel2.Location = new System.Drawing.Point(15, 426);
             this.panel2.Margin = new System.Windows.Forms.Padding(2);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panel2.Size = new System.Drawing.Size(817, 47);
+            this.panel2.Size = new System.Drawing.Size(910, 62);
             this.panel2.TabIndex = 8;
             // 
             // btnCancelar
@@ -137,7 +139,7 @@
             this.btnCancelar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCancelar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnCancelar.ForeColor = System.Drawing.Color.White;
-            this.btnCancelar.Location = new System.Drawing.Point(779, 10);
+            this.btnCancelar.Location = new System.Drawing.Point(872, 25);
             this.btnCancelar.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancelar.Name = "btnCancelar";
             this.btnCancelar.Size = new System.Drawing.Size(36, 32);
@@ -166,7 +168,7 @@
             this.btnLimpiar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLimpiar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnLimpiar.ForeColor = System.Drawing.Color.White;
-            this.btnLimpiar.Location = new System.Drawing.Point(736, 10);
+            this.btnLimpiar.Location = new System.Drawing.Point(829, 25);
             this.btnLimpiar.Margin = new System.Windows.Forms.Padding(2);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(39, 32);
@@ -183,7 +185,7 @@
             this.txtPrecioCosto.Location = new System.Drawing.Point(150, 8);
             this.txtPrecioCosto.Margin = new System.Windows.Forms.Padding(2);
             this.txtPrecioCosto.Name = "txtPrecioCosto";
-            this.txtPrecioCosto.Size = new System.Drawing.Size(293, 27);
+            this.txtPrecioCosto.Size = new System.Drawing.Size(386, 27);
             this.txtPrecioCosto.TabIndex = 1;
             // 
             // btnGuardar
@@ -194,7 +196,7 @@
             this.btnGuardar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnGuardar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnGuardar.ForeColor = System.Drawing.Color.White;
-            this.btnGuardar.Location = new System.Drawing.Point(694, 10);
+            this.btnGuardar.Location = new System.Drawing.Point(787, 25);
             this.btnGuardar.Margin = new System.Windows.Forms.Padding(2);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(38, 32);
@@ -208,11 +210,11 @@
             this.panelPrecio.Controls.Add(this.lblPrecio);
             this.panelPrecio.Controls.Add(this.txtPrecio);
             this.panelPrecio.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelPrecio.Location = new System.Drawing.Point(15, 320);
+            this.panelPrecio.Location = new System.Drawing.Point(15, 379);
             this.panelPrecio.Margin = new System.Windows.Forms.Padding(2);
             this.panelPrecio.Name = "panelPrecio";
             this.panelPrecio.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelPrecio.Size = new System.Drawing.Size(817, 47);
+            this.panelPrecio.Size = new System.Drawing.Size(910, 47);
             this.panelPrecio.TabIndex = 7;
             // 
             // lblPrecio
@@ -235,7 +237,7 @@
             this.txtPrecio.Location = new System.Drawing.Point(150, 8);
             this.txtPrecio.Margin = new System.Windows.Forms.Padding(2);
             this.txtPrecio.Name = "txtPrecio";
-            this.txtPrecio.Size = new System.Drawing.Size(293, 27);
+            this.txtPrecio.Size = new System.Drawing.Size(386, 27);
             this.txtPrecio.TabIndex = 1;
             // 
             // panelCantidad
@@ -243,11 +245,11 @@
             this.panelCantidad.Controls.Add(this.lblCantidad);
             this.panelCantidad.Controls.Add(this.nudCantidad);
             this.panelCantidad.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelCantidad.Location = new System.Drawing.Point(15, 273);
+            this.panelCantidad.Location = new System.Drawing.Point(15, 332);
             this.panelCantidad.Margin = new System.Windows.Forms.Padding(2);
             this.panelCantidad.Name = "panelCantidad";
             this.panelCantidad.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelCantidad.Size = new System.Drawing.Size(817, 47);
+            this.panelCantidad.Size = new System.Drawing.Size(910, 47);
             this.panelCantidad.TabIndex = 6;
             // 
             // lblCantidad
@@ -286,52 +288,16 @@
             0,
             0});
             // 
-            // panelTalle
-            // 
-            this.panelTalle.Controls.Add(this.lblTalle);
-            this.panelTalle.Controls.Add(this.cboTalle);
-            this.panelTalle.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelTalle.Location = new System.Drawing.Point(15, 226);
-            this.panelTalle.Margin = new System.Windows.Forms.Padding(2);
-            this.panelTalle.Name = "panelTalle";
-            this.panelTalle.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelTalle.Size = new System.Drawing.Size(817, 47);
-            this.panelTalle.TabIndex = 4;
-            // 
-            // lblTalle
-            // 
-            this.lblTalle.AutoSize = true;
-            this.lblTalle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblTalle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(73)))), ((int)(((byte)(80)))), ((int)(((byte)(87)))));
-            this.lblTalle.Location = new System.Drawing.Point(2, 12);
-            this.lblTalle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.lblTalle.Name = "lblTalle";
-            this.lblTalle.Size = new System.Drawing.Size(70, 19);
-            this.lblTalle.TabIndex = 0;
-            this.lblTalle.Text = "📏 Talle*";
-            // 
-            // cboTalle
-            // 
-            this.cboTalle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboTalle.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.cboTalle.FormattingEnabled = true;
-            this.cboTalle.Location = new System.Drawing.Point(150, 11);
-            this.cboTalle.Margin = new System.Windows.Forms.Padding(2);
-            this.cboTalle.Name = "cboTalle";
-            this.cboTalle.Size = new System.Drawing.Size(151, 28);
-            this.cboTalle.TabIndex = 1;
-            // 
             // panelCodigoBarra
             // 
             this.panelCodigoBarra.Controls.Add(this.lblCodigoBarra);
             this.panelCodigoBarra.Controls.Add(this.txtCodigoBarra);
-            this.panelCodigoBarra.Controls.Add(this.chkModoScanner);
             this.panelCodigoBarra.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panelCodigoBarra.Location = new System.Drawing.Point(15, 179);
+            this.panelCodigoBarra.Location = new System.Drawing.Point(15, 285);
             this.panelCodigoBarra.Margin = new System.Windows.Forms.Padding(2);
             this.panelCodigoBarra.Name = "panelCodigoBarra";
             this.panelCodigoBarra.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelCodigoBarra.Size = new System.Drawing.Size(817, 47);
+            this.panelCodigoBarra.Size = new System.Drawing.Size(910, 47);
             this.panelCodigoBarra.TabIndex = 3;
             // 
             // lblCodigoBarra
@@ -354,19 +320,72 @@
             this.txtCodigoBarra.Location = new System.Drawing.Point(155, 10);
             this.txtCodigoBarra.Margin = new System.Windows.Forms.Padding(2);
             this.txtCodigoBarra.Name = "txtCodigoBarra";
-            this.txtCodigoBarra.Size = new System.Drawing.Size(443, 27);
+            this.txtCodigoBarra.Size = new System.Drawing.Size(483, 27);
             this.txtCodigoBarra.TabIndex = 1;
             // 
-            // chkModoScanner
+            // panelVariantes
             // 
-            this.chkModoScanner.AutoSize = true;
-            this.chkModoScanner.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkModoScanner.Location = new System.Drawing.Point(610, 13);
-            this.chkModoScanner.Name = "chkModoScanner";
-            this.chkModoScanner.Size = new System.Drawing.Size(116, 19);
-            this.chkModoScanner.TabIndex = 2;
-            this.chkModoScanner.Text = "🖨️ Modo escáner";
-            this.chkModoScanner.UseVisualStyleBackColor = true;
+            this.panelVariantes.Controls.Add(this.lblTalle);
+            this.panelVariantes.Controls.Add(this.panel1);
+            this.panelVariantes.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelVariantes.Location = new System.Drawing.Point(15, 179);
+            this.panelVariantes.Margin = new System.Windows.Forms.Padding(2);
+            this.panelVariantes.Name = "panelVariantes";
+            this.panelVariantes.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
+            this.panelVariantes.Size = new System.Drawing.Size(910, 106);
+            this.panelVariantes.TabIndex = 3;
+            // 
+            // lblTalle
+            // 
+            this.lblTalle.AutoSize = true;
+            this.lblTalle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblTalle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(73)))), ((int)(((byte)(80)))), ((int)(((byte)(87)))));
+            this.lblTalle.Location = new System.Drawing.Point(2, 4);
+            this.lblTalle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.lblTalle.Name = "lblTalle";
+            this.lblTalle.Size = new System.Drawing.Size(70, 19);
+            this.lblTalle.TabIndex = 0;
+            this.lblTalle.Text = "📏 Talle*";
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.btnDesmarcarTodos);
+            this.panel1.Controls.Add(this.btnMarcarTodos);
+            this.panel1.Location = new System.Drawing.Point(720, 74);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(187, 27);
+            this.panel1.TabIndex = 12;
+            // 
+            // btnDesmarcarTodos
+            // 
+            this.btnDesmarcarTodos.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnDesmarcarTodos.FlatAppearance.BorderSize = 0;
+            this.btnDesmarcarTodos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDesmarcarTodos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnDesmarcarTodos.ForeColor = System.Drawing.Color.Black;
+            this.btnDesmarcarTodos.Location = new System.Drawing.Point(7, 0);
+            this.btnDesmarcarTodos.Name = "btnDesmarcarTodos";
+            this.btnDesmarcarTodos.Size = new System.Drawing.Size(90, 27);
+            this.btnDesmarcarTodos.TabIndex = 11;
+            this.btnDesmarcarTodos.Text = "Desmarcar";
+            this.btnDesmarcarTodos.UseVisualStyleBackColor = true;
+            this.btnDesmarcarTodos.Click += new System.EventHandler(this.btnDesmarcarTodos_Click);
+            // 
+            // btnMarcarTodos
+            // 
+            this.btnMarcarTodos.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnMarcarTodos.FlatAppearance.BorderSize = 0;
+            this.btnMarcarTodos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnMarcarTodos.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnMarcarTodos.ForeColor = System.Drawing.Color.Black;
+            this.btnMarcarTodos.Location = new System.Drawing.Point(97, 0);
+            this.btnMarcarTodos.Name = "btnMarcarTodos";
+            this.btnMarcarTodos.Size = new System.Drawing.Size(90, 27);
+            this.btnMarcarTodos.TabIndex = 10;
+            this.btnMarcarTodos.Text = "Marcar todos";
+            this.btnMarcarTodos.UseVisualStyleBackColor = true;
+            this.btnMarcarTodos.Click += new System.EventHandler(this.btnMarcarTodos_Click);
             // 
             // panelDescripcion
             // 
@@ -377,7 +396,7 @@
             this.panelDescripcion.Margin = new System.Windows.Forms.Padding(2);
             this.panelDescripcion.Name = "panelDescripcion";
             this.panelDescripcion.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelDescripcion.Size = new System.Drawing.Size(817, 47);
+            this.panelDescripcion.Size = new System.Drawing.Size(910, 47);
             this.panelDescripcion.TabIndex = 2;
             // 
             // lblDescripcion
@@ -400,7 +419,7 @@
             this.txtDescripcion.Location = new System.Drawing.Point(150, 11);
             this.txtDescripcion.Margin = new System.Windows.Forms.Padding(2);
             this.txtDescripcion.Name = "txtDescripcion";
-            this.txtDescripcion.Size = new System.Drawing.Size(653, 27);
+            this.txtDescripcion.Size = new System.Drawing.Size(746, 27);
             this.txtDescripcion.TabIndex = 1;
             // 
             // panelNombre
@@ -412,7 +431,7 @@
             this.panelNombre.Margin = new System.Windows.Forms.Padding(2);
             this.panelNombre.Name = "panelNombre";
             this.panelNombre.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelNombre.Size = new System.Drawing.Size(817, 47);
+            this.panelNombre.Size = new System.Drawing.Size(910, 47);
             this.panelNombre.TabIndex = 1;
             // 
             // lblNombre
@@ -435,7 +454,7 @@
             this.txtNombre.Location = new System.Drawing.Point(167, 11);
             this.txtNombre.Margin = new System.Windows.Forms.Padding(2);
             this.txtNombre.Name = "txtNombre";
-            this.txtNombre.Size = new System.Drawing.Size(636, 27);
+            this.txtNombre.Size = new System.Drawing.Size(729, 27);
             this.txtNombre.TabIndex = 1;
             // 
             // panelCategoria
@@ -447,7 +466,7 @@
             this.panelCategoria.Margin = new System.Windows.Forms.Padding(2);
             this.panelCategoria.Name = "panelCategoria";
             this.panelCategoria.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
-            this.panelCategoria.Size = new System.Drawing.Size(817, 47);
+            this.panelCategoria.Size = new System.Drawing.Size(910, 47);
             this.panelCategoria.TabIndex = 0;
             // 
             // lblCategoria
@@ -482,7 +501,7 @@
             this.lblInstrucciones.Location = new System.Drawing.Point(22, 24);
             this.lblInstrucciones.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblInstrucciones.Name = "lblInstrucciones";
-            this.lblInstrucciones.Size = new System.Drawing.Size(847, 0);
+            this.lblInstrucciones.Size = new System.Drawing.Size(940, 0);
             this.lblInstrucciones.TabIndex = 0;
             this.lblInstrucciones.Text = "Complete la información del producto. Los campos marcados con * son obligatorios." +
     "";
@@ -490,14 +509,14 @@
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panelTop.Controls.Add(this.button1);
             this.panelTop.Controls.Add(this.lblTitulo);
             this.panelTop.Controls.Add(this.btnCerrar);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(891, 44);
+            this.panelTop.Size = new System.Drawing.Size(984, 44);
             this.panelTop.TabIndex = 4;
             // 
             // button1
@@ -507,7 +526,7 @@
             this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.button1.ForeColor = System.Drawing.Color.DarkRed;
-            this.button1.Location = new System.Drawing.Point(852, 0);
+            this.button1.Location = new System.Drawing.Point(945, 0);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(39, 44);
             this.button1.TabIndex = 2;
@@ -519,6 +538,7 @@
             // 
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.lblTitulo.Location = new System.Drawing.Point(12, 9);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(171, 25);
@@ -532,7 +552,7 @@
             this.btnCerrar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnCerrar.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.btnCerrar.ForeColor = System.Drawing.Color.DarkRed;
-            this.btnCerrar.Location = new System.Drawing.Point(1546, 5);
+            this.btnCerrar.Location = new System.Drawing.Point(1639, 5);
             this.btnCerrar.Name = "btnCerrar";
             this.btnCerrar.Size = new System.Drawing.Size(40, 32);
             this.btnCerrar.TabIndex = 1;
@@ -543,7 +563,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(891, 565);
+            this.ClientSize = new System.Drawing.Size(984, 650);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.panelPrincipal);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -563,10 +583,11 @@
             this.panelCantidad.ResumeLayout(false);
             this.panelCantidad.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCantidad)).EndInit();
-            this.panelTalle.ResumeLayout(false);
-            this.panelTalle.PerformLayout();
             this.panelCodigoBarra.ResumeLayout(false);
             this.panelCodigoBarra.PerformLayout();
+            this.panelVariantes.ResumeLayout(false);
+            this.panelVariantes.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.panelDescripcion.ResumeLayout(false);
             this.panelDescripcion.PerformLayout();
             this.panelNombre.ResumeLayout(false);
@@ -591,9 +612,8 @@
         private System.Windows.Forms.Panel panelCantidad;
         private System.Windows.Forms.Label lblCantidad;
         private System.Windows.Forms.NumericUpDown nudCantidad;
-        private System.Windows.Forms.Panel panelTalle;
         private System.Windows.Forms.Label lblTalle;
-        private System.Windows.Forms.ComboBox cboTalle;
+        // cboTalle removed: using dynamic checkboxes in panelVariantes instead
         private System.Windows.Forms.Panel panelCodigoBarra;
         private System.Windows.Forms.Label lblCodigoBarra;
         private System.Windows.Forms.TextBox txtCodigoBarra;
@@ -610,10 +630,13 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtPrecioCosto;
-        private System.Windows.Forms.CheckBox chkModoScanner;
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Button btnCerrar;
+        private System.Windows.Forms.Panel panelVariantes;
+        private System.Windows.Forms.Button btnMarcarTodos;
+        private System.Windows.Forms.Button btnDesmarcarTodos;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -71,7 +71,7 @@ namespace Gamora_Indumentaria
             // 
             // panel1
             // 
-            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(76)))));
+            this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panel1.Controls.Add(this.lblTitulo);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
@@ -384,7 +384,7 @@ namespace Gamora_Indumentaria
             // 
             // panel3
             // 
-            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(51)))), ((int)(((byte)(51)))), ((int)(((byte)(76)))));
+            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panel3.Controls.Add(this.btnExportar);
             this.panel3.Controls.Add(this.btnActualizar);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -433,6 +433,7 @@ namespace Gamora_Indumentaria
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "Estadisticas";
             this.Text = "Estadísticas - Gamora Indumentaria";
             this.Load += new System.EventHandler(this.Estadisticas_Load);

@@ -206,7 +206,7 @@ namespace Gamora_Indumentaria
             // 
             // panelTop
             // 
-            this.panelTop.BackColor = System.Drawing.Color.White;
+            this.panelTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(11)))), ((int)(((byte)(7)))), ((int)(((byte)(17)))));
             this.panelTop.Controls.Add(this.button1);
             this.panelTop.Controls.Add(this.lblTitulo);
             this.panelTop.Controls.Add(this.btnCerrar);
@@ -215,6 +215,7 @@ namespace Gamora_Indumentaria
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(907, 44);
             this.panelTop.TabIndex = 17;
+            this.panelTop.Paint += new System.Windows.Forms.PaintEventHandler(this.panelTop_Paint);
             // 
             // button1
             // 
@@ -235,6 +236,7 @@ namespace Gamora_Indumentaria
             // 
             this.lblTitulo.AutoSize = true;
             this.lblTitulo.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Bold);
+            this.lblTitulo.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.lblTitulo.Location = new System.Drawing.Point(12, 9);
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(195, 25);

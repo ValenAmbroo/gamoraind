@@ -32,15 +32,31 @@ namespace Gamora_Indumentaria.Data
                 string query = "SELECT Id, Nombre FROM Categorias ORDER BY Nombre";
                 DataTable dt = DatabaseManager.ExecuteQuery(query);
 
+                // Obtener ids de categorías que tengan talles definidos en TiposTalle
+                var categoriasConTalleIds = new HashSet<int>();
+                try
+                {
+                    DataTable dtT = DatabaseManager.ExecuteQuery("SELECT DISTINCT CategoriaId FROM TiposTalle WHERE CategoriaId IS NOT NULL");
+                    foreach (DataRow r in dtT.Rows)
+                    {
+                        if (r["CategoriaId"] != DBNull.Value)
+                        {
+                            categoriasConTalleIds.Add(Convert.ToInt32(r["CategoriaId"]));
+                        }
+                    }
+                }
+                catch { /* si falla la comprobación, caer de nuevo a heurística */ }
+
                 foreach (DataRow row in dt.Rows)
                 {
                     string nombre = row["Nombre"].ToString();
-                    // Heurística: categorías de indumentaria que manejan talles
-                    bool tieneTalle = EsCategoriaConTalle(nombre);
+                    int id = Convert.ToInt32(row["Id"]);
+                    // Determinar si la categoría posee talles en la BD; si no, usar heurística
+                    bool tieneTalle = categoriasConTalleIds.Contains(id) || EsCategoriaConTalle(nombre);
                     string tipoTalle = InferirTipoTalle(nombre);
                     categorias.Add(new Categoria
                     {
-                        Id = Convert.ToInt32(row["Id"]),
+                        Id = id,
                         Nombre = nombre,
                         TieneTalle = tieneTalle,
                         TipoTalle = tipoTalle
@@ -74,13 +90,58 @@ namespace Gamora_Indumentaria.Data
             }
         }
 
+        /// <summary>
+        /// Agrega una lista de talles a una categoría (si no existen ya)
+        /// </summary>
+        public void AgregarTalles(int categoriaId, List<string> talles)
+        {
+            if (talles == null || talles.Count == 0) return;
+            try
+            {
+                using (var conn = DatabaseManager.GetConnection())
+                {
+                    conn.Open();
+                    int orden = 1;
+                    foreach (var t in talles)
+                    {
+                        var tv = (t ?? string.Empty).Trim();
+                        if (string.IsNullOrEmpty(tv)) { orden++; continue; }
+                        // comprobar si ya existe
+                        string check = "SELECT 1 FROM TiposTalle WHERE CategoriaId = @c AND TalleValor = @tv";
+                        using (var cmdCheck = new SqlCommand(check, conn))
+                        {
+                            cmdCheck.Parameters.AddWithValue("@c", categoriaId);
+                            cmdCheck.Parameters.AddWithValue("@tv", tv);
+                            var exists = cmdCheck.ExecuteScalar();
+                            if (exists == null)
+                            {
+                                string insert = "INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden) VALUES (@c,@tv,@ord)";
+                                using (var cmdIns = new SqlCommand(insert, conn))
+                                {
+                                    cmdIns.Parameters.AddWithValue("@c", categoriaId);
+                                    cmdIns.Parameters.AddWithValue("@tv", tv);
+                                    cmdIns.Parameters.AddWithValue("@ord", orden);
+                                    cmdIns.ExecuteNonQuery();
+                                }
+                            }
+                        }
+                        orden++;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(string.Format("Error al agregar talles: {0}", ex.Message), ex);
+            }
+        }
+
         // Determina si una categoría maneja talles (heurística basada en nombre)
         private bool EsCategoriaConTalle(string nombre)
         {
             if (string.IsNullOrWhiteSpace(nombre)) return false;
             nombre = nombre.Trim().ToUpperInvariant();
             // Ajusta aquí según tus categorías reales
-            string[] categoriasConTalle = { "REMERAS", "PANTALONES", "VESTIDOS", "CALZADO", "BUZOS", "CAMPERAS" };
+            string[] categoriasConTalle = { "REMERAS", "PANTALONES", "VESTIDOS", "CALZADO", "BUZOS", "CAMPERAS", "CHALECOS", "JOGGING", "JEANS HOMBRE", "JEANS DAMA", "BOXER" };
             return categoriasConTalle.Contains(nombre);
         }
 
@@ -89,8 +150,9 @@ namespace Gamora_Indumentaria.Data
         {
             if (string.IsNullOrWhiteSpace(nombre)) return null;
             nombre = nombre.Trim().ToUpperInvariant();
-            // Ejemplo simple: Calzado suele ser numérico, resto alfanumérico
+            // Ejemplo simple: Calzado suele ser numérico, Jeans suelen ser numéricos, resto alfanumérico
             if (nombre == "CALZADO") return "NUM";
+            if (nombre.Contains("JEANS")) return "NUM";
             if (EsCategoriaConTalle(nombre)) return "ALFA";
             return null;
         }
@@ -270,7 +332,11 @@ namespace Gamora_Indumentaria.Data
             if (tienePrecioVenta) setParts.Add("PrecioVenta = @PrecioVenta");
             if (tienePrecioCompra) setParts.Add("PrecioCompra = @PrecioCompra");
             if (tienePrecioSimple) setParts.Add("Precio = @PrecioSimple");
-            setParts.Add("FechaModificacion = GETDATE()");
+            // Incluir FechaModificacion solo si la columna existe en la tabla Inventario
+            if (DatabaseManager.ColumnExists("Inventario", "FechaModificacion"))
+            {
+                setParts.Add("FechaModificacion = GETDATE()");
+            }
 
             string query = "UPDATE Inventario SET " + string.Join(", ", setParts) + " WHERE Id = @Id";
 
