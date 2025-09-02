@@ -79,6 +79,7 @@ namespace Gamora_Indumentaria
             this.btnOk.TabIndex = 1;
             this.btnOk.Text = "Aceptar";
             this.btnOk.UseVisualStyleBackColor = false;
+            this.btnOk.Click += new System.EventHandler(this.BtnOk_Click);
             // 
             // btnCancel
             // 
@@ -90,6 +91,7 @@ namespace Gamora_Indumentaria
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancelar";
             this.btnCancel.UseVisualStyleBackColor = false;
+            this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // AgregarCantidadPorTalleForm
             // 
@@ -97,6 +99,9 @@ namespace Gamora_Indumentaria
             this.Controls.Add(this.dgv);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.btnCancel);
+            this.AcceptButton = this.btnOk;
+            this.CancelButton = this.btnCancel;
+            this.Load += new System.EventHandler(this.AgregarCantidadPorTalleForm_Load);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
