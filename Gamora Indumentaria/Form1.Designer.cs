@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.button3 = new System.Windows.Forms.Button();
             this.lblHora = new System.Windows.Forms.Label();
@@ -37,6 +38,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.panelSideMenu = new System.Windows.Forms.Panel();
             this.panelClientes = new System.Windows.Forms.Panel();
+            this.button4 = new System.Windows.Forms.Button();
             this.btnModificarProductos = new System.Windows.Forms.Button();
             this.btnEstadisticaVenta = new System.Windows.Forms.Button();
             this.btnEstadisticaInventario = new System.Windows.Forms.Button();
@@ -54,7 +56,6 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
             this.button10 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panelSideMenu.SuspendLayout();
             this.panelClientes.SuspendLayout();
@@ -99,7 +100,7 @@
             this.lblHora.BackColor = System.Drawing.Color.White;
             this.lblHora.Font = new System.Drawing.Font("Impact", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblHora.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lblHora.Location = new System.Drawing.Point(831, 5);
+            this.lblHora.Location = new System.Drawing.Point(771, 5);
             this.lblHora.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.lblHora.Name = "lblHora";
             this.lblHora.Size = new System.Drawing.Size(0, 27);
@@ -175,11 +176,30 @@
             this.panelClientes.TabIndex = 4;
             this.panelClientes.Paint += new System.Windows.Forms.PaintEventHandler(this.panelClientes_Paint);
             // 
+            // button4
+            // 
+            this.button4.Dock = System.Windows.Forms.DockStyle.Top;
+            this.button4.FlatAppearance.BorderSize = 0;
+            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button4.ForeColor = System.Drawing.Color.LightGray;
+            this.button4.Location = new System.Drawing.Point(0, 156);
+            this.button4.Margin = new System.Windows.Forms.Padding(1);
+            this.button4.Name = "button4";
+            this.button4.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
+            this.button4.Size = new System.Drawing.Size(215, 39);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "Agregar Categoria";
+            this.button4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click_1);
+            // 
             // btnModificarProductos
             // 
             this.btnModificarProductos.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnModificarProductos.FlatAppearance.BorderSize = 0;
             this.btnModificarProductos.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnModificarProductos.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnModificarProductos.ForeColor = System.Drawing.Color.LightGray;
             this.btnModificarProductos.Location = new System.Drawing.Point(0, 117);
             this.btnModificarProductos.Margin = new System.Windows.Forms.Padding(1);
@@ -197,6 +217,7 @@
             this.btnEstadisticaVenta.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnEstadisticaVenta.FlatAppearance.BorderSize = 0;
             this.btnEstadisticaVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEstadisticaVenta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEstadisticaVenta.ForeColor = System.Drawing.Color.LightGray;
             this.btnEstadisticaVenta.Location = new System.Drawing.Point(0, 78);
             this.btnEstadisticaVenta.Margin = new System.Windows.Forms.Padding(1);
@@ -214,6 +235,7 @@
             this.btnEstadisticaInventario.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnEstadisticaInventario.FlatAppearance.BorderSize = 0;
             this.btnEstadisticaInventario.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnEstadisticaInventario.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEstadisticaInventario.ForeColor = System.Drawing.Color.LightGray;
             this.btnEstadisticaInventario.Location = new System.Drawing.Point(0, 39);
             this.btnEstadisticaInventario.Margin = new System.Windows.Forms.Padding(1);
@@ -231,6 +253,7 @@
             this.btnAlta.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnAlta.FlatAppearance.BorderSize = 0;
             this.btnAlta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAlta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnAlta.ForeColor = System.Drawing.Color.LightGray;
             this.btnAlta.Location = new System.Drawing.Point(0, 0);
             this.btnAlta.Margin = new System.Windows.Forms.Padding(1);
@@ -278,6 +301,7 @@
             this.btnCierreCaja.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnCierreCaja.FlatAppearance.BorderSize = 0;
             this.btnCierreCaja.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCierreCaja.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCierreCaja.ForeColor = System.Drawing.Color.LightGray;
             this.btnCierreCaja.Location = new System.Drawing.Point(0, 117);
             this.btnCierreCaja.Margin = new System.Windows.Forms.Padding(1);
@@ -295,6 +319,7 @@
             this.btnHistorialVenta.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnHistorialVenta.FlatAppearance.BorderSize = 0;
             this.btnHistorialVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnHistorialVenta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnHistorialVenta.ForeColor = System.Drawing.Color.LightGray;
             this.btnHistorialVenta.Location = new System.Drawing.Point(0, 78);
             this.btnHistorialVenta.Margin = new System.Windows.Forms.Padding(1);
@@ -312,6 +337,7 @@
             this.btnVenta.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnVenta.FlatAppearance.BorderSize = 0;
             this.btnVenta.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnVenta.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnVenta.ForeColor = System.Drawing.Color.LightGray;
             this.btnVenta.Location = new System.Drawing.Point(0, 39);
             this.btnVenta.Margin = new System.Windows.Forms.Padding(1);
@@ -329,6 +355,7 @@
             this.btnInventario.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnInventario.FlatAppearance.BorderSize = 0;
             this.btnInventario.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnInventario.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnInventario.ForeColor = System.Drawing.Color.LightGray;
             this.btnInventario.Location = new System.Drawing.Point(0, 0);
             this.btnInventario.Margin = new System.Windows.Forms.Padding(1);
@@ -409,7 +436,7 @@
             // 
             this.button10.BackColor = System.Drawing.Color.DarkRed;
             this.button10.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.button10.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.button10.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.button10.Location = new System.Drawing.Point(0, 561);
             this.button10.Margin = new System.Windows.Forms.Padding(1);
             this.button10.Name = "button10";
@@ -418,23 +445,6 @@
             this.button10.Text = "🔓 CERRAR SESIÓN";
             this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
-            // button4
-            // 
-            this.button4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.button4.FlatAppearance.BorderSize = 0;
-            this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button4.ForeColor = System.Drawing.Color.LightGray;
-            this.button4.Location = new System.Drawing.Point(0, 156);
-            this.button4.Margin = new System.Windows.Forms.Padding(1);
-            this.button4.Name = "button4";
-            this.button4.Padding = new System.Windows.Forms.Padding(15, 0, 0, 0);
-            this.button4.Size = new System.Drawing.Size(215, 39);
-            this.button4.TabIndex = 6;
-            this.button4.Text = "Agregar Categoria";
-            this.button4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // Form1
             // 
@@ -447,6 +457,7 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;

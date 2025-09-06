@@ -83,6 +83,25 @@ namespace Gamora_Indumentaria.Data
             return DatabaseManager.ExecuteQuery(query, parameters);
         }
 
+        public static DataTable GetGananciaTotal(DateTime desde, DateTime hasta)
+        {
+            // Excluir ventas marcadas como regalo para que no sumen a la ganancia
+            bool tieneEsRegalo = DatabaseManager.ColumnExists("Ventas", "EsRegalo");
+            string whereExtra = tieneEsRegalo ? " AND ISNULL(v.EsRegalo,0)=0" : string.Empty;
+            string query = $@"
+                SELECT ISNULL(SUM((dv.PrecioUnitario - ISNULL(i.PrecioCompra,0)) * dv.Cantidad), 0) AS Ganancia
+                FROM DetalleVentas dv
+                INNER JOIN Ventas v ON dv.VentaId = v.Id
+                INNER JOIN Inventario i ON dv.ProductoId = i.Id
+                WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta{whereExtra}";
+
+            SqlParameter[] parameters = {
+                new SqlParameter("@Desde", desde),
+                new SqlParameter("@Hasta", hasta)
+            };
+            return DatabaseManager.ExecuteQuery(query, parameters);
+        }
+
         public static string GenerarCsvDetalle(DataTable detalle)
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder();

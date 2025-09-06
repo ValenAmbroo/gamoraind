@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Gamora_Indumentaria.Data;
 
@@ -45,6 +46,23 @@ namespace Gamora_Indumentaria
                 fechaDesde = fechaHasta.AddDays(-30);
                 ConfigurarFiltros();
                 CargarEstadisticasVentas("Hoy");
+                // Crear label de ganancia dinámicamente (si no existe en el diseñador)
+                if (this.Controls.Find("lblGanancia", true).Length == 0)
+                {
+                    Label l = new Label();
+                    l.Name = "lblGanancia";
+                    l.AutoSize = true;
+                    l.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+                    l.ForeColor = Color.FromArgb(231, 76, 60);
+                    l.Text = "$0.00";
+                    l.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+                    // Ubicarlo abajo del tableLayoutPanel dentro del groupBox1
+                    l.Location = new System.Drawing.Point(238, 270);
+                    l.Size = new System.Drawing.Size(122, 30);
+                    // Añadir al groupBox1 para que sea visible
+                    var gb = this.Controls.Find("groupBox1", true).FirstOrDefault() as GroupBox;
+                    if (gb != null) gb.Controls.Add(l);
+                }
             }
             catch (Exception ex)
             {
@@ -492,6 +510,24 @@ namespace Gamora_Indumentaria
 
                     if (lblPromedioVenta != null)
                         lblPromedioVenta.Text = string.Format("${0:N2}", promedioVenta);
+
+                    // Obtener ganancia total y asignar al label (si existe)
+                    try
+                    {
+                        DataTable dg = ReporteVentasGenerator.GetGananciaTotal(fechaDesde, fechaHasta);
+                        if (dg.Rows.Count > 0)
+                        {
+                            decimal ganancia = Convert.ToDecimal(dg.Rows[0]["Ganancia"]);
+                            // buscar control existente (puede ser creado dinámicamente)
+                            var matches = this.Controls.Find("lblGanancia", true);
+                            if (matches.Length > 0)
+                            {
+                                var lblG = matches[0] as Label;
+                                if (lblG != null) lblG.Text = string.Format("${0:N2}", ganancia);
+                            }
+                        }
+                    }
+                    catch { /* no bloquear resumen por fallo en ganancia */ }
                 }
             }
             catch (Exception ex)

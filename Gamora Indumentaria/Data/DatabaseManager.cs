@@ -432,14 +432,15 @@ namespace Gamora_Indumentaria.Data
                         END
 
                         -- Tabla Ventas
-                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ventas')
+            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ventas')
                         BEGIN
                             CREATE TABLE Ventas (
                                 Id INT IDENTITY(1,1) PRIMARY KEY,
                                 FechaVenta DATETIME NOT NULL DEFAULT GETDATE(),
                                 Total DECIMAL(10,2) NOT NULL,
-                                MetodoPago NVARCHAR(50) NOT NULL,
-                                Cliente NVARCHAR(200) NULL
+                MetodoPago NVARCHAR(50) NOT NULL,
+                Cliente NVARCHAR(200) NULL,
+                EsRegalo BIT NOT NULL DEFAULT 0
                             );
                         END
 
@@ -498,7 +499,8 @@ namespace Gamora_Indumentaria.Data
                                     FechaVenta DATETIME NOT NULL DEFAULT GETDATE(),
                                     Total DECIMAL(10,2) NOT NULL,
                                     MetodoPago NVARCHAR(50) NOT NULL,
-                                    Cliente NVARCHAR(200) NULL
+                                    Cliente NVARCHAR(200) NULL,
+                                    EsRegalo BIT NOT NULL DEFAULT 0
                                 );
                             END
                         END
@@ -515,6 +517,13 @@ namespace Gamora_Indumentaria.Data
                                      WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'Cliente')
                         BEGIN
                             ALTER TABLE Ventas ADD Cliente NVARCHAR(200) NULL;
+                        END
+
+                        -- Agregar columna EsRegalo si no existe
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'EsRegalo')
+                        BEGIN
+                            ALTER TABLE Ventas ADD EsRegalo BIT NOT NULL DEFAULT 0;
                         END
 
             -- Tabla DetalleVentas
@@ -916,7 +925,7 @@ namespace Gamora_Indumentaria.Data
         /// <param name="metodoPago">Método de pago</param>
         /// <param name="detalles">Lista de detalles de la venta</param>
         /// <returns>ID de la venta creada</returns>
-        public static int ProcesarVenta(decimal total, string metodoPago, List<ItemVenta> detalles)
+        public static int ProcesarVenta(decimal total, string metodoPago, List<ItemVenta> detalles, bool esRegalo = false)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
@@ -927,13 +936,14 @@ namespace Gamora_Indumentaria.Data
                     {
                         // 1. Insertar la venta principal
                         string insertVenta = @"
-                            INSERT INTO Ventas (Total, MetodoPago)
-                            VALUES (@Total, @MetodoPago);
+                            INSERT INTO Ventas (Total, MetodoPago, EsRegalo)
+                            VALUES (@Total, @MetodoPago, @EsRegalo);
                             SELECT SCOPE_IDENTITY();";
 
                         SqlCommand cmd = new SqlCommand(insertVenta, conn, transaction);
                         cmd.Parameters.AddWithValue("@Total", total);
                         cmd.Parameters.AddWithValue("@MetodoPago", metodoPago);
+                        cmd.Parameters.AddWithValue("@EsRegalo", esRegalo ? 1 : 0);
 
                         int ventaId = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -1002,7 +1012,7 @@ namespace Gamora_Indumentaria.Data
         /// <summary>
         /// Procesa una venta desde el carrito de compras
         /// </summary>
-        public static int ProcesarVenta(List<ItemCarrito> carrito, string metodoPago, decimal totalVenta)
+        public static int ProcesarVenta(List<ItemCarrito> carrito, string metodoPago, decimal totalVenta, bool esRegalo = false)
         {
             var detalles = carrito.Select(item => new ItemVenta
             {
@@ -1013,7 +1023,7 @@ namespace Gamora_Indumentaria.Data
                 Subtotal = item.Subtotal,
                 Descuento = item.Descuento
             }).ToList();
-            return ProcesarVenta(totalVenta, metodoPago, detalles);
+            return ProcesarVenta(totalVenta, metodoPago, detalles, esRegalo);
         }
 
         /// <summary>
@@ -1037,11 +1047,14 @@ namespace Gamora_Indumentaria.Data
                                 throw new Exception("Ya existe un cierre para esta fecha");
                         }
 
-                        string sql = @"
+                        // Excluir ventas marcadas como regalo del cierre de caja para ganancias
+                        bool tieneEsRegalo = ColumnExists("Ventas", "EsRegalo");
+                        string filtroRegalo = tieneEsRegalo ? " AND ISNULL(v.EsRegalo,0)=0" : string.Empty;
+                        string sql = $@"
                             SELECT v.Id, v.Total, v.FechaVenta, d.Cantidad, d.PrecioUnitario, ISNULL(d.CostoUnitario,0) AS CostoUnitario
                             FROM Ventas v
                             INNER JOIN DetalleVentas d ON v.Id = d.VentaId
-                            WHERE CONVERT(date, v.FechaVenta) = @Fecha";
+                            WHERE CONVERT(date, v.FechaVenta) = @Fecha{filtroRegalo}";
                         decimal totalVentas = 0m, costoTotal = 0m; int cantVentas = 0, cantItems = 0; int lastVenta = -1;
                         using (SqlCommand cmd = new SqlCommand(sql, conn, tr))
                         {

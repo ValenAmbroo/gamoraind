@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -58,7 +59,7 @@
             this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button1.Font = new System.Drawing.Font("MingLiU_HKSCS-ExtB", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.Location = new System.Drawing.Point(589, 642);
-            this.button1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(143, 38);
             this.button1.TabIndex = 1;
@@ -76,7 +77,7 @@
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.button4);
             this.panel1.Location = new System.Drawing.Point(1, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1321, 29);
             this.panel1.TabIndex = 2;
@@ -88,7 +89,7 @@
             this.button3.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.cerrrar_;
             this.button3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button3.Location = new System.Drawing.Point(1286, 0);
-            this.button3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button3.Margin = new System.Windows.Forms.Padding(2);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(33, 32);
             this.button3.TabIndex = 2;
@@ -113,7 +114,7 @@
             this.button2.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.nuevo_minimized_;
             this.button2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button2.Location = new System.Drawing.Point(1211, -1);
-            this.button2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(33, 32);
             this.button2.TabIndex = 0;
@@ -127,7 +128,7 @@
             this.button4.BackgroundImage = global::Gamora_Indumentaria.Properties.Resources.maximized_n;
             this.button4.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.button4.Location = new System.Drawing.Point(1249, -1);
-            this.button4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.button4.Margin = new System.Windows.Forms.Padding(2);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(33, 32);
             this.button4.TabIndex = 1;
@@ -147,7 +148,8 @@
             this.Controls.Add(this.label1);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form2";
             this.Text = "Form2";
             this.Load += new System.EventHandler(this.Form2_Load);

@@ -40,6 +40,7 @@ namespace Gamora_Indumentaria
             public string MetodoPago { get; set; }
             public decimal Total { get; set; }
             public List<ItemCarrito> Items { get; set; }
+            public bool EsRegalo { get; set; }
         }
 
         // Controles definidos manualmente
@@ -451,7 +452,8 @@ namespace Gamora_Indumentaria
                     Subtotal = i.Subtotal // ya neto
                 }).ToList();
 
-                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta);
+                bool esRegalo = string.Equals(metodoPago, "Regalo", StringComparison.OrdinalIgnoreCase);
+                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta, esRegalo);
 
                 // Preparar datos para ticket
                 lastTicketData = new VentaTicketData
@@ -462,6 +464,7 @@ namespace Gamora_Indumentaria
                     Total = totalVenta,
                     Items = snapshotItems
                 };
+                lastTicketData.EsRegalo = esRegalo;
 
                 MessageBox.Show(string.Format("Venta procesada exitosamente.\nVenta ID: {0}\nTotal: {1:C}\nMétodo: {2}",
                     ventaId, totalVenta, metodoPago),
@@ -550,8 +553,8 @@ namespace Gamora_Indumentaria
             // 
             // lblTitulo1
             // 
-            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblTitulo1.Controls.Add(this.btnAgregar1);
             this.lblTitulo1.Controls.Add(this.grpPago);
@@ -675,8 +678,8 @@ namespace Gamora_Indumentaria
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.button2);
@@ -719,8 +722,8 @@ namespace Gamora_Indumentaria
             // 
             // dgvCarrito1
             // 
-            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.dgvCarrito1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvCarrito1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvCarrito1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -820,7 +823,8 @@ namespace Gamora_Indumentaria
                     "Tarjeta de Débito",
                     "Tarjeta de Crédito",
                     "Transferencia",
-                    "Mercado Pago"
+                    "Mercado Pago",
+                    "Regalo"
                 });
                 cmbMetodoPago1.SelectedIndexChanged += (s, ev) => UpdateProcesarEnabled();
             }
@@ -995,6 +999,7 @@ namespace Gamora_Indumentaria
                         Subtotal = i.Subtotal
                     }).ToList()
                 };
+                lastTicketData.EsRegalo = string.Equals(cmbMetodoPago1?.SelectedItem?.ToString(), "Regalo", StringComparison.OrdinalIgnoreCase);
             }
             try { previewDlg.ShowDialog(this); }
             catch (Exception ex) { MessageBox.Show("No se pudo mostrar la vista previa: " + ex.Message, "Impresión", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
@@ -1099,9 +1104,6 @@ namespace Gamora_Indumentaria
                 decimal descValor = Math.Round(bruto * (it.Descuento / 100m), 2);
                 decimal neto = it.Subtotal;
 
-                totalBruto += bruto;
-                totalDesc += descValor;
-
                 // Nombre multilínea
                 var nameLines = WrapLeft(nombre, fNormal, usableWidth);
                 foreach (var ln in nameLines)
@@ -1110,42 +1112,62 @@ namespace Gamora_Indumentaria
                     y += lineH;
                 }
 
-                // Cantidad x Precio = Bruto
-                string detalle = $"{it.Cantidad} x {it.PrecioUnitario:C} = {bruto:C}";
-                e.Graphics.DrawString(detalle, fNormal, Brushes.Black, leftCol, y);
-                y += lineH;
-
-                // Descuento
-                if (it.Descuento > 0)
+                if (!lastTicketData.EsRegalo)
                 {
-                    string descTxt = $"-{it.Descuento:0.##}%  (-{descValor:C})";
-                    e.Graphics.DrawString(descTxt, fNormal, Brushes.Black, leftCol, y);
-                    y += lineH;
-                }
+                    totalBruto += bruto;
+                    totalDesc += descValor;
 
-                // Total del ítem (alineado a la derecha en su propia línea)
-                string netoTxt = neto.ToString("C");
-                e.Graphics.DrawString(netoTxt, fBold, Brushes.Black,
-                    left + width - TR_Width(netoTxt, fBold) - padding, y);
-                y += lineH + 6;
+                    string detalle = $"{it.Cantidad} x {it.PrecioUnitario:C} = {bruto:C}";
+                    e.Graphics.DrawString(detalle, fNormal, Brushes.Black, leftCol, y);
+                    y += lineH;
+
+                    if (it.Descuento > 0)
+                    {
+                        string descTxt = $"-{it.Descuento:0.##}%  (-{descValor:C})";
+                        e.Graphics.DrawString(descTxt, fNormal, Brushes.Black, leftCol, y);
+                        y += lineH;
+                    }
+
+                    string netoTxt = neto.ToString("C");
+                    e.Graphics.DrawString(netoTxt, fBold, Brushes.Black,
+                        left + width - TR_Width(netoTxt, fBold) - padding, y);
+                    y += lineH + 6;
+                }
+                else
+                {
+                    string cantTxt = $"Cantidad: {it.Cantidad}";
+                    e.Graphics.DrawString(cantTxt, fNormal, Brushes.Black, leftCol, y);
+                    y += lineH + 6;
+                }
             }
 
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
 
-            // --- Totales ---
-            DrawCenter($"Subtotal: {totalBruto:C}", fNormal);
-            if (totalDesc > 0) DrawCenter($"Descuentos: -{totalDesc:C}", fNormal);
+            // --- Totales --- (omitidos en regalos)
+            if (!lastTicketData.EsRegalo)
+            {
+                DrawCenter($"Subtotal: {totalBruto:C}", fNormal);
+                if (totalDesc > 0) DrawCenter($"Descuentos: -{totalDesc:C}", fNormal);
 
-            string totalTxt = "TOTAL: " + lastTicketData.Total.ToString("C");
-            e.Graphics.DrawString(totalTxt, fTotal, Brushes.Black, CenterText(e.Graphics, totalTxt, fTotal, width, left), y);
-            y += (int)e.Graphics.MeasureString(totalTxt, fTotal).Height + 4;
+                string totalTxt = "TOTAL: " + lastTicketData.Total.ToString("C");
+                e.Graphics.DrawString(totalTxt, fTotal, Brushes.Black, CenterText(e.Graphics, totalTxt, fTotal, width, left), y);
+                y += (int)e.Graphics.MeasureString(totalTxt, fTotal).Height + 4;
+            }
 
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
 
             // --- Pie ---
-            DrawCenter("Cambio válido dentro de 15 días con ticket", fNormal);
-            DrawCenter("¡Gracias por su compra!", fNormal);
-            DrawCenter("No válido como factura", fNormal);
+            if (lastTicketData.EsRegalo)
+            {
+                DrawCenter("Comprobante de regalo - sin precios", fNormal);
+                DrawCenter("¡Gracias por su compra!", fNormal);
+            }
+            else
+            {
+                DrawCenter("Cambio válido dentro de 15 días con ticket", fNormal);
+                DrawCenter("¡Gracias por su compra!", fNormal);
+                DrawCenter("No válido como factura", fNormal);
+            }
 
             e.HasMorePages = false;
         }
