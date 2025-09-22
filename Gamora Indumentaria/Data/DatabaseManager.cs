@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
 using System.Linq;
+using System.Configuration;
 using Gamora_Indumentaria.Models;
 
 namespace Gamora_Indumentaria.Data
@@ -15,11 +16,10 @@ namespace Gamora_Indumentaria.Data
     {
         // Flag para controlar si se cargan datos de ejemplo (desactivado para usar solo datos reales)
         private const bool CARGAR_DATOS_EJEMPLO = false;
-        // Cadena de conexión principal para la aplicación
-        public static readonly string ConnectionString = @"Data Source=DESKTOP-8860VEA;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
-
-        // Cadena de conexión para operaciones en master (crear BD)
-        private static readonly string MasterConnectionString = @"Data Source=DESKTOP-8860VEA;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+        // Cadena de conexión principal para la aplicación (se lee de App.config)
+        private static readonly string ConnectionString = GetConfiguredConnectionString();
+        // Cadena de conexión a master derivada de la principal (mismo servidor)
+        private static readonly string MasterConnectionString = BuildMasterConnectionString(ConnectionString);
 
         /// <summary>
         /// Obtiene una nueva conexión a la base de datos
@@ -28,6 +28,37 @@ namespace Gamora_Indumentaria.Data
         public static SqlConnection GetConnection()
         {
             return new SqlConnection(ConnectionString);
+        }
+
+        private static string GetConfiguredConnectionString()
+        {
+            // Intenta múltiples claves conocidas
+            string[] keys = new[] { "GamoraIndumentariaDB", "VentasDB", "DefaultConnection" };
+            foreach (var key in keys)
+            {
+                try
+                {
+                    var cs = ConfigurationManager.ConnectionStrings[key]?.ConnectionString;
+                    if (!string.IsNullOrWhiteSpace(cs)) return cs;
+                }
+                catch { /* ignorar y probar siguiente */ }
+            }
+            // Fallback razonable: LocalDB con nombre por defecto
+            return "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+        }
+
+        private static string BuildMasterConnectionString(string cs)
+        {
+            try
+            {
+                var sb = new SqlConnectionStringBuilder(cs);
+                sb.InitialCatalog = "master";
+                return sb.ToString();
+            }
+            catch
+            {
+                return "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+            }
         }
 
         /// <summary>

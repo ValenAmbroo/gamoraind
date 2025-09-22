@@ -275,7 +275,7 @@ namespace Gamora_Indumentaria
         {
             try
             {
-                CargarFormularioHijo(new CierreCaja());
+                CargarFormularioHijo(new CierreCaja(perfilUsuario != null && perfilUsuario.ToLower() == "administrador"));
             }
             catch (Exception ex)
             {
@@ -314,7 +314,7 @@ namespace Gamora_Indumentaria
         {
             try
             {
-                CargarFormularioHijo(new EstadisticasVentas());
+                CargarFormularioHijo(new EstadisticasVentas(perfilUsuario != null && perfilUsuario.ToLower() == "administrador"));
             }
             catch (Exception ex)
             {

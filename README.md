@@ -141,3 +141,52 @@ La aplicación creará automáticamente las tablas necesarias en la primera ejec
 
 - Verificar la cadena de conexión en los archivos `.cs`
 - Asegurar que las tablas tienen datos iniciales
+
+## Instalación en una PC del cliente (sin entorno de programación)
+
+Sigue estos pasos para instalar y dejar funcionando la aplicación en otra computadora.
+
+### 1) Requisitos
+
+- Windows 10/11 64 bits
+- .NET Framework 4.7.2 o superior
+- Uno de estos motores de base de datos:
+  - LocalDB (ideal uso local en una sola PC)
+  - SQL Server Express (para multiusuario o servidor dedicado)
+
+### 2) Instalar dependencias
+
+1. Instala .NET Framework 4.7.2 si no está presente.
+2. Instala SQL Server:
+   - LocalDB: a través del instalador de SQL Server Express (marca “LocalDB”).
+   - SQL Server Express: instala el “Motor de base de datos (Database Engine)”. Anota la instancia (p. ej., SQLEXPRESS).
+
+### 3) Configurar la cadena de conexión
+
+Edita `Gamora Indumentaria/App.config` antes de compilar o el `.config` junto al `.exe` después de copiar. La app intentará leer `GamoraIndumentariaDB` y luego `VentasDB`.
+
+Ejemplos:
+
+- LocalDB (local):
+  `<add name="GamoraIndumentariaDB" connectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30" providerName="System.Data.SqlClient" />`
+- SQL Express local:
+  `<add name="GamoraIndumentariaDB" connectionString="Data Source=MI_PC\SQLEXPRESS;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30" providerName="System.Data.SqlClient" />`
+- SQL Server en red (usuario/clave):
+  `<add name="GamoraIndumentariaDB" connectionString="Data Source=IP_SERVIDOR\INSTANCIA;Initial Catalog=GamoraIndumentariaDB;User ID=usuario;Password=clave;TrustServerCertificate=True;Connect Timeout=30" providerName="System.Data.SqlClient" />`
+
+### 4) Compilar y copiar
+
+1. Compila en modo Release.
+2. Copia la carpeta `Gamora Indumentaria\bin\Release` a la PC cliente (p. ej., `C:\Program Files\Gamora Indumentaria`).
+3. Incluye el `.exe` y el `.config`.
+
+Opcional: crea un instalador MSI (Visual Studio Installer Projects) para automatizar instalación y atajos.
+
+### 5) Primer inicio y creación de BD
+
+Al abrir `Gamora Indumentaria.exe`, la aplicación creará la base y tablas si no existen, usando la cadena de conexión configurada. Si falla, revisa la conexión, que el servicio SQL esté corriendo y permisos.
+
+### 6) Actualizaciones y backup
+
+- Para actualizar, reemplaza los archivos de la carpeta de instalación (mantén el `.config` si la conexión no cambia).
+- Realiza respaldos periódicos de la base (SSMS o scripts de backup).

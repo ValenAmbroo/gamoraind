@@ -17,10 +17,15 @@ namespace Gamora_Indumentaria
             try
             {
                 // Conexión sin archivos MDF
-                string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;Connect Timeout=30;";
+                string connectionString = Gamora_Indumentaria.Data.DatabaseManager.GetType() != null ?
+                    (string)typeof(Gamora_Indumentaria.Data.DatabaseManager)
+                        .GetField("ConnectionString", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+                        .GetValue(null) : null;
 
                 // Crear la base de datos primero
-                string masterConnectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;";
+                string masterConnectionString = (string)typeof(Gamora_Indumentaria.Data.DatabaseManager)
+                        .GetField("MasterConnectionString", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)
+                        .GetValue(null);
 
                 using (SqlConnection masterConnection = new SqlConnection(masterConnectionString))
                 {
@@ -37,7 +42,7 @@ namespace Gamora_Indumentaria
                 }
 
                 // Ahora conectar a la base de datos creada
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using (SqlConnection testConnection = new SqlConnection(connectionString))
                 {
                     connection.Open();
 

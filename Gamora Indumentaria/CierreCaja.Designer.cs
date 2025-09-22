@@ -22,6 +22,7 @@ namespace Gamora_Indumentaria
             this.dgvDetalles = new System.Windows.Forms.DataGridView();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblResumen = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lblGananciaDia = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnCerrar = new System.Windows.Forms.Button();
             this.lblTitulo = new System.Windows.Forms.Label();
             this.panelTop = new System.Windows.Forms.Panel();
@@ -93,7 +94,8 @@ namespace Gamora_Indumentaria
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblResumen});
+            this.lblResumen,
+            this.lblGananciaDia});
             this.statusStrip1.Location = new System.Drawing.Point(0, 578);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(900, 22);
@@ -104,6 +106,12 @@ namespace Gamora_Indumentaria
             this.lblResumen.Name = "lblResumen";
             this.lblResumen.Size = new System.Drawing.Size(56, 17);
             this.lblResumen.Text = "Resumen";
+            // 
+            // lblGananciaDia
+            // 
+            this.lblGananciaDia.Name = "lblGananciaDia";
+            this.lblGananciaDia.Size = new System.Drawing.Size(120, 17);
+            this.lblGananciaDia.Text = "Ganancia: $0,00";
             // 
             // btnCerrar
             // 
@@ -188,6 +196,7 @@ namespace Gamora_Indumentaria
         private System.Windows.Forms.DataGridView dgvDetalles;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel lblResumen;
+        private System.Windows.Forms.ToolStripStatusLabel lblGananciaDia;
         private System.Windows.Forms.Button btnCerrar;
         private System.Windows.Forms.Label lblTitulo;
         private System.Windows.Forms.Panel panelTop;

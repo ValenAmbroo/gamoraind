@@ -29,6 +29,7 @@ namespace Gamora_Indumentaria
         // Impresión de ticket
         private PrintDocument printDoc;
         private CheckBox chkImprimirTicket;
+        private CheckBox chkEsRegalo; // Ocultar precios en ticket
         private VentaTicketData lastTicketData;
         private PrintPreviewDialog previewDlg;
         private Button btnVistaPrevia;
@@ -82,6 +83,17 @@ namespace Gamora_Indumentaria
                     Location = new Point(20, 95)
                 };
                 grpPago.Controls.Add(chkImprimirTicket);
+            }
+            // Agregar checkbox de regalo (solo afecta impresión)
+            if (chkEsRegalo == null)
+            {
+                chkEsRegalo = new CheckBox
+                {
+                    Text = "Es un regalo (ocultar precios)",
+                    AutoSize = true,
+                    Location = new Point(20, 125)
+                };
+                grpPago.Controls.Add(chkEsRegalo);
             }
             if (btnVistaPrevia == null)
             {
@@ -452,8 +464,8 @@ namespace Gamora_Indumentaria
                     Subtotal = i.Subtotal // ya neto
                 }).ToList();
 
-                bool esRegalo = string.Equals(metodoPago, "Regalo", StringComparison.OrdinalIgnoreCase);
-                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta, esRegalo);
+                // Ya no persistimos 'regalo' en BD. Solo afecta la impresión del ticket.
+                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta);
 
                 // Preparar datos para ticket
                 lastTicketData = new VentaTicketData
@@ -464,7 +476,7 @@ namespace Gamora_Indumentaria
                     Total = totalVenta,
                     Items = snapshotItems
                 };
-                lastTicketData.EsRegalo = esRegalo;
+                lastTicketData.EsRegalo = chkEsRegalo?.Checked == true;
 
                 MessageBox.Show(string.Format("Venta procesada exitosamente.\nVenta ID: {0}\nTotal: {1:C}\nMétodo: {2}",
                     ventaId, totalVenta, metodoPago),
@@ -823,8 +835,7 @@ namespace Gamora_Indumentaria
                     "Tarjeta de Débito",
                     "Tarjeta de Crédito",
                     "Transferencia",
-                    "Mercado Pago",
-                    "Regalo"
+                    "Mercado Pago"
                 });
                 cmbMetodoPago1.SelectedIndexChanged += (s, ev) => UpdateProcesarEnabled();
             }
@@ -999,7 +1010,7 @@ namespace Gamora_Indumentaria
                         Subtotal = i.Subtotal
                     }).ToList()
                 };
-                lastTicketData.EsRegalo = string.Equals(cmbMetodoPago1?.SelectedItem?.ToString(), "Regalo", StringComparison.OrdinalIgnoreCase);
+                lastTicketData.EsRegalo = chkEsRegalo?.Checked == true;
             }
             try { previewDlg.ShowDialog(this); }
             catch (Exception ex) { MessageBox.Show("No se pudo mostrar la vista previa: " + ex.Message, "Impresión", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
@@ -1079,7 +1090,7 @@ namespace Gamora_Indumentaria
             // --- Encabezado ---
             DrawCenter("GAMORA INDUMENTARIA", fHeader);
             DrawCenter("Av. Siempre Viva 123 - San Vicente", fNormal);
-            DrawCenter("CUIT: 20-12345678-9  |  Tel: (011) 5555-5555", fNormal);
+            DrawCenter("Tel: (011) 5555-5555", fNormal);
             DrawCenter("Instagram: @GamoraIndumentaria", fNormal);
             y += 2;
             DrawCenter($"Fecha: {lastTicketData.Fecha:dd/MM/yyyy HH:mm}", fNormal);
@@ -1104,12 +1115,11 @@ namespace Gamora_Indumentaria
                 decimal descValor = Math.Round(bruto * (it.Descuento / 100m), 2);
                 decimal neto = it.Subtotal;
 
-                // Nombre multilínea
+                // Nombre multilínea (centrado)
                 var nameLines = WrapLeft(nombre, fNormal, usableWidth);
                 foreach (var ln in nameLines)
                 {
-                    e.Graphics.DrawString(ln, fNormal, Brushes.Black, leftCol, y);
-                    y += lineH;
+                    DrawCenter(ln, fNormal);
                 }
 
                 if (!lastTicketData.EsRegalo)
@@ -1118,26 +1128,23 @@ namespace Gamora_Indumentaria
                     totalDesc += descValor;
 
                     string detalle = $"{it.Cantidad} x {it.PrecioUnitario:C} = {bruto:C}";
-                    e.Graphics.DrawString(detalle, fNormal, Brushes.Black, leftCol, y);
-                    y += lineH;
+                    DrawCenter(detalle, fNormal);
 
                     if (it.Descuento > 0)
                     {
                         string descTxt = $"-{it.Descuento:0.##}%  (-{descValor:C})";
-                        e.Graphics.DrawString(descTxt, fNormal, Brushes.Black, leftCol, y);
-                        y += lineH;
+                        DrawCenter(descTxt, fNormal);
                     }
 
                     string netoTxt = neto.ToString("C");
-                    e.Graphics.DrawString(netoTxt, fBold, Brushes.Black,
-                        left + width - TR_Width(netoTxt, fBold) - padding, y);
-                    y += lineH + 6;
+                    DrawCenter(netoTxt, fBold);
+                    y += 6; // espacio extra
                 }
                 else
                 {
                     string cantTxt = $"Cantidad: {it.Cantidad}";
-                    e.Graphics.DrawString(cantTxt, fNormal, Brushes.Black, leftCol, y);
-                    y += lineH + 6;
+                    DrawCenter(cantTxt, fNormal);
+                    y += 6;
                 }
             }
 

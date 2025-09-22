@@ -36,10 +36,13 @@ namespace Gamora_Indumentaria
                 }
             }
         }
-        public EstadisticasVentas()
+        private readonly bool _isAdmin;
+
+        public EstadisticasVentas(bool isAdmin = false)
         {
             try
             {
+                _isAdmin = isAdmin;
                 InitializeComponent();
                 DatabaseManager.InitializeDatabase(); // Usar el manager centralizado
                 fechaHasta = DateTime.Today.AddDays(1); // exclusivo
@@ -62,6 +65,7 @@ namespace Gamora_Indumentaria
                     // Añadir al groupBox1 para que sea visible
                     var gb = this.Controls.Find("groupBox1", true).FirstOrDefault() as GroupBox;
                     if (gb != null) gb.Controls.Add(l);
+                    if (!_isAdmin) l.Visible = false;
                 }
             }
             catch (Exception ex)
@@ -511,19 +515,22 @@ namespace Gamora_Indumentaria
                     if (lblPromedioVenta != null)
                         lblPromedioVenta.Text = string.Format("${0:N2}", promedioVenta);
 
-                    // Obtener ganancia total y asignar al label (si existe)
+                    // Obtener ganancia total y asignar al label (solo admin)
                     try
                     {
-                        DataTable dg = ReporteVentasGenerator.GetGananciaTotal(fechaDesde, fechaHasta);
-                        if (dg.Rows.Count > 0)
+                        if (_isAdmin)
                         {
-                            decimal ganancia = Convert.ToDecimal(dg.Rows[0]["Ganancia"]);
-                            // buscar control existente (puede ser creado dinámicamente)
-                            var matches = this.Controls.Find("lblGanancia", true);
-                            if (matches.Length > 0)
+                            DataTable dg = ReporteVentasGenerator.GetGananciaTotal(fechaDesde, fechaHasta);
+                            if (dg.Rows.Count > 0)
                             {
-                                var lblG = matches[0] as Label;
-                                if (lblG != null) lblG.Text = string.Format("${0:N2}", ganancia);
+                                decimal ganancia = Convert.ToDecimal(dg.Rows[0]["Ganancia"]);
+                                // buscar control existente (puede ser creado dinámicamente)
+                                var matches = this.Controls.Find("lblGanancia", true);
+                                if (matches.Length > 0)
+                                {
+                                    var lblG = matches[0] as Label;
+                                    if (lblG != null) lblG.Text = string.Format("${0:N2}", ganancia);
+                                }
                             }
                         }
                     }

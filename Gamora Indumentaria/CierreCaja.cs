@@ -9,11 +9,19 @@ namespace Gamora_Indumentaria
 {
     public partial class CierreCaja : Form
     {
-        public CierreCaja()
+        private readonly bool _isAdmin;
+
+        public CierreCaja(bool isAdmin = false)
         {
+            _isAdmin = isAdmin;
             InitializeComponent();
             dtpFecha.Value = DateTime.Today;
             ConfigurarGrid();
+            // Ocultar ganancia para no administradores
+            if (!_isAdmin)
+            {
+                if (lblGananciaDia != null) lblGananciaDia.Visible = false;
+            }
         }
 
         private void ConfigurarGrid()
@@ -68,6 +76,7 @@ namespace Gamora_Indumentaria
             {
                 dgvDetalles.DataSource = null;
                 lblResumen.Text = "Sin ventas en el día";
+                if (lblGananciaDia != null) lblGananciaDia.Text = "Ganancia: $0,00";
                 return;
             }
             var agrupado = dt.AsEnumerable().GroupBy(r => r.Field<int>("VentaId")).Select(g => new
@@ -84,6 +93,29 @@ namespace Gamora_Indumentaria
             int items = agrupado.Sum(a => a.Items);
             lblResumen.Text = $"Ventas: {ventas} | Items: {items} | Total: {total:C2}";
             if (trasCierre) lblResumen.Text += " (Cierre registrado)";
+
+            // Calcular ganancia del día (excluir regalos si la columna existe) solo para admin
+            try
+            {
+                if (_isAdmin && lblGananciaDia != null)
+                {
+                    bool tieneEsRegalo = DatabaseManager.ColumnExists("Ventas", "EsRegalo");
+                    string filtroRegalo = tieneEsRegalo ? " AND ISNULL(v.EsRegalo,0)=0" : string.Empty;
+                    string sqlGan = $@"SELECT ISNULL(SUM((d.PrecioUnitario - ISNULL(i.PrecioCompra,0)) * d.Cantidad),0)
+                                   FROM Ventas v
+                                   INNER JOIN DetalleVentas d ON v.Id=d.VentaId
+                                   INNER JOIN Inventario i ON d.ProductoId = i.Id
+                                   WHERE CONVERT(date, v.FechaVenta)=@F{filtroRegalo}";
+                    var val = DatabaseManager.ExecuteScalar(sqlGan, new System.Data.SqlClient.SqlParameter("@F", dia));
+                    decimal gan = 0m;
+                    if (val != null && val != DBNull.Value) gan = Convert.ToDecimal(val);
+                    lblGananciaDia.Text = $"Ganancia: {gan:C2}";
+                }
+            }
+            catch
+            {
+                if (_isAdmin && lblGananciaDia != null) lblGananciaDia.Text = "Ganancia: —";
+            }
         }
 
         private void CierreCaja_Load(object sender, EventArgs e)
