@@ -1089,9 +1089,9 @@ namespace Gamora_Indumentaria
 
             // --- Encabezado ---
             DrawCenter("GAMORA INDUMENTARIA", fHeader);
-            DrawCenter("Av. Siempre Viva 123 - San Vicente", fNormal);
-            DrawCenter("Tel: (011) 5555-5555", fNormal);
-            DrawCenter("Instagram: @GamoraIndumentaria", fNormal);
+            DrawCenter("Belgrano 108 - Brandsen", fNormal);
+            DrawCenter("Tel: 2223-424816", fNormal);
+            DrawCenter("Instagram: @gamora.indd", fNormal);
             y += 2;
             DrawCenter($"Fecha: {lastTicketData.Fecha:dd/MM/yyyy HH:mm}", fNormal);
             DrawCenter($"Venta ID: {lastTicketData.VentaId}   Pago: {lastTicketData.MetodoPago}", fNormal);
