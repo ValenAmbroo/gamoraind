@@ -80,20 +80,24 @@ namespace Gamora_Indumentaria
                     Text = "Imprimir ticket",
                     Checked = true,
                     AutoSize = true,
-                    Location = new Point(20, 95)
+                    // Mover al área superior izquierda del grupo para evitar solapamiento
+                    Location = new Point(20, 30)
                 };
                 grpPago.Controls.Add(chkImprimirTicket);
+                chkImprimirTicket.BringToFront();
             }
             // Agregar checkbox de regalo (solo afecta impresión)
             if (chkEsRegalo == null)
             {
                 chkEsRegalo = new CheckBox
                 {
-                    Text = "Es un regalo (ocultar precios)",
+                    Text = "Es un regalo",
                     AutoSize = true,
-                    Location = new Point(20, 125)
+                    // Colocar debajo del checkbox de imprimir para que sean visibles
+                    Location = new Point(20, 60)
                 };
                 grpPago.Controls.Add(chkEsRegalo);
+                chkEsRegalo.BringToFront();
             }
             if (btnVistaPrevia == null)
             {
@@ -605,9 +609,9 @@ namespace Gamora_Indumentaria
             this.grpPago.Controls.Add(this.lblTotal);
             this.grpPago.Controls.Add(this.label3);
             this.grpPago.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpPago.Location = new System.Drawing.Point(776, 372);
+            this.grpPago.Location = new System.Drawing.Point(589, 372);
             this.grpPago.Name = "grpPago";
-            this.grpPago.Size = new System.Drawing.Size(390, 169);
+            this.grpPago.Size = new System.Drawing.Size(586, 175);
             this.grpPago.TabIndex = 5;
             this.grpPago.TabStop = false;
             this.grpPago.Text = "Procedimiento de Pago";
@@ -617,7 +621,7 @@ namespace Gamora_Indumentaria
             this.ProcesarVentabtn.BackColor = System.Drawing.Color.LawnGreen;
             this.ProcesarVentabtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ProcesarVentabtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ProcesarVentabtn.Location = new System.Drawing.Point(176, 138);
+            this.ProcesarVentabtn.Location = new System.Drawing.Point(369, 142);
             this.ProcesarVentabtn.Name = "ProcesarVentabtn";
             this.ProcesarVentabtn.Size = new System.Drawing.Size(196, 27);
             this.ProcesarVentabtn.TabIndex = 3;
@@ -641,7 +645,7 @@ namespace Gamora_Indumentaria
             // 
             this.btnVistaPrevia.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnVistaPrevia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.btnVistaPrevia.Location = new System.Drawing.Point(176, 114);
+            this.btnVistaPrevia.Location = new System.Drawing.Point(369, 108);
             this.btnVistaPrevia.Name = "btnVistaPrevia";
             this.btnVistaPrevia.Size = new System.Drawing.Size(196, 24);
             this.btnVistaPrevia.TabIndex = 7;
@@ -652,9 +656,9 @@ namespace Gamora_Indumentaria
             // cmbMetodoPago1
             // 
             this.cmbMetodoPago1.FormattingEnabled = true;
-            this.cmbMetodoPago1.Location = new System.Drawing.Point(233, 58);
+            this.cmbMetodoPago1.Location = new System.Drawing.Point(369, 62);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
-            this.cmbMetodoPago1.Size = new System.Drawing.Size(139, 28);
+            this.cmbMetodoPago1.Size = new System.Drawing.Size(196, 28);
             this.cmbMetodoPago1.TabIndex = 5;
             // 
             // lblTotal
