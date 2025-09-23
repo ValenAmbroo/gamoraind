@@ -1024,9 +1024,20 @@ namespace Gamora_Indumentaria
                 return;
             }
 
+            // Usar el área imprimible real para evitar cortes horizontales.
+            // En algunos drivers MarginBounds puede ser pequeño; preferir VisibleClipBounds o PageBounds si es necesario.
             int y = 5;
-            int left = e.MarginBounds.Left;
-            int width = e.MarginBounds.Width > 0 ? e.MarginBounds.Width : 280;
+            // Obtener el rect imprimible (en unidades de Graphics: 1/100 inch por defecto en GDI+).
+            var clip = e.Graphics.VisibleClipBounds; // float-based
+            // Convertir a enteros y dejar un pequeño margen interno
+            int left = (int)Math.Max(0, Math.Floor(clip.X)) + 2;
+            int width = (int)Math.Max(0, Math.Floor(clip.Width)) - 4;
+            if (width <= 0)
+            {
+                // Fallback a MarginBounds si VisibleClipBounds no es útil
+                left = e.MarginBounds.Left;
+                width = e.MarginBounds.Width > 0 ? e.MarginBounds.Width : 280;
+            }
 
             Font fHeader = new Font("Segoe UI", 9, FontStyle.Bold);
             Font fNormal = new Font("Consolas", 8);
@@ -1101,7 +1112,7 @@ namespace Gamora_Indumentaria
             y = DibujarSeparadorCentrado(e.Graphics, y, width, left);
 
             int padding = 6;
-            int usableWidth = width - padding * 2;
+            int usableWidth = Math.Max(20, width - padding * 2);
             int leftCol = left + padding;
 
             decimal totalBruto = 0m;
@@ -1115,7 +1126,7 @@ namespace Gamora_Indumentaria
                 decimal descValor = Math.Round(bruto * (it.Descuento / 100m), 2);
                 decimal neto = it.Subtotal;
 
-                // Nombre multilínea (centrado)
+                // Nombre multilínea (centrado). Usar WrapLeft con el ancho utilizable real.
                 var nameLines = WrapLeft(nombre, fNormal, usableWidth);
                 foreach (var ln in nameLines)
                 {
