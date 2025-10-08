@@ -65,7 +65,18 @@ namespace Gamora_Indumentaria
             try
             {
                 var dt = dal.ObtenerInventarioCompleto();
-                dgvProductos.DataSource = dt;
+                if (dt != null && dt.Columns.Contains("Id"))
+                {
+                    // Crear una vista ordenada por Id ascendente
+                    DataView dv = dt.DefaultView;
+                    dv.Sort = "Id ASC";
+                    dgvProductos.DataSource = dv.ToTable();
+                }
+                else
+                {
+                    dgvProductos.DataSource = dt; // fallback sin ordenar
+                }
+
                 // Ajustar columnas básicas si existen
                 if (dgvProductos.Columns.Contains("Id")) dgvProductos.Columns["Id"].Width = 50;
                 string nombreCol = dgvProductos.Columns.Contains("Producto") ? "Producto" : (dgvProductos.Columns.Contains("Nombre") ? "Nombre" : null);
