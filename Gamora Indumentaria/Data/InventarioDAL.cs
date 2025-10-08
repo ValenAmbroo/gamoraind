@@ -91,6 +91,119 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
+        /// Actualiza el nombre de una categoría
+        /// </summary>
+        public void ActualizarCategoria(int id, string nuevoNombre)
+        {
+            if (id <= 0) throw new ArgumentException("Id inválido", nameof(id));
+            if (string.IsNullOrWhiteSpace(nuevoNombre)) throw new ArgumentException("Nombre requerido", nameof(nuevoNombre));
+            try
+            {
+                string query = "UPDATE Categorias SET Nombre = @Nombre WHERE Id = @Id";
+                DatabaseManager.ExecuteNonQuery(query,
+                    new SqlParameter("@Nombre", nuevoNombre.Trim()),
+                    new SqlParameter("@Id", id));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al actualizar categoría: " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Indica si una categoría tiene productos asociados en Inventario
+        /// </summary>
+        public bool CategoriaTieneProductos(int categoriaId)
+        {
+            string query = "SELECT TOP 1 1 FROM Inventario WHERE CategoriaId = @Id";
+            var r = DatabaseManager.ExecuteScalar(query, new SqlParameter("@Id", categoriaId));
+            return r != null;
+        }
+
+        /// <summary>
+        /// Elimina una categoría (y sus talles) si no tiene productos. Lanza excepción si tiene.
+        /// </summary>
+        public void EliminarCategoria(int id)
+        {
+            if (id <= 0) throw new ArgumentException("Id inválido", nameof(id));
+            try
+            {
+                if (CategoriaTieneProductos(id))
+                    throw new InvalidOperationException("La categoría tiene productos asociados y no puede eliminarse.");
+
+                using (var conn = DatabaseManager.GetConnection())
+                {
+                    conn.Open();
+                    using (var tx = conn.BeginTransaction())
+                    {
+                        // Borrar talles asociados
+                        using (var cmdT = new SqlCommand("DELETE FROM TiposTalle WHERE CategoriaId = @Id", conn, tx))
+                        {
+                            cmdT.Parameters.AddWithValue("@Id", id);
+                            cmdT.ExecuteNonQuery();
+                        }
+                        // Borrar categoría
+                        using (var cmdC = new SqlCommand("DELETE FROM Categorias WHERE Id = @Id", conn, tx))
+                        {
+                            cmdC.Parameters.AddWithValue("@Id", id);
+                            int rows = cmdC.ExecuteNonQuery();
+                            if (rows == 0) throw new Exception("Categoría no encontrada");
+                        }
+                        tx.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al eliminar categoría: " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
+        /// Reemplaza completamente los talles de una categoría por una nueva lista
+        /// </summary>
+        public void ReemplazarTalles(int categoriaId, List<string> talles)
+        {
+            try
+            {
+                using (var conn = DatabaseManager.GetConnection())
+                {
+                    conn.Open();
+                    using (var tx = conn.BeginTransaction())
+                    {
+                        using (var del = new SqlCommand("DELETE FROM TiposTalle WHERE CategoriaId = @Id", conn, tx))
+                        {
+                            del.Parameters.AddWithValue("@Id", categoriaId);
+                            del.ExecuteNonQuery();
+                        }
+                        if (talles != null && talles.Count > 0)
+                        {
+                            int orden = 1;
+                            foreach (var t in talles)
+                            {
+                                var tv = (t ?? string.Empty).Trim();
+                                if (string.IsNullOrEmpty(tv)) { orden++; continue; }
+                                using (var ins = new SqlCommand("INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden) VALUES (@c,@v,@o)", conn, tx))
+                                {
+                                    ins.Parameters.AddWithValue("@c", categoriaId);
+                                    ins.Parameters.AddWithValue("@v", tv);
+                                    ins.Parameters.AddWithValue("@o", orden);
+                                    ins.ExecuteNonQuery();
+                                }
+                                orden++;
+                            }
+                        }
+                        tx.Commit();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error al reemplazar talles: " + ex.Message, ex);
+            }
+        }
+
+        /// <summary>
         /// Agrega una lista de talles a una categoría (si no existen ya)
         /// </summary>
         public void AgregarTalles(int categoriaId, List<string> talles)

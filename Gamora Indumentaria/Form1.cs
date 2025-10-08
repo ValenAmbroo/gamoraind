@@ -350,6 +350,12 @@ namespace Gamora_Indumentaria
             CargarFormularioHijo(new agregarcategoria());
 
         }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            CargarFormularioHijo(new AdministrarCategorias());
+
+        }
     }
 }
 
