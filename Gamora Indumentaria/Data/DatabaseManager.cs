@@ -610,6 +610,17 @@ namespace Gamora_Indumentaria.Data
                                 CantidadItems INT NOT NULL,
                                 HoraCierre DATETIME NOT NULL DEFAULT GETDATE()
                             );
+                        END
+
+                        -- Tabla Notas
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Notas')
+                        BEGIN
+                            CREATE TABLE Notas (
+                                Id INT IDENTITY(1,1) PRIMARY KEY,
+                                Titulo NVARCHAR(100) NOT NULL,
+                                Fecha DATETIME NOT NULL,
+                                Texto NVARCHAR(MAX) NULL
+                            );
                         END";
 
                     SqlCommand cmd = new SqlCommand(createTables, connection);

@@ -144,6 +144,14 @@
     <Compile Include="AdministrarCategorias.Designer.cs">
       <DependentUpon>AdministrarCategorias.cs</DependentUpon>
     </Compile>
+    <Compile Include="NotasForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotasForm.Designer.cs">
+      <DependentUpon>NotasForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Data\NotasDAL.cs" />
+    <Compile Include="Models\Nota.cs" />
   <Compile Include="AppEvents.cs" />
     <EmbeddedResource Include="AgregarCantidadPorTalleForm.resx">
       <DependentUpon>AgregarCantidadPorTalleForm.cs</DependentUpon>
@@ -153,6 +161,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AdministrarCategorias.resx">
       <DependentUpon>AdministrarCategorias.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NotasForm.resx">
+      <DependentUpon>NotasForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="agregarpruducto.resx">
       <DependentUpon>agregarpruducto.cs</DependentUpon>
