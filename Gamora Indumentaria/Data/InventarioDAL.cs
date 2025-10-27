@@ -382,15 +382,40 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
-        /// Elimina un producto del inventario (eliminación lógica)
+        /// Elimina un producto del inventario.
+        /// Si no tiene ventas asociadas, se elimina físicamente.
+        /// Si tiene ventas, se realiza baja lógica (Stock = 0) para no romper FKs.
         /// </summary>
         public void EliminarProducto(int inventarioId)
         {
-            string query = @"UPDATE Inventario 
-                           SET Stock = 0
-                           WHERE Id = @Id";
-
-            DatabaseManager.ExecuteNonQuery(query, new SqlParameter("@Id", inventarioId));
+            using (var conn = DatabaseManager.GetConnection())
+            {
+                conn.Open();
+                // Verificar referencias en DetalleVentas
+                using (var cmdCheck = new SqlCommand("SELECT TOP 1 1 FROM DetalleVentas WHERE ProductoId = @Id", conn))
+                {
+                    cmdCheck.Parameters.AddWithValue("@Id", inventarioId);
+                    var exists = cmdCheck.ExecuteScalar();
+                    if (exists == null)
+                    {
+                        // Borrado físico
+                        using (var del = new SqlCommand("DELETE FROM Inventario WHERE Id=@Id", conn))
+                        {
+                            del.Parameters.AddWithValue("@Id", inventarioId);
+                            del.ExecuteNonQuery();
+                        }
+                    }
+                    else
+                    {
+                        // Baja lógica
+                        using (var upd = new SqlCommand("UPDATE Inventario SET Stock = 0 WHERE Id=@Id", conn))
+                        {
+                            upd.Parameters.AddWithValue("@Id", inventarioId);
+                            upd.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

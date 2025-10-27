@@ -80,13 +80,26 @@ namespace Gamora_Indumentaria
             if (cmbFiltroTiempo != null)
             {
                 cmbFiltroTiempo.Items.Clear();
+                // Nombres alineados con el resto de la app
                 cmbFiltroTiempo.Items.Add("Hoy");
-                cmbFiltroTiempo.Items.Add("Esta Semana");
-                cmbFiltroTiempo.Items.Add("Este Mes");
+                cmbFiltroTiempo.Items.Add("Semana Actual");
+                cmbFiltroTiempo.Items.Add("Mes Actual");
+                cmbFiltroTiempo.Items.Add("Año Actual");
                 cmbFiltroTiempo.Items.Add("Últimos 7 días");
                 cmbFiltroTiempo.Items.Add("Últimos 30 días");
                 cmbFiltroTiempo.SelectedIndex = 0;
             }
+
+            // Cargar años disponibles en la base de datos para el filtro por año
+            CargarAniosDisponibles();
+
+            // Deshabilitar selección de año salvo que el filtro sea "Este Año"
+            try
+            {
+                if (labelAnio != null) labelAnio.Enabled = false;
+                if (cmbAnio != null) cmbAnio.Enabled = false;
+            }
+            catch { }
 
             ConfigurarGraficos();
         }
@@ -243,14 +256,21 @@ namespace Gamora_Indumentaria
                         fechaHasta = hoy.AddDays(1);
                         break;
                     case "esta semana":
+                    case "semana actual":
                         int diff = (int)hoy.DayOfWeek; // domingo=0
                         DateTime inicioSemana = hoy.AddDays(-diff);
                         fechaDesde = inicioSemana;
                         fechaHasta = inicioSemana.AddDays(7);
                         break;
                     case "este mes":
+                    case "mes actual":
                         fechaDesde = new DateTime(hoy.Year, hoy.Month, 1);
                         fechaHasta = fechaDesde.AddMonths(1);
+                        break;
+                    case "este año":
+                    case "año actual":
+                        fechaDesde = new DateTime(hoy.Year, 1, 1);
+                        fechaHasta = fechaDesde.AddYears(1);
                         break;
                     case "últimos 7 días":
                         fechaHasta = hoy.AddDays(1);
@@ -562,6 +582,11 @@ namespace Gamora_Indumentaria
             if (cmbFiltroTiempo?.SelectedItem != null)
             {
                 string periodo = cmbFiltroTiempo.SelectedItem.ToString();
+                // Habilitar/deshabilitar selector de año según corresponda (acepta ambos nombres)
+                bool esEsteAnio = string.Equals(periodo, "Este Año", StringComparison.OrdinalIgnoreCase)
+                                   || string.Equals(periodo, "Año Actual", StringComparison.OrdinalIgnoreCase);
+                if (labelAnio != null) labelAnio.Enabled = esEsteAnio;
+                if (cmbAnio != null) cmbAnio.Enabled = esEsteAnio;
                 CargarEstadisticasVentas(periodo);
             }
         }
@@ -681,6 +706,71 @@ namespace Gamora_Indumentaria
             {
                 MessageBox.Show("Error al exportar detalle: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        // Cargar años para el filtro por año
+        private void CargarAniosDisponibles()
+        {
+            try
+            {
+                if (cmbAnio == null) return;
+                cmbAnio.Items.Clear();
+
+                string query = @"SELECT DISTINCT YEAR(FechaVenta) AS Anio FROM Ventas ORDER BY Anio DESC";
+                DataTable dt = DatabaseManager.ExecuteQuery(query);
+
+                if (dt.Rows.Count == 0)
+                {
+                    // Si no hay ventas aún, mostrar el año actual
+                    cmbAnio.Items.Add(DateTime.Today.Year);
+                }
+                else
+                {
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        cmbAnio.Items.Add(Convert.ToInt32(row["Anio"]));
+                    }
+                }
+
+                if (cmbAnio.Items.Count > 0)
+                {
+                    // Seleccionar el primer año (más reciente)
+                    cmbAnio.SelectedIndex = 0;
+                }
+            }
+            catch
+            {
+                // En caso de error, al menos ofertar el año actual
+                if (cmbAnio != null && cmbAnio.Items.Count == 0)
+                {
+                    cmbAnio.Items.Add(DateTime.Today.Year);
+                    cmbAnio.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void cmbAnio_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbAnio?.SelectedItem == null) return;
+            try
+            {
+                int anio = Convert.ToInt32(cmbAnio.SelectedItem);
+                fechaDesde = new DateTime(anio, 1, 1);
+                fechaHasta = fechaDesde.AddYears(1);
+                // Alinear el filtro visual al periodo "Este Año" para consistencia
+                try
+                {
+                    if (cmbFiltroTiempo != null)
+                    {
+                        cmbFiltroTiempo.SelectedItem = "Este Año";
+                    }
+                }
+                catch { }
+                // Cargar todas las vistas con el rango definido por año
+                CargarEstadisticasVentas("año"); // valor no manejado en switch => conserva fechaDesde/fechaHasta
+                CargarResumenVentas();
+            }
+            catch { }
         }
     }
 }

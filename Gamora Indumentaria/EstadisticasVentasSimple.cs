@@ -29,9 +29,10 @@ namespace Gamora_Indumentaria
             if (cmbFiltroTiempo != null)
             {
                 cmbFiltroTiempo.Items.Clear();
+                // Nombres alineados con el resto de la app
                 cmbFiltroTiempo.Items.Add("Hoy");
-                cmbFiltroTiempo.Items.Add("Esta Semana");
-                cmbFiltroTiempo.Items.Add("Este Mes");
+                cmbFiltroTiempo.Items.Add("Semana Actual");
+                cmbFiltroTiempo.Items.Add("Mes Actual");
                 cmbFiltroTiempo.Items.Add("Últimos 7 días");
                 cmbFiltroTiempo.Items.Add("Últimos 30 días");
                 cmbFiltroTiempo.SelectedIndex = 0; // Seleccionar "Hoy" por defecto

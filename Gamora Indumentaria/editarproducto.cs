@@ -62,6 +62,8 @@ namespace Gamora_Indumentaria
 
         private void CargarListaProductos()
         {
+            bool prev = cargando;
+            cargando = true;
             try
             {
                 var dt = dal.ObtenerInventarioCompleto();
@@ -69,6 +71,11 @@ namespace Gamora_Indumentaria
                 {
                     // Crear una vista ordenada por Id ascendente
                     DataView dv = dt.DefaultView;
+                    // Ocultar productos dados de baja (stock 0) para que 'Eliminar' refleje la grilla
+                    if (dt.Columns.Contains("Cantidad"))
+                    {
+                        dv.RowFilter = "Cantidad > 0";
+                    }
                     dv.Sort = "Id ASC";
                     dgvProductos.DataSource = dv.ToTable();
                 }
@@ -87,10 +94,15 @@ namespace Gamora_Indumentaria
                 else if (dgvProductos.Columns.Contains("Precio")) dgvProductos.Columns["Precio"].DefaultCellStyle.Format = "0.00";
                 // Estilos posteriores a asignación de DataSource
                 dgvProductos.ClearSelection();
+                dgvProductos.CurrentCell = null;
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error cargando lista: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                cargando = prev;
             }
         }
 
@@ -168,6 +180,54 @@ namespace Gamora_Indumentaria
             Close();
         }
 
+        private void btnEliminar_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Determinar producto seleccionado
+                int? idSel = null;
+                if (dgvProductos.CurrentRow != null && dgvProductos.Columns["Id"] != null)
+                {
+                    idSel = Convert.ToInt32(dgvProductos.CurrentRow.Cells["Id"].Value);
+                }
+
+                if ((producto == null || producto.Id == 0) && idSel == null)
+                {
+                    MessageBox.Show("Seleccione un producto para eliminar", "Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                int idEliminar = idSel ?? producto.Id;
+                var confirm = MessageBox.Show("¿Eliminar el producto seleccionado?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirm != DialogResult.Yes) return;
+
+                dal.EliminarProducto(idEliminar);
+                MessageBox.Show("Producto eliminado", "Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Refrescar lista y limpiar detalle
+                CargarListaProductos();
+                LimpiarDetalle();
+                dgvProductos.ClearSelection();
+                dgvProductos.CurrentCell = null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudo eliminar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LimpiarDetalle()
+        {
+            producto = null;
+            txtNombre.Clear();
+            txtDescripcion.Clear();
+            txtCodigoBarra.Clear();
+            if (cboCategoria.Items.Count > 0) cboCategoria.SelectedIndex = 0;
+            nudCantidad.Value = 0;
+            txtPrecioVenta.Clear();
+            txtPrecioCosto.Clear();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -230,6 +290,7 @@ namespace Gamora_Indumentaria
             }
             StyleButton(btnGuardar, success, Color.White);
             StyleButton(btnCancelar, Color.FromArgb(149, 165, 166), Color.White);
+            StyleButton(btnEliminar, Color.FromArgb(231, 76, 60), Color.White);
             // Botón cerrar igual que en otros formularios (fondo blanco, texto rojo sin hover permanente)
             button1.FlatStyle = FlatStyle.Flat;
             button1.FlatAppearance.BorderSize = 0;
@@ -240,6 +301,8 @@ namespace Gamora_Indumentaria
             btnGuardar.MouseLeave += (s, e) => btnGuardar.BackColor = success;
             btnCancelar.MouseEnter += (s, e) => btnCancelar.BackColor = Color.FromArgb(127, 140, 141);
             btnCancelar.MouseLeave += (s, e) => btnCancelar.BackColor = Color.FromArgb(149, 165, 166);
+            btnEliminar.MouseEnter += (s, e) => btnEliminar.BackColor = Color.FromArgb(192, 57, 43);
+            btnEliminar.MouseLeave += (s, e) => btnEliminar.BackColor = Color.FromArgb(231, 76, 60);
             button1.MouseEnter += (s, e) => button1.BackColor = Color.FromArgb(252, 238, 238);
             button1.MouseLeave += (s, e) => button1.BackColor = Color.White;
 

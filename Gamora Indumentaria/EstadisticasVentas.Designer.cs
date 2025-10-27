@@ -63,6 +63,8 @@ namespace Gamora_Indumentaria
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.chartProductosVendidos = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.labelAnio = new System.Windows.Forms.Label();
+            this.cmbAnio = new System.Windows.Forms.ComboBox();
             this.btnExportarVentas = new System.Windows.Forms.Button();
             this.btnActualizar = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -400,6 +402,8 @@ namespace Gamora_Indumentaria
             // panel3
             // 
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
+            this.panel3.Controls.Add(this.labelAnio);
+            this.panel3.Controls.Add(this.cmbAnio);
             this.panel3.Controls.Add(this.btnExportarVentas);
             this.panel3.Controls.Add(this.btnActualizar);
             this.panel3.Controls.Add(this.label8);
@@ -409,6 +413,28 @@ namespace Gamora_Indumentaria
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1200, 50);
             this.panel3.TabIndex = 2;
+            // 
+            // labelAnio
+            // 
+            this.labelAnio.AutoSize = true;
+            this.labelAnio.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.labelAnio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.labelAnio.Location = new System.Drawing.Point(360, 15);
+            this.labelAnio.Name = "labelAnio";
+            this.labelAnio.Size = new System.Drawing.Size(42, 19);
+            this.labelAnio.TabIndex = 5;
+            this.labelAnio.Text = "Año:";
+            // 
+            // cmbAnio
+            // 
+            this.cmbAnio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAnio.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbAnio.FormattingEnabled = true;
+            this.cmbAnio.Location = new System.Drawing.Point(410, 12);
+            this.cmbAnio.Name = "cmbAnio";
+            this.cmbAnio.Size = new System.Drawing.Size(100, 25);
+            this.cmbAnio.TabIndex = 4;
+            this.cmbAnio.SelectedIndexChanged += new System.EventHandler(this.cmbAnio_SelectedIndexChanged);
             // 
             // btnExportarVentas
             // 
@@ -551,5 +577,7 @@ namespace Gamora_Indumentaria
         private System.Windows.Forms.Label lblganancia1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartProductosVendidos;
+        private System.Windows.Forms.Label labelAnio;
+        private System.Windows.Forms.ComboBox cmbAnio;
     }
 }
