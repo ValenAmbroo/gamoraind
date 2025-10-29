@@ -65,6 +65,11 @@ namespace Gamora_Indumentaria
             this.panel3 = new System.Windows.Forms.Panel();
             this.labelAnio = new System.Windows.Forms.Label();
             this.cmbAnio = new System.Windows.Forms.ComboBox();
+            this.labelDesde = new System.Windows.Forms.Label();
+            this.dtpDesde = new System.Windows.Forms.DateTimePicker();
+            this.labelHasta = new System.Windows.Forms.Label();
+            this.dtpHasta = new System.Windows.Forms.DateTimePicker();
+            this.btnAplicarRango = new System.Windows.Forms.Button();
             this.btnExportarVentas = new System.Windows.Forms.Button();
             this.btnActualizar = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
@@ -404,6 +409,11 @@ namespace Gamora_Indumentaria
             this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(236)))), ((int)(((byte)(240)))), ((int)(((byte)(241)))));
             this.panel3.Controls.Add(this.labelAnio);
             this.panel3.Controls.Add(this.cmbAnio);
+            this.panel3.Controls.Add(this.labelDesde);
+            this.panel3.Controls.Add(this.dtpDesde);
+            this.panel3.Controls.Add(this.labelHasta);
+            this.panel3.Controls.Add(this.dtpHasta);
+            this.panel3.Controls.Add(this.btnAplicarRango);
             this.panel3.Controls.Add(this.btnExportarVentas);
             this.panel3.Controls.Add(this.btnActualizar);
             this.panel3.Controls.Add(this.label8);
@@ -419,7 +429,7 @@ namespace Gamora_Indumentaria
             this.labelAnio.AutoSize = true;
             this.labelAnio.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.labelAnio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
-            this.labelAnio.Location = new System.Drawing.Point(360, 15);
+            this.labelAnio.Location = new System.Drawing.Point(320, 15);
             this.labelAnio.Name = "labelAnio";
             this.labelAnio.Size = new System.Drawing.Size(42, 19);
             this.labelAnio.TabIndex = 5;
@@ -430,11 +440,66 @@ namespace Gamora_Indumentaria
             this.cmbAnio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbAnio.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbAnio.FormattingEnabled = true;
-            this.cmbAnio.Location = new System.Drawing.Point(410, 12);
+            this.cmbAnio.Location = new System.Drawing.Point(370, 12);
             this.cmbAnio.Name = "cmbAnio";
             this.cmbAnio.Size = new System.Drawing.Size(100, 25);
             this.cmbAnio.TabIndex = 4;
             this.cmbAnio.SelectedIndexChanged += new System.EventHandler(this.cmbAnio_SelectedIndexChanged);
+            // 
+            // labelDesde
+            // 
+            this.labelDesde.AutoSize = true;
+            this.labelDesde.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.labelDesde.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.labelDesde.Location = new System.Drawing.Point(480, 15);
+            this.labelDesde.Name = "labelDesde";
+            this.labelDesde.Size = new System.Drawing.Size(54, 19);
+            this.labelDesde.TabIndex = 6;
+            this.labelDesde.Text = "Desde:";
+            // 
+            // dtpDesde
+            // 
+            this.dtpDesde.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dtpDesde.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpDesde.Location = new System.Drawing.Point(540, 12);
+            this.dtpDesde.Name = "dtpDesde";
+            this.dtpDesde.Size = new System.Drawing.Size(110, 25);
+            this.dtpDesde.TabIndex = 7;
+            // 
+            // labelHasta
+            // 
+            this.labelHasta.AutoSize = true;
+            this.labelHasta.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.labelHasta.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
+            this.labelHasta.Location = new System.Drawing.Point(660, 15);
+            this.labelHasta.Name = "labelHasta";
+            this.labelHasta.Size = new System.Drawing.Size(53, 19);
+            this.labelHasta.TabIndex = 8;
+            this.labelHasta.Text = "Hasta:";
+            // 
+            // dtpHasta
+            // 
+            this.dtpHasta.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dtpHasta.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpHasta.Location = new System.Drawing.Point(720, 12);
+            this.dtpHasta.Name = "dtpHasta";
+            this.dtpHasta.Size = new System.Drawing.Size(110, 25);
+            this.dtpHasta.TabIndex = 9;
+            // 
+            // btnAplicarRango
+            // 
+            this.btnAplicarRango.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(52)))), ((int)(((byte)(73)))), ((int)(((byte)(94)))));
+            this.btnAplicarRango.FlatAppearance.BorderSize = 0;
+            this.btnAplicarRango.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAplicarRango.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnAplicarRango.ForeColor = System.Drawing.Color.White;
+            this.btnAplicarRango.Location = new System.Drawing.Point(840, 10);
+            this.btnAplicarRango.Name = "btnAplicarRango";
+            this.btnAplicarRango.Size = new System.Drawing.Size(70, 26);
+            this.btnAplicarRango.TabIndex = 10;
+            this.btnAplicarRango.Text = "Aplicar";
+            this.btnAplicarRango.UseVisualStyleBackColor = false;
+            this.btnAplicarRango.Click += new System.EventHandler(this.btnAplicarRango_Click);
             // 
             // btnExportarVentas
             // 
@@ -444,9 +509,9 @@ namespace Gamora_Indumentaria
             this.btnExportarVentas.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExportarVentas.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnExportarVentas.ForeColor = System.Drawing.Color.White;
-            this.btnExportarVentas.Location = new System.Drawing.Point(960, 10);
+            this.btnExportarVentas.Location = new System.Drawing.Point(1000, 10);
             this.btnExportarVentas.Name = "btnExportarVentas";
-            this.btnExportarVentas.Size = new System.Drawing.Size(110, 30);
+            this.btnExportarVentas.Size = new System.Drawing.Size(90, 26);
             this.btnExportarVentas.TabIndex = 3;
             this.btnExportarVentas.Text = "📤 Exportar";
             this.btnExportarVentas.UseVisualStyleBackColor = false;
@@ -460,9 +525,9 @@ namespace Gamora_Indumentaria
             this.btnActualizar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnActualizar.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
             this.btnActualizar.ForeColor = System.Drawing.Color.White;
-            this.btnActualizar.Location = new System.Drawing.Point(1080, 10);
+            this.btnActualizar.Location = new System.Drawing.Point(1100, 10);
             this.btnActualizar.Name = "btnActualizar";
-            this.btnActualizar.Size = new System.Drawing.Size(110, 30);
+            this.btnActualizar.Size = new System.Drawing.Size(90, 26);
             this.btnActualizar.TabIndex = 2;
             this.btnActualizar.Text = "🔄 Actualizar";
             this.btnActualizar.UseVisualStyleBackColor = false;
@@ -486,7 +551,7 @@ namespace Gamora_Indumentaria
             this.cmbFiltroTiempo.FormattingEnabled = true;
             this.cmbFiltroTiempo.Location = new System.Drawing.Point(144, 12);
             this.cmbFiltroTiempo.Name = "cmbFiltroTiempo";
-            this.cmbFiltroTiempo.Size = new System.Drawing.Size(200, 25);
+            this.cmbFiltroTiempo.Size = new System.Drawing.Size(160, 25);
             this.cmbFiltroTiempo.TabIndex = 0;
             this.cmbFiltroTiempo.SelectedIndexChanged += new System.EventHandler(this.cmbFiltroTiempo_SelectedIndexChanged);
             // 
@@ -579,5 +644,10 @@ namespace Gamora_Indumentaria
         private System.Windows.Forms.DataVisualization.Charting.Chart chartProductosVendidos;
         private System.Windows.Forms.Label labelAnio;
         private System.Windows.Forms.ComboBox cmbAnio;
+        private System.Windows.Forms.Label labelDesde;
+        private System.Windows.Forms.DateTimePicker dtpDesde;
+        private System.Windows.Forms.Label labelHasta;
+        private System.Windows.Forms.DateTimePicker dtpHasta;
+        private System.Windows.Forms.Button btnAplicarRango;
     }
 }

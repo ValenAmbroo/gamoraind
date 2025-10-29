@@ -87,6 +87,7 @@ namespace Gamora_Indumentaria
                 cmbFiltroTiempo.Items.Add("Año Actual");
                 cmbFiltroTiempo.Items.Add("Últimos 7 días");
                 cmbFiltroTiempo.Items.Add("Últimos 30 días");
+                cmbFiltroTiempo.Items.Add("Rango Personalizado");
                 cmbFiltroTiempo.SelectedIndex = 0;
             }
 
@@ -98,6 +99,19 @@ namespace Gamora_Indumentaria
             {
                 if (labelAnio != null) labelAnio.Enabled = false;
                 if (cmbAnio != null) cmbAnio.Enabled = false;
+                if (labelDesde != null) labelDesde.Enabled = false;
+                if (dtpDesde != null)
+                {
+                    dtpDesde.Enabled = false;
+                    dtpDesde.Value = DateTime.Today;
+                }
+                if (labelHasta != null) labelHasta.Enabled = false;
+                if (dtpHasta != null)
+                {
+                    dtpHasta.Enabled = false;
+                    dtpHasta.Value = DateTime.Today;
+                }
+                if (btnAplicarRango != null) btnAplicarRango.Enabled = false;
             }
             catch { }
 
@@ -587,6 +601,12 @@ namespace Gamora_Indumentaria
                                    || string.Equals(periodo, "Año Actual", StringComparison.OrdinalIgnoreCase);
                 if (labelAnio != null) labelAnio.Enabled = esEsteAnio;
                 if (cmbAnio != null) cmbAnio.Enabled = esEsteAnio;
+                bool esRango = string.Equals(periodo, "Rango Personalizado", StringComparison.OrdinalIgnoreCase);
+                if (labelDesde != null) labelDesde.Enabled = esRango;
+                if (dtpDesde != null) dtpDesde.Enabled = esRango;
+                if (labelHasta != null) labelHasta.Enabled = esRango;
+                if (dtpHasta != null) dtpHasta.Enabled = esRango;
+                if (btnAplicarRango != null) btnAplicarRango.Enabled = esRango;
                 CargarEstadisticasVentas(periodo);
             }
         }
@@ -762,7 +782,10 @@ namespace Gamora_Indumentaria
                 {
                     if (cmbFiltroTiempo != null)
                     {
-                        cmbFiltroTiempo.SelectedItem = "Este Año";
+                        if (cmbFiltroTiempo.Items.Contains("Año Actual"))
+                            cmbFiltroTiempo.SelectedItem = "Año Actual";
+                        else if (cmbFiltroTiempo.Items.Contains("Este Año"))
+                            cmbFiltroTiempo.SelectedItem = "Este Año";
                     }
                 }
                 catch { }
@@ -771,6 +794,39 @@ namespace Gamora_Indumentaria
                 CargarResumenVentas();
             }
             catch { }
+        }
+
+        private void btnAplicarRango_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dtpDesde == null || dtpHasta == null)
+                {
+                    MessageBox.Show("Controles de fecha no disponibles", "Rango", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                DateTime d = dtpDesde.Value.Date;
+                DateTime h = dtpHasta.Value.Date;
+                if (h < d)
+                {
+                    MessageBox.Show("La fecha 'Hasta' no puede ser menor que 'Desde'", "Rango", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                fechaDesde = d;
+                fechaHasta = h.AddDays(1); // exclusivo
+
+                if (cmbFiltroTiempo != null && cmbFiltroTiempo.Items.Contains("Rango Personalizado"))
+                {
+                    cmbFiltroTiempo.SelectedItem = "Rango Personalizado";
+                }
+
+                CargarEstadisticasVentas("rango"); // no altera fechas en el switch
+                CargarResumenVentas();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error aplicando rango: " + ex.Message, "Rango", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
