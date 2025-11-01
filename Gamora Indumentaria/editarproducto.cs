@@ -71,11 +71,8 @@ namespace Gamora_Indumentaria
                 {
                     // Crear una vista ordenada por Id ascendente
                     DataView dv = dt.DefaultView;
-                    // Ocultar productos dados de baja (stock 0) para que 'Eliminar' refleje la grilla
-                    if (dt.Columns.Contains("Cantidad"))
-                    {
-                        dv.RowFilter = "Cantidad > 0";
-                    }
+                    // Mostrar todos los productos (incluye stock 0) para permitir edición/restauración
+                    // (Antes se filtraba Cantidad > 0 aquí; se eliminó para que el formulario muestre inactivos)
                     dv.Sort = "Id ASC";
                     dgvProductos.DataSource = dv.ToTable();
                 }
