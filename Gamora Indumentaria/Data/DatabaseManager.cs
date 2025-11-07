@@ -90,8 +90,7 @@ namespace Gamora_Indumentaria.Data
                 {
                     InsertarDatosEjemplo();
                 }
-                // Aplicar migraciones ligeras: asegurarse talles comunes están presentes
-                AplicarMigracionTalles();
+                // Nota: Se deshabilita cualquier siembra de datos en arranque para evitar inserciones automáticas.
             }
             catch (Exception ex)
             {
@@ -105,179 +104,7 @@ namespace Gamora_Indumentaria.Data
         /// </summary>
         private static void AplicarMigracionTalles()
         {
-            try
-            {
-                using (SqlConnection connection = GetConnection())
-                {
-                    connection.Open();
-
-                    // Asegurar la categoría Pantalones exista
-                    string ensureCat = @"
-                        IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'Pantalones')
-                        INSERT INTO Categorias (Nombre) VALUES ('Pantalones');
-                        SELECT Id FROM Categorias WHERE Nombre = 'Pantalones';";
-                    int categoriaId = 0;
-                    using (SqlCommand cmd = new SqlCommand(ensureCat, connection))
-                    {
-                        var res = cmd.ExecuteScalar();
-                        if (res != null) categoriaId = Convert.ToInt32(res);
-                    }
-
-                    if (categoriaId == 0)
-                    {
-                        // obtener id si no vino en scalar
-                        using (SqlCommand cmd = new SqlCommand("SELECT Id FROM Categorias WHERE Nombre = 'Pantalones'", connection))
-                        {
-                            var r = cmd.ExecuteScalar();
-                            if (r != null) categoriaId = Convert.ToInt32(r);
-                        }
-                    }
-
-                    if (categoriaId > 0)
-                    {
-                        // Insertar talles 36..55 que falten
-                        for (int i = 36; i <= 55; i++)
-                        {
-                            string tv = i.ToString();
-                            string check = "SELECT 1 FROM TiposTalle WHERE CategoriaId = @c AND TalleValor = @tv";
-                            using (SqlCommand checkCmd = new SqlCommand(check, connection))
-                            {
-                                checkCmd.Parameters.AddWithValue("@c", categoriaId);
-                                checkCmd.Parameters.AddWithValue("@tv", tv);
-                                var ex = checkCmd.ExecuteScalar();
-                                if (ex == null)
-                                {
-                                    string insert = "INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden) VALUES (@c,@tv,@ord)";
-                                    using (SqlCommand ins = new SqlCommand(insert, connection))
-                                    {
-                                        ins.Parameters.AddWithValue("@c", categoriaId);
-                                        ins.Parameters.AddWithValue("@tv", tv);
-                                        ins.Parameters.AddWithValue("@ord", i - 35);
-                                        ins.ExecuteNonQuery();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    // Asegurar que Remeras tenga talle 'XXXL' (si falta) para instalaciones existentes
-                    try
-                    {
-                        string ensureRemeras = @"
-                            IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'Remeras')
-                                INSERT INTO Categorias (Nombre) VALUES ('Remeras');
-                            SELECT Id FROM Categorias WHERE Nombre = 'Remeras';";
-                        int remerasCatId = 0;
-                        using (SqlCommand cmdRem = new SqlCommand(ensureRemeras, connection))
-                        {
-                            var r = cmdRem.ExecuteScalar();
-                            if (r != null) remerasCatId = Convert.ToInt32(r);
-                        }
-
-                        if (remerasCatId == 0)
-                        {
-                            using (SqlCommand cmd2 = new SqlCommand("SELECT Id FROM Categorias WHERE Nombre = 'Remeras'", connection))
-                            {
-                                var r2 = cmd2.ExecuteScalar();
-                                if (r2 != null) remerasCatId = Convert.ToInt32(r2);
-                            }
-                        }
-
-                        if (remerasCatId > 0)
-                        {
-                            string checkRem = "SELECT 1 FROM TiposTalle WHERE CategoriaId = @c AND TalleValor = @tv";
-                            using (SqlCommand checkCmd = new SqlCommand(checkRem, connection))
-                            {
-                                checkCmd.Parameters.AddWithValue("@c", remerasCatId);
-                                checkCmd.Parameters.AddWithValue("@tv", "XXXL");
-                                var exists = checkCmd.ExecuteScalar();
-                                if (exists == null)
-                                {
-                                    string insertRem = "INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden) VALUES (@c,@tv,@ord)";
-                                    using (SqlCommand ins = new SqlCommand(insertRem, connection))
-                                    {
-                                        ins.Parameters.AddWithValue("@c", remerasCatId);
-                                        ins.Parameters.AddWithValue("@tv", "XXXL");
-                                        ins.Parameters.AddWithValue("@ord", 7);
-                                        ins.ExecuteNonQuery();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception exRem)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Error aplicando migracion Remeras XXXL: " + exRem.Message);
-                    }
-                    // Asegurar talles para Camperas, Chalecos, Jogging, Jeans Hombre, Jeans Dama y Boxer
-                    try
-                    {
-                        var migraciones = new List<(string categoria, string[] talles, int startOrden)>()
-                        {
-                            ("Camperas", new string[]{"S","M","L","XL","XXL"}, 1),
-                            ("Chalecos", new string[]{"S","M","L","XL","XXL"}, 1),
-                            ("Jogging", new string[]{"S","M","L","XL","XXL"}, 1),
-                            ("Jeans Hombre", new string[]{"36","38","40","42","44","46","48"}, 1),
-                            ("Jeans Dama", new string[]{"34","36","38","40","42","44","46","48"}, 1),
-                            ("Boxer", new string[]{"S","M","L","XL","XXL"}, 1)
-                        };
-
-                        foreach (var mig in migraciones)
-                        {
-                            // Asegurar categoría exista
-                            string ensure = $"IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = '{mig.categoria}') INSERT INTO Categorias (Nombre) VALUES ('{mig.categoria}'); SELECT Id FROM Categorias WHERE Nombre = '{mig.categoria}';";
-                            int catId = 0;
-                            using (SqlCommand cmdMig = new SqlCommand(ensure, connection))
-                            {
-                                var r = cmdMig.ExecuteScalar();
-                                if (r != null) catId = Convert.ToInt32(r);
-                            }
-
-                            if (catId == 0)
-                            {
-                                using (SqlCommand cmd2 = new SqlCommand($"SELECT Id FROM Categorias WHERE Nombre = '{mig.categoria}'", connection))
-                                {
-                                    var r2 = cmd2.ExecuteScalar();
-                                    if (r2 != null) catId = Convert.ToInt32(r2);
-                                }
-                            }
-
-                            if (catId > 0)
-                            {
-                                for (int idx = 0; idx < mig.talles.Length; idx++)
-                                {
-                                    string tv = mig.talles[idx];
-                                    string check = "SELECT 1 FROM TiposTalle WHERE CategoriaId = @c AND TalleValor = @tv";
-                                    using (SqlCommand checkCmd = new SqlCommand(check, connection))
-                                    {
-                                        checkCmd.Parameters.AddWithValue("@c", catId);
-                                        checkCmd.Parameters.AddWithValue("@tv", tv);
-                                        var ex = checkCmd.ExecuteScalar();
-                                        if (ex == null)
-                                        {
-                                            string insert = "INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden) VALUES (@c,@tv,@ord)";
-                                            using (SqlCommand ins = new SqlCommand(insert, connection))
-                                            {
-                                                ins.Parameters.AddWithValue("@c", catId);
-                                                ins.Parameters.AddWithValue("@tv", tv);
-                                                ins.Parameters.AddWithValue("@ord", mig.startOrden + idx);
-                                                ins.ExecuteNonQuery();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception exMig)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Error aplicando migraciones adicionales de talles: " + exMig.Message);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine("Error aplicando migracion de talles: " + ex.Message);
-            }
+            // Deshabilitado: no se insertan datos automáticamente al iniciar la aplicación.
         }
 
         /// <summary>
@@ -378,27 +205,17 @@ namespace Gamora_Indumentaria.Data
 
                     // Script para crear todas las tablas
                     string createTables = @"
-                        -- Tabla Categorias
+                        -- Tabla Categorias (sin insertar datos por defecto)
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Categorias')
                         BEGIN
                             CREATE TABLE Categorias (
                                 Id INT IDENTITY(1,1) PRIMARY KEY,
                                 Nombre NVARCHAR(100) NOT NULL
                             );
-                            
-                            INSERT INTO Categorias (Nombre) VALUES 
-                            ('Remeras'), ('Pantalones'), ('Vestidos'), ('Accesorios'), ('Calzado'), ('Buzos'), ('Camperas'), ('Chalecos'), ('Jogging'), ('Jeans Hombre'), ('Jeans Dama'), ('Boxer');
                         END
 
-                        -- Asegurar categoría VAPER (y opcional VAPERS) exista aunque la tabla ya exista
-                        IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'VAPER')
-                        BEGIN
-                            INSERT INTO Categorias (Nombre) VALUES ('VAPER');
-                        END
-                        IF NOT EXISTS (SELECT 1 FROM Categorias WHERE Nombre = 'VAPERS')
-                        BEGIN
-                            INSERT INTO Categorias (Nombre) VALUES ('VAPERS');
-                        END
+                        -- (Eliminado) No forzar creación de categorías específicas como 'VAPER' o 'VAPERS'.
+                        -- La lista de categorías debe ser dinámica según los datos del usuario.
 
                         -- Tabla Inventario
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Inventario')
@@ -475,7 +292,7 @@ namespace Gamora_Indumentaria.Data
                             );
                         END
 
-                        -- Tabla TiposTalle (relaciona categorías con valores de talle)
+                        -- Tabla TiposTalle (relaciona categorías con valores de talle) - sin poblar datos por defecto
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'TiposTalle')
                         BEGIN
                             CREATE TABLE TiposTalle (
@@ -485,34 +302,6 @@ namespace Gamora_Indumentaria.Data
                                 Orden INT NOT NULL,
                                 FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id)
                             );
-
-                            -- Poblar talles básicos si la tabla estaba vacía
-                            INSERT INTO TiposTalle (CategoriaId, TalleValor, Orden)
-                            SELECT c.Id, v.TalleValor, v.Orden FROM Categorias c
-                            CROSS APPLY (VALUES
-                                -- Remeras / Buzos / Camperas (talles alfanuméricos comunes)
-                                ('Remeras','XS',1),('Remeras','S',2),('Remeras','M',3),('Remeras','L',4),('Remeras','XL',5),('Remeras','XXL',6),('Remeras','XXXL',7),
-                                ('Buzos','XS',1),('Buzos','S',2),('Buzos','M',3),('Buzos','L',4),('Buzos','XL',5),('Buzos','XXL',6),
-                                ('Camperas','S',1),('Camperas','M',2),('Camperas','L',3),('Camperas','XL',4),('Camperas','XXL',5),
-                                ('Chalecos','S',1),('Chalecos','M',2),('Chalecos','L',3),('Chalecos','XL',4),('Chalecos','XXL',5),
-                                ('Jogging','S',1),('Jogging','M',2),('Jogging','L',3),('Jogging','XL',4),('Jogging','XXL',5),
-                                -- Pantalones (tallas numéricas comunes)
-                                ('Pantalones','30',1),('Pantalones','32',2),('Pantalones','34',3),('Pantalones','36',4),('Pantalones','38',5),('Pantalones','40',6),
-                                ('Pantalones','42',7),('Pantalones','44',8),('Pantalones','46',9),('Pantalones','48',10),('Pantalones','50',11),('Pantalones','52',12),
-                                -- Jeans Hombre (tallas específicas)
-                                ('Jeans Hombre','36',1),('Jeans Hombre','38',2),('Jeans Hombre','40',3),('Jeans Hombre','42',4),('Jeans Hombre','44',5),('Jeans Hombre','46',6),('Jeans Hombre','48',7),
-                                -- Vestidos (alfanuméricos)
-                                ('Vestidos','XS',1),('Vestidos','S',2),('Vestidos','M',3),('Vestidos','L',4),('Vestidos','XL',5),
-                                -- Jeans Dama / Unidades Jeans Dama
-                                ('Jeans Dama','34',1),('Jeans Dama','36',2),('Jeans Dama','38',3),('Jeans Dama','40',4),('Jeans Dama','42',5),('Jeans Dama','44',6),('Jeans Dama','46',7),('Jeans Dama','48',8),
-                                -- Calzado (numéricos)
-                                ('Calzado','30',1),('Calzado','31',2),('Calzado','32',3),('Calzado','33',4),('Calzado','34',5),
-                                ('Calzado','35',6),('Calzado','36',7),('Calzado','37',8),('Calzado','38',9),('Calzado','39',10),('Calzado','40',11),
-                                ('Calzado','41',12),('Calzado','42',13),('Calzado','43',14),('Calzado','44',15),('Calzado','45',16),('Calzado','46',17),
-                                -- Boxer (alfanuméricos)
-                                ('Boxer','S',1),('Boxer','M',2),('Boxer','L',3),('Boxer','XL',4),('Boxer','XXL',5)
-                            ) v(CategoriaNombre,TalleValor,Orden)
-                            WHERE c.Nombre = v.CategoriaNombre;
                         END
                         ELSE
                         BEGIN

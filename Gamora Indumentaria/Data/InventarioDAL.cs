@@ -121,6 +121,16 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
+        /// Devuelve la cantidad de productos asociados a una categoría.
+        /// </summary>
+        public int ContarProductosPorCategoria(int categoriaId)
+        {
+            string query = "SELECT COUNT(1) FROM Inventario WHERE CategoriaId = @Id";
+            var r = DatabaseManager.ExecuteScalar(query, new SqlParameter("@Id", categoriaId));
+            return r == null ? 0 : Convert.ToInt32(r);
+        }
+
+        /// <summary>
         /// Elimina una categoría (y sus talles) si no tiene productos. Lanza excepción si tiene.
         /// </summary>
         public void EliminarCategoria(int id)
@@ -129,7 +139,7 @@ namespace Gamora_Indumentaria.Data
             try
             {
                 if (CategoriaTieneProductos(id))
-                    throw new InvalidOperationException("La categoría tiene productos asociados y no puede eliminarse.");
+                    throw new InvalidOperationException("La categoría tiene productos cargados y no se puede eliminar.");
 
                 using (var conn = DatabaseManager.GetConnection())
                 {
