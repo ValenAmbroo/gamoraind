@@ -164,21 +164,7 @@ namespace Gamora_Indumentaria
                 MessageBox.Show("Seleccione una categoría", "Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            // Validar si hay productos asociados antes de confirmar
-            try
-            {
-                int cantidadProductos = dal.ContarProductosPorCategoria(categoriaActual.Id);
-                if (cantidadProductos > 0)
-                {
-                    MessageBox.Show($"No se puede eliminar la categoría '{categoriaActual.Nombre}' porque tiene productos cargados ({cantidadProductos}). Para eliminarla, primero reasigna o elimina esos productos.", "No se puede eliminar", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error verificando productos asociados: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            // Ya no bloqueamos por productos asociados: la lógica interna hace limpieza/desasociación.
             var confirm = MessageBox.Show($"¿Eliminar la categoría '{categoriaActual.Nombre}'?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirm != DialogResult.Yes) return;
             try

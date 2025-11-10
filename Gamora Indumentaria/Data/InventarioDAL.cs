@@ -131,34 +131,62 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
-        /// Elimina una categoría (y sus talles) si no tiene productos. Lanza excepción si tiene.
+        /// Elimina una categoría. Nueva lógica:
+        /// - Productos sin ventas asociadas: borrado físico.
+        /// - Productos con ventas asociadas: se desasocian (CategoriaId = NULL) y se marca Stock=0 para ocultarlos.
+        /// - Luego se eliminan los talles y la categoría.
+        /// Esto evita errores por FKs en DetalleVentas y cumple con el requerimiento de eliminar la categoría sin mensaje de bloqueo.
         /// </summary>
         public void EliminarCategoria(int id)
         {
             if (id <= 0) throw new ArgumentException("Id inválido", nameof(id));
             try
             {
-                if (CategoriaTieneProductos(id))
-                    throw new InvalidOperationException("La categoría tiene productos cargados y no se puede eliminar.");
-
                 using (var conn = DatabaseManager.GetConnection())
                 {
                     conn.Open();
                     using (var tx = conn.BeginTransaction())
                     {
-                        // Borrar talles asociados
+                        // 1. Eliminar físicamente productos SIN ventas
+                        string deleteProductosSinVentas = @"
+                            DELETE i FROM Inventario i
+                            LEFT JOIN DetalleVentas d ON d.ProductoId = i.Id
+                            WHERE i.CategoriaId = @CatId AND d.ProductoId IS NULL";
+                        using (var cmdDel = new SqlCommand(deleteProductosSinVentas, conn, tx))
+                        {
+                            cmdDel.Parameters.AddWithValue("@CatId", id);
+                            cmdDel.ExecuteNonQuery();
+                        }
+
+                        // 2. Desasociar productos CON ventas (mantener registro para integridad)
+                        string updateProductosConVentas = @"
+                            UPDATE Inventario SET CategoriaId = NULL, Stock = 0
+                            WHERE CategoriaId = @CatId AND Id IN (
+                                SELECT DISTINCT ProductoId FROM DetalleVentas WHERE ProductoId IN (
+                                    SELECT Id FROM Inventario WHERE CategoriaId = @CatId
+                                )
+                            )";
+                        using (var cmdUpd = new SqlCommand(updateProductosConVentas, conn, tx))
+                        {
+                            cmdUpd.Parameters.AddWithValue("@CatId", id);
+                            cmdUpd.ExecuteNonQuery();
+                        }
+
+                        // 3. Borrar talles asociados
                         using (var cmdT = new SqlCommand("DELETE FROM TiposTalle WHERE CategoriaId = @Id", conn, tx))
                         {
                             cmdT.Parameters.AddWithValue("@Id", id);
                             cmdT.ExecuteNonQuery();
                         }
-                        // Borrar categoría
+
+                        // 4. Borrar categoría
                         using (var cmdC = new SqlCommand("DELETE FROM Categorias WHERE Id = @Id", conn, tx))
                         {
                             cmdC.Parameters.AddWithValue("@Id", id);
                             int rows = cmdC.ExecuteNonQuery();
                             if (rows == 0) throw new Exception("Categoría no encontrada");
                         }
+
                         tx.Commit();
                     }
                 }
