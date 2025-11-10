@@ -279,6 +279,13 @@ namespace Gamora_Indumentaria.Data
                             ALTER TABLE Inventario ADD Sabor NVARCHAR(100) NULL;
                         END
 
+                        -- Agregar columna Activo si no existe (para distinguir baja lógica de sin stock)
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Inventario' AND COLUMN_NAME = 'Activo')
+                        BEGIN
+                            ALTER TABLE Inventario ADD Activo BIT NOT NULL CONSTRAINT DF_Inventario_Activo DEFAULT 1;
+                        END
+
                         -- Tabla Ventas
             IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ventas')
                         BEGIN
@@ -474,7 +481,7 @@ namespace Gamora_Indumentaria.Data
                             ISNULL(tt.TalleValor,'') AS Talle,
                             ISNULL(i.Sabor,'') AS Sabor,
                             ISNULL(i.FechaCreacion, GETDATE()) AS FechaModificacion,
-                            1 AS Activo
+                            ISNULL(i.Activo,1) AS Activo
                         FROM Inventario i
                         INNER JOIN Categorias c ON i.CategoriaId = c.Id
                         LEFT JOIN TiposTalle tt ON i.TalleId = tt.Id";
@@ -495,7 +502,7 @@ namespace Gamora_Indumentaria.Data
                             'Stock Bajo' AS Estado
                         FROM Inventario i
                         INNER JOIN Categorias c ON i.CategoriaId = c.Id
-                        WHERE ISNULL(i.Stock, 0) <= 10";
+                        WHERE ISNULL(i.Stock, 0) <= 10 AND ISNULL(i.Activo,1) = 1";
                     using (SqlCommand cmd2 = new SqlCommand(createView2, connection))
                     {
                         cmd2.ExecuteNonQuery();

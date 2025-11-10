@@ -131,9 +131,9 @@ namespace Gamora_Indumentaria.Data
         }
 
         /// <summary>
-        /// Elimina una categoría. Nueva lógica:
+        /// Elimina una categoría. Lógica actualizada:
         /// - Productos sin ventas asociadas: borrado físico.
-        /// - Productos con ventas asociadas: se desasocian (CategoriaId = NULL) y se marca Stock=0 para ocultarlos.
+        /// - Productos con ventas asociadas: se desasocian (CategoriaId = NULL) y se marca Activo = 0 (baja lógica) manteniendo su stock histórico.
         /// - Luego se eliminan los talles y la categoría.
         /// Esto evita errores por FKs en DetalleVentas y cumple con el requerimiento de eliminar la categoría sin mensaje de bloqueo.
         /// </summary>
@@ -160,7 +160,7 @@ namespace Gamora_Indumentaria.Data
 
                         // 2. Desasociar productos CON ventas (mantener registro para integridad)
                         string updateProductosConVentas = @"
-                            UPDATE Inventario SET CategoriaId = NULL, Stock = 0
+                            UPDATE Inventario SET CategoriaId = NULL, Activo = 0
                             WHERE CategoriaId = @CatId AND Id IN (
                                 SELECT DISTINCT ProductoId FROM DetalleVentas WHERE ProductoId IN (
                                     SELECT Id FROM Inventario WHERE CategoriaId = @CatId
@@ -421,10 +421,10 @@ namespace Gamora_Indumentaria.Data
 
         /// <summary>
         /// Elimina un producto del inventario.
-        /// Si no tiene ventas asociadas, se elimina físicamente.
-        /// Si tiene ventas, se realiza baja lógica (Stock = 0) para no romper FKs.
+        /// Retorna true si el borrado fue físico (sin ventas asociadas).
+        /// Retorna false si se realizó baja lógica (con ventas asociadas: Stock=0).
         /// </summary>
-        public void EliminarProducto(int inventarioId)
+        public bool EliminarProducto(int inventarioId)
         {
             using (var conn = DatabaseManager.GetConnection())
             {
@@ -442,15 +442,17 @@ namespace Gamora_Indumentaria.Data
                             del.Parameters.AddWithValue("@Id", inventarioId);
                             del.ExecuteNonQuery();
                         }
+                        return true;
                     }
                     else
                     {
-                        // Baja lógica
-                        using (var upd = new SqlCommand("UPDATE Inventario SET Stock = 0 WHERE Id=@Id", conn))
+                        // Baja lógica: marcar Activo = 0 (mantener stock como estaba para referencia histórica) opcionalmente podría ponerse a 0
+                        using (var upd = new SqlCommand("UPDATE Inventario SET Activo = 0 WHERE Id=@Id", conn))
                         {
                             upd.Parameters.AddWithValue("@Id", inventarioId);
                             upd.ExecuteNonQuery();
                         }
+                        return false;
                     }
                 }
             }

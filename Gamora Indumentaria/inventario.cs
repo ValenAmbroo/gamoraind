@@ -177,7 +177,7 @@ namespace Gamora_Indumentaria
         private void Filtrar()
         {
             if (datos == null) return;
-            string filtro = "1=1";
+            string filtro = datos.Columns.Contains("Activo") ? "Activo = 1" : "1=1";
             if (!string.IsNullOrWhiteSpace(txtBuscar.Text))
             {
                 string b = Escape(txtBuscar.Text.Trim());

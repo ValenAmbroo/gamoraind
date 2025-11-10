@@ -71,8 +71,11 @@ namespace Gamora_Indumentaria
                 {
                     // Crear una vista ordenada por Id ascendente
                     DataView dv = dt.DefaultView;
-                    // Mostrar todos los productos (incluye stock 0) para permitir edición/restauración
-                    // (Antes se filtraba Cantidad > 0 aquí; se eliminó para que el formulario muestre inactivos)
+                    // Ocultar productos con Activo = 0 (baja lógica) pero mostrar productos con Cantidad = 0 (sin stock pero activos)
+                    if (dt.Columns.Contains("Activo"))
+                    {
+                        dv.RowFilter = "Activo = 1";
+                    }
                     dv.Sort = "Id ASC";
                     dgvProductos.DataSource = dv.ToTable();
                 }
@@ -198,8 +201,15 @@ namespace Gamora_Indumentaria
                 var confirm = MessageBox.Show("¿Eliminar el producto seleccionado?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (confirm != DialogResult.Yes) return;
 
-                dal.EliminarProducto(idEliminar);
-                MessageBox.Show("Producto eliminado", "Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                bool borradoFisico = dal.EliminarProducto(idEliminar);
+                if (borradoFisico)
+                {
+                    MessageBox.Show("Producto eliminado .", "Eliminar", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    MessageBox.Show("El producto tiene ventas asociadas. Se marcó como inactivo (Activo=0).", "Baja lógica", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
 
                 // Refrescar lista y limpiar detalle
                 CargarListaProductos();
