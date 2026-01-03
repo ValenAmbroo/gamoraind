@@ -105,8 +105,12 @@ namespace Gamora_Indumentaria
 
             Series serie = new Series("Categorías");
             serie.ChartType = SeriesChartType.Pie;
-            serie.IsValueShownAsLabel = true;
-            serie.LabelFormat = "{P1}";
+            // No mostrar texto dentro del gráfico
+            serie.IsValueShownAsLabel = false;
+            serie.Label = string.Empty;
+            // Referencia al lado del gráfico: nombre + porcentaje
+            serie.ToolTip = "#VALX (#PERCENT{P1})";
+            serie.LegendText = "#VALX (#PERCENT{P1})";
             chartCategorias.Series.Add(serie);
 
             chartCategorias.Titles.Clear();
@@ -114,6 +118,7 @@ namespace Gamora_Indumentaria
 
             Legend legend = new Legend();
             legend.Docking = Docking.Right;
+            chartCategorias.Legends.Clear();
             chartCategorias.Legends.Add(legend);
         }
 
@@ -209,7 +214,8 @@ namespace Gamora_Indumentaria
 
             for (int i = 0; i < productos.Length; i++)
             {
-                int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(cantidades[i], productos[i]);
+                // Nombre del producto como categoría (X) y cantidad como valor
+                int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(productos[i], cantidades[i]);
                 chartProductosVendidos.Series["Productos"].Points[pointIndex].Color = colores[i];
             }
         }

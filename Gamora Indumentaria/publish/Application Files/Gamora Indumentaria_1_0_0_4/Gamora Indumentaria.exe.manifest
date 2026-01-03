@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
+  <asmv1:assemblyIdentity name="Gamora Indumentaria.exe" version="1.0.0.4" publicKeyToken="8a8d8293855d845a" language="neutral" processorArchitecture="msil" type="win32" />
+  <application />
+  <entryPoint>
+    <assemblyIdentity name="Gamora Indumentaria" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+    <commandLine file="Gamora Indumentaria.exe" parameters="" />
+  </entryPoint>
+  <trustInfo>
+    <security>
+      <applicationRequestMinimum>
+        <PermissionSet Unrestricted="true" ID="Custom" SameSite="site" />
+        <defaultAssemblyRequest permissionSetReference="Custom" />
+      </applicationRequestMinimum>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          Opciones del manifiesto de Control de cuentas de usuario
+          Si quiere cambiar el nivel de Control de cuentas de usuario de Windows, reemplace el
+          nodo requestedExecutionLevel por alguno de los siguientes.
+
+        <requestedExecutionLevel  level="asInvoker" uiAccess="false" />
+        <requestedExecutionLevel  level="requireAdministrator" uiAccess="false" />
+        <requestedExecutionLevel  level="highestAvailable" uiAccess="false" />
+
+         Si desea usar la virtualización de archivos y del Registro para la
+         compatibilidad con versiones anteriores, elimine el nodo requestedExecutionLevel.
+    -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <dependency>
+    <dependentOS>
+      <osVersionInfo>
+        <os majorVersion="5" minorVersion="1" buildNumber="2600" servicePackMajor="0" />
+      </osVersionInfo>
+    </dependentOS>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="preRequisite" allowDelayedBinding="true">
+      <assemblyIdentity name="Microsoft.Windows.CommonLanguageRuntime" version="4.0.30319.0" />
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Gamora Indumentaria.exe" size="5733344">
+      <assemblyIdentity name="Gamora Indumentaria" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>STdLc3St3r6uBE7Nc8aO+cxFjatoPd+3tsgMa2HVkDE=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <file name="Gamora Indumentaria.exe.config" size="912">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>71zpGZULrOyEChwzcLMm+ivDo+64E+iUqgxsFrb/10A=</dsig:DigestValue>
+    </hash>
+  </file>
+<publisherIdentity name="CN=DESKTOP-8860VEA\ivanv" issuerKeyHash="6e4310b72564956a44414c1a9783e3b73b018b83" /><Signature Id="StrongNameSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>doIBX+ARcsWQe/PiettQYa403lHCWNnAkPzyphAQuQo=</DigestValue></Reference></SignedInfo><SignatureValue>FK7W8cvAuqCapPqpbBPRplgJCCTGw1JV4ixe+rMo7rsIFrYuKbvx0Ft3H8PwotcEKdNM78Gwmw6QUd6M28dKj41PCHPwpqJMQ42ha7PI3Hqa/cdpAtHN9M6AszrLZ+4aBgEXu3+fzhDu2qbCuMzoXyLtL7udYZXKybVCs9ss+PY=</SignatureValue><KeyInfo Id="StrongNameKeyInfo"><KeyValue><RSAKeyValue><Modulus>5FyJ3NQAtNMWv8uqDdir/flYQ0IDtPB8sysWhdzUearDDARvxQuintzdcMD+ibM7SlQ0gjDMjTfMC060CS68+UrjYka8kjoO5gilFXQkRSnxgLtlwILo3CUo4gYqfZ1CyUkuN4xYidXntpxg8d28+PvSwRGpuM96YEA3TB5UFTU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><msrel:RelData xmlns:msrel="http://schemas.microsoft.com/windows/rel/2005/reldata"><r:license xmlns:r="urn:mpeg:mpeg21:2003:01-REL-R-NS" xmlns:as="http://schemas.microsoft.com/windows/pki/2005/Authenticode"><r:grant><as:ManifestInformation Hash="0ab91010a6f2fc90c0d958c251de34ae6150db7ae2f37b90c57211e05f018276" Description="" Url=""><as:assemblyIdentity name="Gamora Indumentaria.exe" version="1.0.0.4" publicKeyToken="8a8d8293855d845a" language="neutral" processorArchitecture="msil" type="win32" /></as:ManifestInformation><as:SignedBy /><as:AuthenticodePublisher><as:X509SubjectName>CN=DESKTOP-8860VEA\ivanv</as:X509SubjectName></as:AuthenticodePublisher></r:grant><r:issuer><Signature Id="AuthenticodeSignature" xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha256" /><Reference URI=""><Transforms><Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature" /><Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#" /></Transforms><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" /><DigestValue>XZ3adzuGAFZJC5wFoeXSKwEGD4UlzcwIZo2cCw0yQx0=</DigestValue></Reference></SignedInfo><SignatureValue>3nDSltPPy5y3kxVWkxv9tFbQhRImZ0+Pvh3olvrjxaTE13BAKk4G5i8zLbEsLedUgEvMGl886bq0Wp+ejTXptZNgr9SUlQrpd51bV5u6RZRLmz6c0DIJm6jTzB3jGM2sX6tP2hE59ybx5EnwMdAuYdtHhTXUir5oeNARTmnE30I=</SignatureValue><KeyInfo><KeyValue><RSAKeyValue><Modulus>5FyJ3NQAtNMWv8uqDdir/flYQ0IDtPB8sysWhdzUearDDARvxQuintzdcMD+ibM7SlQ0gjDMjTfMC060CS68+UrjYka8kjoO5gilFXQkRSnxgLtlwILo3CUo4gYqfZ1CyUkuN4xYidXntpxg8d28+PvSwRGpuM96YEA3TB5UFTU=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue></KeyValue><X509Data><X509Certificate>MIIB7TCCAVagAwIBAgIQS0eZhknqBbZPvd8XTvwZ5jANBgkqhkiG9w0BAQsFADA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtADgAOAA2ADAAVgBFAEEAXABpAHYAYQBuAHYwHhcNMjUxMTE2MTkyMjE3WhcNMjYxMTE3MDEyMjE3WjA1MTMwMQYDVQQDHioARABFAFMASwBUAE8AUAAtADgAOAA2ADAAVgBFAEEAXABpAHYAYQBuAHYwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAORcidzUALTTFr/Lqg3Yq/35WENCA7TwfLMrFoXc1HmqwwwEb8ULop7c3XDA/omzO0pUNIIwzI03zAtOtAkuvPlK42JGvJI6DuYIpRV0JEUp8YC7ZcCC6NwlKOIGKn2dQslJLjeMWInV57acYPHdvPj70sERqbjPemBAN0weVBU1AgMBAAEwDQYJKoZIhvcNAQELBQADgYEAa2yWTzYvqkM/Yqi5yk6tIYZEYZaNRCZ2ci/FVaRDEXokMvqpifluJxKBTLv02Pw+F1RLFV1HGKtJUkQQq8FXTgQ/FneFFwbAtdK6V/hbkuB4D7RR7nDyfxyEajB0gWX8y9lagb6TiZJ7LODA+SMbb/zp7gMFVHa3sfklV/XfQ5s=</X509Certificate></X509Data></KeyInfo></Signature></r:issuer></r:license></msrel:RelData></KeyInfo></Signature></asmv1:assembly>

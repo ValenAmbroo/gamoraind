@@ -108,11 +108,14 @@ namespace Gamora_Indumentaria
 
                 Series serieCategorias = new Series("Categorías");
                 serieCategorias.ChartType = SeriesChartType.Pie;
-                serieCategorias.IsValueShownAsLabel = true;
-                serieCategorias.LabelFormat = "{P1}";
-                serieCategorias["PieLabelStyle"] = "Outside";
+                // No mostrar texto dentro del gráfico
+                serieCategorias.IsValueShownAsLabel = false;
+                serieCategorias.Label = string.Empty;
                 serieCategorias.BorderWidth = 2;
                 serieCategorias.BorderColor = Color.White;
+                // Referencia al lado del gráfico: nombre + porcentaje
+                serieCategorias.ToolTip = "#VALX (#PERCENT{P1})";
+                serieCategorias.LegendText = "#VALX (#PERCENT{P1})";
                 chartCategorias.Series.Add(serieCategorias);
 
                 chartCategorias.Titles.Clear();
@@ -120,7 +123,7 @@ namespace Gamora_Indumentaria
                 chartCategorias.Titles[0].Font = new Font("Segoe UI", 12, FontStyle.Bold);
                 chartCategorias.Titles[0].ForeColor = Color.FromArgb(44, 62, 80);
 
-                // Habilitar leyenda
+                // Habilitar leyenda a la derecha
                 chartCategorias.Legends.Clear();
                 Legend legend = new Legend("CategoriaLegend");
                 legend.Docking = Docking.Right;
@@ -236,7 +239,8 @@ namespace Gamora_Indumentaria
 
             for (int i = 0; i < productos.Length; i++)
             {
-                int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(cantidades[i], productos[i]);
+                // Nombre del producto como categoría (X) y cantidad como valor
+                int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(productos[i], cantidades[i]);
                 chartProductosVendidos.Series["Productos"].Points[pointIndex].Color = colores[i];
             }
         }

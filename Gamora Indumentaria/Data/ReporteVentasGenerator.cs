@@ -11,14 +11,20 @@ namespace Gamora_Indumentaria.Data
     {
         public static DataTable GetResumen(DateTime desde, DateTime hasta)
         {
+            // Importante: evitar que SUM(v.Total) se multiplique por cada fila de DetalleVentas.
+            // Para eso agregamos previamente las cantidades por venta y mantenemos un join 1 a 1.
             string query = @"SELECT 
                                 ISNULL(SUM(v.Total), 0) AS TotalVentas,
-                                ISNULL(SUM(dv.Cantidad), 0) AS TotalUnidades,
-                                COUNT(DISTINCT v.Id) AS TotalTransacciones,
-                                CASE WHEN COUNT(DISTINCT v.Id) > 0 
-                                     THEN ISNULL(SUM(v.Total),0)/COUNT(DISTINCT v.Id) ELSE 0 END AS PromedioVenta
+                                ISNULL(SUM(dv.TotalUnidades), 0) AS TotalUnidades,
+                                COUNT(*) AS TotalTransacciones,
+                                CASE WHEN COUNT(*) > 0 
+                                     THEN ISNULL(SUM(v.Total),0)/COUNT(*) ELSE 0 END AS PromedioVenta
                              FROM Ventas v
-                             LEFT JOIN DetalleVentas dv ON v.Id = dv.VentaId
+                             LEFT JOIN (
+                                 SELECT VentaId, SUM(Cantidad) AS TotalUnidades
+                                 FROM DetalleVentas
+                                 GROUP BY VentaId
+                             ) dv ON v.Id = dv.VentaId
                              WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta";
 
             SqlParameter[] parameters = {

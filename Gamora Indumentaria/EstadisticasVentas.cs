@@ -132,10 +132,12 @@ namespace Gamora_Indumentaria
 
             chartVentasTiempo.Series.Clear();
             chartVentasTiempo.ChartAreas.Clear();
+            chartVentasTiempo.Legends.Clear();
 
             ChartArea area = new ChartArea("VentasArea");
-            area.AxisX.Title = "Período";
-            area.AxisY.Title = "Ventas ($)";
+            // Sin títulos de ejes para no mostrar texto
+            area.AxisX.Title = string.Empty;
+            area.AxisY.Title = string.Empty;
             area.BackColor = Color.White;
             chartVentasTiempo.ChartAreas.Add(area);
 
@@ -144,8 +146,8 @@ namespace Gamora_Indumentaria
             serie.Color = Color.FromArgb(52, 152, 219);
             chartVentasTiempo.Series.Add(serie);
 
+            // Sin título dentro del gráfico
             chartVentasTiempo.Titles.Clear();
-            chartVentasTiempo.Titles.Add("📈 Ventas por Tiempo");
         }
 
         private void ConfigurarGraficoProductos()
@@ -154,20 +156,23 @@ namespace Gamora_Indumentaria
 
             chartProductosVendidos.Series.Clear();
             chartProductosVendidos.ChartAreas.Clear();
+            chartProductosVendidos.Legends.Clear();
 
             ChartArea area = new ChartArea("ProductosArea");
-            area.AxisX.Title = "Cantidad";
-            area.AxisY.Title = "Productos";
+            // Sin títulos de ejes
+            area.AxisX.Title = string.Empty;
+            area.AxisY.Title = string.Empty;
             area.BackColor = Color.White;
             chartProductosVendidos.ChartAreas.Add(area);
 
             Series serie = new Series("Productos");
             serie.ChartType = SeriesChartType.Bar;
-            serie.IsValueShownAsLabel = true;
+            // No mostrar valores sobre las barras para mantener los gráficos limpios
+            serie.IsValueShownAsLabel = false;
             chartProductosVendidos.Series.Add(serie);
 
+            // Sin título dentro del gráfico
             chartProductosVendidos.Titles.Clear();
-            chartProductosVendidos.Titles.Add("🏆 Productos Más Vendidos");
         }
 
         private void ConfigurarGraficoCategorias()
@@ -176,6 +181,7 @@ namespace Gamora_Indumentaria
 
             chartCategorias.Series.Clear();
             chartCategorias.ChartAreas.Clear();
+            chartCategorias.Legends.Clear();
 
             ChartArea area = new ChartArea("CategoriasArea");
             area.BackColor = Color.White;
@@ -183,13 +189,16 @@ namespace Gamora_Indumentaria
 
             Series serie = new Series("Categorías");
             serie.ChartType = SeriesChartType.Pie;
-            serie.IsValueShownAsLabel = true;
-            serie.LabelFormat = "{P1}";
+            // No mostrar texto dentro del gráfico
+            serie.IsValueShownAsLabel = false;
+            serie.Label = string.Empty;
+            // Referencia al lado del gráfico: nombre + porcentaje
+            serie.ToolTip = "#VALX (#PERCENT{P1})";
+            serie.LegendText = "#VALX (#PERCENT{P1})";
             chartCategorias.Series.Add(serie);
 
+            // Mantener el gráfico sin título interno, pero con leyenda visible a la derecha
             chartCategorias.Titles.Clear();
-            chartCategorias.Titles.Add("🎯 Ventas por Categoría");
-
             Legend legend = new Legend();
             legend.Docking = Docking.Right;
             chartCategorias.Legends.Add(legend);
@@ -201,10 +210,12 @@ namespace Gamora_Indumentaria
 
             chartTendenciaMensual.Series.Clear();
             chartTendenciaMensual.ChartAreas.Clear();
+            chartTendenciaMensual.Legends.Clear();
 
             ChartArea area = new ChartArea("TendenciaArea");
-            area.AxisX.Title = "Mes";
-            area.AxisY.Title = "Ventas ($)";
+            // Sin títulos de ejes
+            area.AxisX.Title = string.Empty;
+            area.AxisY.Title = string.Empty;
             area.BackColor = Color.White;
             chartTendenciaMensual.ChartAreas.Add(area);
 
@@ -216,18 +227,17 @@ namespace Gamora_Indumentaria
             serie.MarkerSize = 8;
             chartTendenciaMensual.Series.Add(serie);
 
+            // Sin título dentro del gráfico
             chartTendenciaMensual.Titles.Clear();
-            chartTendenciaMensual.Titles.Add("📈 Tendencia Mensual");
         }
 
         private void CargarEstadisticasVentas(string periodo)
         {
             try
             {
-                CargarVentasPorTiempo(periodo);
                 CargarProductosMasVendidos();
                 CargarVentasPorCategoria();
-                CargarTendenciaMensual();
+                // CargarTendenciaMensual(); // gráfico de tendencia mensual removido de la vista principal
                 CargarResumenVentas();
             }
             catch (Exception ex)
@@ -387,7 +397,8 @@ namespace Gamora_Indumentaria
 
                 if (dt.Rows.Count == 0)
                 {
-                    chartProductosVendidos.Series["Productos"].Points.AddXY(0, "Sin datos");
+                    // Etiqueta de categoría "Sin datos" con valor 0
+                    chartProductosVendidos.Series["Productos"].Points.AddXY("Sin datos", 0);
                 }
                 else
                 {
@@ -397,7 +408,8 @@ namespace Gamora_Indumentaria
                         string producto = row["Producto"].ToString();
                         int cantidad = Convert.ToInt32(row["CantidadVendida"]);
 
-                        int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(cantidad, producto);
+                        // Usar el nombre del producto como categoría (eje X) y la cantidad como valor
+                        int pointIndex = chartProductosVendidos.Series["Productos"].Points.AddXY(producto, cantidad);
                         chartProductosVendidos.Series["Productos"].Points[pointIndex].Color = colores[i % colores.Length];
                     }
                 }
@@ -419,6 +431,10 @@ namespace Gamora_Indumentaria
 
             try
             {
+                // Construir WHERE dinámico para excluir ventas de regalo si existe esa columna
+                bool tieneEsRegalo = DatabaseManager.ColumnExists("Ventas", "EsRegalo");
+                string whereExtra = tieneEsRegalo ? " AND ISNULL(v.EsRegalo,0)=0" : string.Empty;
+
                 string query = @"
                     SELECT 
                         c.Nombre AS Categoria,
@@ -427,7 +443,7 @@ namespace Gamora_Indumentaria
                     INNER JOIN Inventario i ON dv.ProductoId = i.Id
                     INNER JOIN Categorias c ON i.CategoriaId = c.Id
                     INNER JOIN Ventas v ON dv.VentaId = v.Id
-                    WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
+                    WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta" + whereExtra + @"
                     GROUP BY c.Nombre
                     ORDER BY TotalVentas DESC";
 
@@ -454,14 +470,33 @@ namespace Gamora_Indumentaria
                 }
                 else
                 {
+                    // Para mejorar legibilidad, mostrar solo las principales categorías
+                    // y agrupar el resto en "Otros" cuando haya muchas categorías.
+                    int maxCategoriasIndividuales = 7;
+                    decimal otrasVentas = 0m;
+
                     for (int i = 0; i < dt.Rows.Count; i++)
                     {
                         DataRow row = dt.Rows[i];
                         string categoria = row["Categoria"].ToString();
                         decimal ventas = Convert.ToDecimal(row["TotalVentas"]);
 
-                        int pointIndex = chartCategorias.Series["Categorías"].Points.AddXY(categoria, ventas);
-                        chartCategorias.Series["Categorías"].Points[pointIndex].Color = colores[i % colores.Length];
+                        if (i < maxCategoriasIndividuales)
+                        {
+                            int pointIndex = chartCategorias.Series["Categorías"].Points.AddXY(categoria, ventas);
+                            chartCategorias.Series["Categorías"].Points[pointIndex].Color = colores[i % colores.Length];
+                        }
+                        else
+                        {
+                            otrasVentas += ventas;
+                        }
+                    }
+
+                    if (otrasVentas > 0)
+                    {
+                        int pointIndexOtros = chartCategorias.Series["Categorías"].Points.AddXY("Otros", otrasVentas);
+                        // Usar un color neutro para "Otros"
+                        chartCategorias.Series["Categorías"].Points[pointIndexOtros].Color = Color.FromArgb(189, 195, 199);
                     }
                 }
             }

@@ -134,12 +134,70 @@ namespace Gamora_Indumentaria
             {
                 string sql = "SELECT * FROM vw_InventarioCompleto";
                 datos = Data.DatabaseManager.ExecuteQuery(sql);
+
+                System.Diagnostics.Debug.WriteLine("Datos cargados: " + datos.Rows.Count + " filas");
+
+                // Agregar columna IdVisual al DataTable ANTES de asignar al DataSource
+                if (!datos.Columns.Contains("IdVisual"))
+                {
+                    datos.Columns.Add("IdVisual", typeof(int));
+                }
+
+                // Llenar la columna IdVisual en el DataTable
+                int contador = 1;
+                foreach (DataRow row in datos.Rows)
+                {
+                    if (row["Activo"] != DBNull.Value && Convert.ToInt32(row["Activo"]) == 1)
+                    {
+                        row["IdVisual"] = contador;
+                        contador++;
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine("Columna IdVisual agregada al DataTable");
+
+                // Limpiar el grid antes de asignar nuevo origen
+                dgvInventario.DataSource = null;
+                dgvInventario.Columns.Clear();
+
+                // Asignar datos
                 dgvInventario.DataSource = datos;
+
+                System.Diagnostics.Debug.WriteLine("DataSource asignado. Columnas actuales: " + dgvInventario.Columns.Count);
+
+                // Mover la columna IdVisual al inicio
+                if (dgvInventario.Columns.Contains("IdVisual"))
+                {
+                    DataGridViewColumn col = dgvInventario.Columns["IdVisual"];
+                    dgvInventario.Columns.Remove(col);
+                    dgvInventario.Columns.Insert(0, col);
+                    col.HeaderText = "id";
+                    col.Width = 50;
+                    col.ReadOnly = true;
+                }
+
+                // Ocultar el Id real de la BD
+                if (dgvInventario.Columns.Contains("Id"))
+                {
+                    dgvInventario.Columns["Id"].Visible = false;
+                }
+
+                // Formatear columnas
                 FormatearColumnas();
+
+                System.Diagnostics.Debug.WriteLine("Columnas formateadas");
+
+                // Aplicar filtros
                 Filtrar();
+
+                System.Diagnostics.Debug.WriteLine("Filtros aplicados");
+
+                // Refrescar el display
+                dgvInventario.Refresh();
             }
             catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("Error en CargarInventario: " + ex.Message + "\n" + ex.StackTrace);
                 MessageBox.Show("Error cargando inventario: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -181,20 +239,20 @@ namespace Gamora_Indumentaria
             if (!string.IsNullOrWhiteSpace(txtBuscar.Text))
             {
                 string b = Escape(txtBuscar.Text.Trim());
-                filtro += $" AND (Producto LIKE '%{b}%' OR Descripcion LIKE '%{b}%' OR CodigoBarras LIKE '%{b}%')";
+                filtro += " AND (Producto LIKE '%" + b + "%' OR Descripcion LIKE '%" + b + "%' OR CodigoBarras LIKE '%" + b + "%')";
             }
             if (cboCategoria.SelectedItem is Data.Categoria cat)
             {
                 if (!string.Equals(cat.Nombre, "Todos", StringComparison.OrdinalIgnoreCase))
                 {
                     string catEsc = Escape(cat.Nombre);
-                    filtro += $" AND Categoria = '{catEsc}'";
+                    filtro += " AND Categoria = '" + catEsc + "'";
                 }
             }
             if (cboTalle.Visible && cboTalle.SelectedItem is Data.TallePorCategoria talle)
             {
                 string t = Escape(talle.TalleValor);
-                filtro += $" AND Talle = '{t}'";
+                filtro += " AND Talle = '" + t + "'";
             }
 
             if (chkSoloBajo.Checked)
@@ -203,15 +261,52 @@ namespace Gamora_Indumentaria
             }
             if (nudStockMin.Value > 0)
             {
-                filtro += $" AND Cantidad >= {nudStockMin.Value}";
+                filtro += " AND Cantidad >= " + nudStockMin.Value;
             }
             if (nudStockMax.Value < 100000)
             {
-                filtro += $" AND Cantidad <= {nudStockMax.Value}";
+                filtro += " AND Cantidad <= " + nudStockMax.Value;
             }
+
+            // Aplicar el filtro
             datos.DefaultView.RowFilter = filtro;
+
+            // Recalcular los índices visuales basados en el filtro
+            RecalcularIndices();
+
             ActualizarResumen();
         }
+
+        private void RecalcularIndices()
+        {
+            if (datos == null) return;
+
+            // Primero, resetear todos los IdVisual
+            foreach (DataRow row in datos.Rows)
+            {
+                row["IdVisual"] = DBNull.Value;
+            }
+
+            // Luego, recalcular solo para las filas visibles (filtradas)
+            int contador = 1;
+            foreach (DataRowView rv in datos.DefaultView)
+            {
+                rv.Row["IdVisual"] = contador;
+                contador++;
+            }
+
+            // Asegurar que la columna IdVisual esté al inicio del grid
+            if (dgvInventario.Columns.Contains("IdVisual") && dgvInventario.Columns["IdVisual"].Index != 0)
+            {
+                DataGridViewColumn col = dgvInventario.Columns["IdVisual"];
+                dgvInventario.Columns.Remove(col);
+                dgvInventario.Columns.Insert(0, col);
+            }
+
+            // Refrescar el grid para que muestre los cambios
+            dgvInventario.Refresh();
+        }
+
 
         private void ActualizarResumen()
         {
@@ -225,10 +320,10 @@ namespace Gamora_Indumentaria
                     totalVal += Convert.ToDecimal(rv.Row["PrecioVenta"]) * Convert.ToInt32(rv.Row["Cantidad"]);
                 }
             }
-            lblResumen.Text = $"{visibles} registros | Valor total: {totalVal:C2}";
+            lblResumen.Text = visibles + " registros | Valor total: " + totalVal.ToString("C2");
         }
 
-        private string Escape(string s) => s.Replace("'", "''");
+        private string Escape(string s) { return s.Replace("'", "''"); }
 
         private void PrepararFuentes()
         {
@@ -255,10 +350,10 @@ namespace Gamora_Indumentaria
                 if (datos != null)
                 {
                     // Buscar coincidencia exacta en CodigoBarras
-                    var rows = datos.Select($"CodigoBarras = '{Escape(codigo)}'");
+                    var rows = datos.Select("CodigoBarras = '" + Escape(codigo) + "'");
                     if (rows.Length > 0)
                     {
-                        datos.DefaultView.RowFilter = $"CodigoBarras = '{Escape(codigo)}'";
+                        datos.DefaultView.RowFilter = "CodigoBarras = '" + Escape(codigo) + "'";
                         ActualizarResumen();
                     }
                     else
@@ -346,8 +441,8 @@ namespace Gamora_Indumentaria
             {
                 try
                 {
-                    // Eliminación lógica: poner stock 0 (placeholder simplificado)
-                    Data.DatabaseManager.ExecuteNonQuery("UPDATE Inventario SET Stock = 0 WHERE Id = " + id);
+                    // Eliminación lógica: marcar como inactivo
+                    Data.DatabaseManager.ExecuteNonQuery("UPDATE Inventario SET Activo = 0 WHERE Id = " + id);
                     CargarInventario();
                 }
                 catch (Exception ex)

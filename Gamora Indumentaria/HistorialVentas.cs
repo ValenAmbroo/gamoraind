@@ -243,16 +243,21 @@ namespace Gamora_Indumentaria
                 string buscar = txtBuscar.Text == _placeholder ? string.Empty : txtBuscar.Text.Trim();
 
                 string query = @"SELECT v.Id, v.FechaVenta, v.MetodoPago, v.Total,
-                                        ISNULL(COUNT(dv.Id),0) AS Items,
-                                        ISNULL(SUM(dv.Cantidad),0) AS Unidades
-                                 FROM Ventas v
-                                 LEFT JOIN DetalleVentas dv ON v.Id = dv.VentaId
-                                 WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
-                                   AND (@Metodo = '' OR v.MetodoPago = @Metodo)
-                                   AND (@Buscar = '' OR EXISTS (SELECT 1 FROM DetalleVentas dv2 INNER JOIN Inventario i2 ON i2.Id = dv2.ProductoId
-                                                               WHERE dv2.VentaId = v.Id AND (i2.Nombre LIKE @BuscarPatron OR i2.CodigoBarras LIKE @BuscarPatron)))
-                                 GROUP BY v.Id, v.FechaVenta, v.MetodoPago, v.Total
-                                 ORDER BY v.FechaVenta DESC";
+                                                                                ISNULL(COUNT(dv.Id),0) AS Items,
+                                                                                ISNULL(SUM(dv.Cantidad),0) AS Unidades,
+                                                                                ISNULL(v.MontoEfectivo,0) AS MontoEfectivo,
+                                                                                ISNULL(v.MontoDebito,0) AS MontoDebito,
+                                                                                ISNULL(v.MontoCredito,0) AS MontoCredito,
+                                                                                ISNULL(v.MontoTransferencia,0) AS MontoTransferencia
+                                                                 FROM Ventas v
+                                                                 LEFT JOIN DetalleVentas dv ON v.Id = dv.VentaId
+                                                                 WHERE v.FechaVenta >= @Desde AND v.FechaVenta < @Hasta
+                                                                     AND (@Metodo = '' OR v.MetodoPago = @Metodo)
+                                                                     AND (@Buscar = '' OR EXISTS (SELECT 1 FROM DetalleVentas dv2 INNER JOIN Inventario i2 ON i2.Id = dv2.ProductoId
+                                                                                                                             WHERE dv2.VentaId = v.Id AND (i2.Nombre LIKE @BuscarPatron OR i2.CodigoBarras LIKE @BuscarPatron)))
+                                                                 GROUP BY v.Id, v.FechaVenta, v.MetodoPago, v.Total,
+                                                                                    v.MontoEfectivo, v.MontoDebito, v.MontoCredito, v.MontoTransferencia
+                                                                 ORDER BY v.FechaVenta DESC";
 
                 SqlParameter[] p = {
                     new SqlParameter("@Desde", desde),
@@ -276,6 +281,28 @@ namespace Gamora_Indumentaria
                 {
                     dgvVentas.Columns["Total"].DefaultCellStyle.Format = "C2";
                     dgvVentas.Columns["FechaVenta"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+                }
+
+                // Encabezados y formato para montos por medio de pago
+                if (dgvVentas.Columns.Contains("MontoEfectivo"))
+                {
+                    dgvVentas.Columns["MontoEfectivo"].HeaderText = "Efectivo";
+                    dgvVentas.Columns["MontoEfectivo"].DefaultCellStyle.Format = "C2";
+                }
+                if (dgvVentas.Columns.Contains("MontoDebito"))
+                {
+                    dgvVentas.Columns["MontoDebito"].HeaderText = "Débito";
+                    dgvVentas.Columns["MontoDebito"].DefaultCellStyle.Format = "C2";
+                }
+                if (dgvVentas.Columns.Contains("MontoCredito"))
+                {
+                    dgvVentas.Columns["MontoCredito"].HeaderText = "Crédito";
+                    dgvVentas.Columns["MontoCredito"].DefaultCellStyle.Format = "C2";
+                }
+                if (dgvVentas.Columns.Contains("MontoTransferencia"))
+                {
+                    dgvVentas.Columns["MontoTransferencia"].HeaderText = "Transferencia";
+                    dgvVentas.Columns["MontoTransferencia"].DefaultCellStyle.Format = "C2";
                 }
 
                 int count = dt.Rows.Count;
@@ -345,10 +372,25 @@ namespace Gamora_Indumentaria
             {
                 StringBuilder sb = new StringBuilder();
                 DataTable dtVentas = (DataTable)dgvVentas.DataSource;
-                sb.AppendLine("Id;FechaVenta;MetodoPago;Total;Items;Unidades");
+                sb.AppendLine("Id;FechaVenta;MetodoPago;Total;Items;Unidades;MontoEfectivo;MontoDebito;MontoCredito;MontoTransferencia");
                 foreach (DataRow row in dtVentas.Rows)
                 {
-                    sb.AppendFormat("{0};{1:yyyy-MM-dd HH:mm};{2};{3};{4};{5}\n", row["Id"], row["FechaVenta"], row["MetodoPago"], row["Total"], row["Items"], row["Unidades"]);
+                    object montoEfectivo = dtVentas.Columns.Contains("MontoEfectivo") && row["MontoEfectivo"] != DBNull.Value ? row["MontoEfectivo"] : 0;
+                    object montoDebito = dtVentas.Columns.Contains("MontoDebito") && row["MontoDebito"] != DBNull.Value ? row["MontoDebito"] : 0;
+                    object montoCredito = dtVentas.Columns.Contains("MontoCredito") && row["MontoCredito"] != DBNull.Value ? row["MontoCredito"] : 0;
+                    object montoTransferencia = dtVentas.Columns.Contains("MontoTransferencia") && row["MontoTransferencia"] != DBNull.Value ? row["MontoTransferencia"] : 0;
+
+                    sb.AppendFormat("{0};{1:yyyy-MM-dd HH:mm};{2};{3};{4};{5};{6};{7};{8};{9}\n",
+                        row["Id"],
+                        row["FechaVenta"],
+                        row["MetodoPago"],
+                        row["Total"],
+                        row["Items"],
+                        row["Unidades"],
+                        montoEfectivo,
+                        montoDebito,
+                        montoCredito,
+                        montoTransferencia);
                 }
                 sb.AppendLine();
                 sb.AppendLine("DETALLES");

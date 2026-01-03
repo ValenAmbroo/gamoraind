@@ -78,10 +78,14 @@ namespace Gamora_Indumentaria
                     }
                     dv.Sort = "Id ASC";
                     dgvProductos.DataSource = dv.ToTable();
+                    AsegurarColumnaIndice(dgvProductos);
+                    Renumerar(dgvProductos);
                 }
                 else
                 {
                     dgvProductos.DataSource = dt; // fallback sin ordenar
+                    AsegurarColumnaIndice(dgvProductos);
+                    Renumerar(dgvProductos);
                 }
 
                 // Ajustar columnas básicas si existen
@@ -103,6 +107,56 @@ namespace Gamora_Indumentaria
             finally
             {
                 cargando = prev;
+            }
+        }
+
+        // Agrega una columna visual "id" (no de base de datos) para numerar filas 1..N
+        private void AsegurarColumnaIndice(DataGridView dgv)
+        {
+            if (dgv == null) return;
+            // Usamos Name = "IdVisual" y HeaderText = "id" para no chocar con la columna real "Id"
+            if (!dgv.Columns.Contains("IdVisual"))
+            {
+                var col = new DataGridViewTextBoxColumn
+                {
+                    Name = "IdVisual",
+                    HeaderText = "id",
+                    ReadOnly = true,
+                    SortMode = DataGridViewColumnSortMode.NotSortable,
+                    Width = 50,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    Frozen = false
+                };
+                // Insertar al principio
+                dgv.Columns.Insert(0, col);
+            }
+            // Asegurar que la columna real Id siga visible según necesidad
+            if (dgv.Columns.Contains("Id"))
+            {
+                // Mover y ocultar el Id real; trabajamos solo con el índice visual
+                dgv.Columns["Id"].DisplayIndex = Math.Min(dgv.Columns["Id"].DisplayIndex + 1, dgv.Columns.Count - 1);
+                dgv.Columns["Id"].Visible = false;
+            }
+
+            // Ajustar ancho al contenido actual después de insertar/mover
+            if (dgv.Columns.Contains("IdVisual"))
+            {
+                dgv.AutoResizeColumn(dgv.Columns["IdVisual"].Index, DataGridViewAutoSizeColumnMode.AllCells);
+            }
+        }
+
+        // Recalcula los índices visibles 1..N según el orden actual y filtros
+        private void Renumerar(DataGridView dgv)
+        {
+            if (dgv == null) return;
+            if (!dgv.Columns.Contains("IdVisual")) return;
+            int n = 1;
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (!row.IsNewRow && row.Visible)
+                {
+                    row.Cells["IdVisual"].Value = n++;
+                }
             }
         }
 
@@ -342,6 +396,12 @@ namespace Gamora_Indumentaria
                         row.DefaultCellStyle.BackColor = Color.FromArgb(224, 238, 252);
                 }
             };
+
+            // Eventos para mantener actualizado el índice visual
+            dgvProductos.DataBindingComplete += (s, e) => { AsegurarColumnaIndice(dgvProductos); Renumerar(dgvProductos); };
+            dgvProductos.Sorted += (s, e) => { Renumerar(dgvProductos); };
+            dgvProductos.RowsAdded += (s, e) => { Renumerar(dgvProductos); };
+            dgvProductos.RowsRemoved += (s, e) => { Renumerar(dgvProductos); };
         }
 
         private void panelTop_Paint(object sender, PaintEventArgs e)

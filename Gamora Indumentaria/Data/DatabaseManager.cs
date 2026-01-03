@@ -44,7 +44,7 @@ namespace Gamora_Indumentaria.Data
                 catch { /* ignorar y probar siguiente */ }
             }
             // Fallback razonable: LocalDB con nombre por defecto
-            return "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+            return "Data Source=DESKTOP-8860VEA\\MSSQLLocalDB;Initial Catalog=GamoraIndumentariaDB;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
         }
 
         private static string BuildMasterConnectionString(string cs)
@@ -57,7 +57,7 @@ namespace Gamora_Indumentaria.Data
             }
             catch
             {
-                return "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
+                return "Data Source=DESKTOP-8860VEA\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;TrustServerCertificate=True;Connect Timeout=30;";
             }
         }
 
@@ -287,15 +287,19 @@ namespace Gamora_Indumentaria.Data
                         END
 
                         -- Tabla Ventas
-            IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ventas')
+	    IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Ventas')
                         BEGIN
                             CREATE TABLE Ventas (
                                 Id INT IDENTITY(1,1) PRIMARY KEY,
                                 FechaVenta DATETIME NOT NULL DEFAULT GETDATE(),
                                 Total DECIMAL(10,2) NOT NULL,
-                MetodoPago NVARCHAR(50) NOT NULL,
-                Cliente NVARCHAR(200) NULL,
-                EsRegalo BIT NOT NULL DEFAULT 0
+		        MetodoPago NVARCHAR(50) NOT NULL,
+		        Cliente NVARCHAR(200) NULL,
+		        EsRegalo BIT NOT NULL DEFAULT 0,
+		        MontoEfectivo DECIMAL(10,2) NOT NULL DEFAULT 0,
+		        MontoDebito DECIMAL(10,2) NOT NULL DEFAULT 0,
+		        MontoCredito DECIMAL(10,2) NOT NULL DEFAULT 0,
+		        MontoTransferencia DECIMAL(10,2) NOT NULL DEFAULT 0
                             );
                         END
 
@@ -327,7 +331,11 @@ namespace Gamora_Indumentaria.Data
                                     Total DECIMAL(10,2) NOT NULL,
                                     MetodoPago NVARCHAR(50) NOT NULL,
                                     Cliente NVARCHAR(200) NULL,
-                                    EsRegalo BIT NOT NULL DEFAULT 0
+                                    EsRegalo BIT NOT NULL DEFAULT 0,
+		            MontoEfectivo DECIMAL(10,2) NOT NULL DEFAULT 0,
+		            MontoDebito DECIMAL(10,2) NOT NULL DEFAULT 0,
+		            MontoCredito DECIMAL(10,2) NOT NULL DEFAULT 0,
+		            MontoTransferencia DECIMAL(10,2) NOT NULL DEFAULT 0
                                 );
                             END
                         END
@@ -352,6 +360,33 @@ namespace Gamora_Indumentaria.Data
                         BEGIN
                             ALTER TABLE Ventas ADD EsRegalo BIT NOT NULL DEFAULT 0;
                         END
+
+                        -- Agregar columnas de distribución de medios de pago si no existen
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'MontoEfectivo')
+                        BEGIN
+                            ALTER TABLE Ventas ADD MontoEfectivo DECIMAL(10,2) NOT NULL DEFAULT 0;
+                        END
+
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'MontoDebito')
+                        BEGIN
+                            ALTER TABLE Ventas ADD MontoDebito DECIMAL(10,2) NOT NULL DEFAULT 0;
+                        END
+
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'MontoCredito')
+                        BEGIN
+                            ALTER TABLE Ventas ADD MontoCredito DECIMAL(10,2) NOT NULL DEFAULT 0;
+                        END
+
+                        IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS 
+                                     WHERE TABLE_NAME = 'Ventas' AND COLUMN_NAME = 'MontoTransferencia')
+                        BEGIN
+                            ALTER TABLE Ventas ADD MontoTransferencia DECIMAL(10,2) NOT NULL DEFAULT 0;
+                        END
+
+                        
 
             -- Tabla DetalleVentas
                         IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DetalleVentas')
@@ -762,8 +797,13 @@ namespace Gamora_Indumentaria.Data
         /// <param name="total">Total de la venta</param>
         /// <param name="metodoPago">Método de pago</param>
         /// <param name="detalles">Lista de detalles de la venta</param>
+        /// <param name="montoEfectivo">Monto abonado en efectivo</param>
+        /// <param name="montoDebito">Monto abonado con tarjeta de débito</param>
+        /// <param name="montoCredito">Monto abonado con tarjeta de crédito</param>
+        /// <param name="montoTransferencia">Monto abonado por transferencia</param>
         /// <returns>ID de la venta creada</returns>
-        public static int ProcesarVenta(decimal total, string metodoPago, List<ItemVenta> detalles, bool esRegalo = false)
+        public static int ProcesarVenta(decimal total, string metodoPago, List<ItemVenta> detalles, bool esRegalo = false,
+            decimal montoEfectivo = 0m, decimal montoDebito = 0m, decimal montoCredito = 0m, decimal montoTransferencia = 0m)
         {
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
@@ -774,14 +814,18 @@ namespace Gamora_Indumentaria.Data
                     {
                         // 1. Insertar la venta principal
                         string insertVenta = @"
-                            INSERT INTO Ventas (Total, MetodoPago, EsRegalo)
-                            VALUES (@Total, @MetodoPago, @EsRegalo);
+                            INSERT INTO Ventas (Total, MetodoPago, EsRegalo, MontoEfectivo, MontoDebito, MontoCredito, MontoTransferencia)
+                            VALUES (@Total, @MetodoPago, @EsRegalo, @MontoEfectivo, @MontoDebito, @MontoCredito, @MontoTransferencia);
                             SELECT SCOPE_IDENTITY();";
 
                         SqlCommand cmd = new SqlCommand(insertVenta, conn, transaction);
                         cmd.Parameters.AddWithValue("@Total", total);
                         cmd.Parameters.AddWithValue("@MetodoPago", metodoPago);
                         cmd.Parameters.AddWithValue("@EsRegalo", esRegalo ? 1 : 0);
+                        cmd.Parameters.AddWithValue("@MontoEfectivo", montoEfectivo);
+                        cmd.Parameters.AddWithValue("@MontoDebito", montoDebito);
+                        cmd.Parameters.AddWithValue("@MontoCredito", montoCredito);
+                        cmd.Parameters.AddWithValue("@MontoTransferencia", montoTransferencia);
 
                         int ventaId = Convert.ToInt32(cmd.ExecuteScalar());
 
@@ -847,10 +891,12 @@ namespace Gamora_Indumentaria.Data
             }
         }
 
+
         /// <summary>
         /// Procesa una venta desde el carrito de compras
         /// </summary>
-        public static int ProcesarVenta(List<ItemCarrito> carrito, string metodoPago, decimal totalVenta, bool esRegalo = false)
+        public static int ProcesarVenta(List<ItemCarrito> carrito, string metodoPago, decimal totalVenta, bool esRegalo = false,
+            decimal montoEfectivo = 0m, decimal montoDebito = 0m, decimal montoCredito = 0m, decimal montoTransferencia = 0m)
         {
             var detalles = carrito.Select(item => new ItemVenta
             {
@@ -861,7 +907,7 @@ namespace Gamora_Indumentaria.Data
                 Subtotal = item.Subtotal,
                 Descuento = item.Descuento
             }).ToList();
-            return ProcesarVenta(totalVenta, metodoPago, detalles, esRegalo);
+            return ProcesarVenta(totalVenta, metodoPago, detalles, esRegalo, montoEfectivo, montoDebito, montoCredito, montoTransferencia);
         }
 
         /// <summary>

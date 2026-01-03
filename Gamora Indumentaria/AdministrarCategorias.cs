@@ -37,6 +37,16 @@ namespace Gamora_Indumentaria
                 dgvCategorias.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
                 dgvCategorias.DefaultCellStyle.SelectionBackColor = Color.FromArgb(210, 225, 245);
                 dgvCategorias.DefaultCellStyle.SelectionForeColor = Color.Black;
+
+                // Asegurar columna visual y renumeración automática
+                dgvCategorias.DataBindingComplete -= DgvCategorias_DataBindingComplete;
+                dgvCategorias.DataBindingComplete += DgvCategorias_DataBindingComplete;
+                dgvCategorias.Sorted -= (s, e) => { Renumerar(dgvCategorias); };
+                dgvCategorias.Sorted += (s, e) => { Renumerar(dgvCategorias); };
+                dgvCategorias.RowsAdded -= (s, e) => { Renumerar(dgvCategorias); };
+                dgvCategorias.RowsAdded += (s, e) => { Renumerar(dgvCategorias); };
+                dgvCategorias.RowsRemoved -= (s, e) => { Renumerar(dgvCategorias); };
+                dgvCategorias.RowsRemoved += (s, e) => { Renumerar(dgvCategorias); };
             }
         }
 
@@ -63,6 +73,10 @@ namespace Gamora_Indumentaria
                 .OrderBy(c => c.Id)
                 .Select(c => new { c.Id, c.Nombre, Talles = c.TieneTalle ? (string.IsNullOrEmpty(c.TipoTalle) ? "Sí" : c.TipoTalle) : "No" })
                 .ToList();
+
+            // Insertar columna de índice visual y numerar
+            AsegurarColumnaIndice(dgvCategorias);
+            Renumerar(dgvCategorias);
         }
 
         private void Filtrar()
@@ -187,5 +201,54 @@ namespace Gamora_Indumentaria
 
         private void TxtBuscar_TextChanged(object sender, EventArgs e) => Filtrar();
         private void BtnCerrar_Click(object sender, EventArgs e) => Close();
+
+        // Mantiene una columna visual "#" con 1..N independiente del Id real
+        private void AsegurarColumnaIndice(DataGridView dgv)
+        {
+            if (dgv == null) return;
+            if (!dgv.Columns.Contains("IdVisual"))
+            {
+                var col = new DataGridViewTextBoxColumn
+                {
+                    Name = "IdVisual",
+                    HeaderText = "#",
+                    ReadOnly = true,
+                    Width = 45,
+                    AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells,
+                    SortMode = DataGridViewColumnSortMode.NotSortable
+                };
+                dgv.Columns.Insert(0, col);
+            }
+
+            // Mover la columna Id real para que quede después del índice visual
+            if (dgv.Columns.Contains("Id"))
+            {
+                try
+                {
+                    dgv.Columns["Id"].DisplayIndex = Math.Min(dgv.Columns["Id"].DisplayIndex + 1, dgv.Columns.Count - 1);
+                    // Ocultar el Id de base de datos en la grilla
+                    dgv.Columns["Id"].Visible = false;
+                }
+                catch { /* ignorar si no aplica */ }
+            }
+        }
+
+        private void Renumerar(DataGridView dgv)
+        {
+            if (dgv == null || !dgv.Columns.Contains("IdVisual")) return;
+            int i = 1;
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
+                row.Cells["IdVisual"].Value = i++;
+            }
+        }
+
+        private void DgvCategorias_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            AsegurarColumnaIndice(dgvCategorias);
+            if (dgvCategorias.Columns.Contains("Id")) dgvCategorias.Columns["Id"].Visible = false;
+            Renumerar(dgvCategorias);
+        }
     }
 }

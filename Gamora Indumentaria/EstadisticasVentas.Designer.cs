@@ -124,14 +124,21 @@ namespace Gamora_Indumentaria
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            // Columna 0: Resumen y Productos
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30F));
+            // Columna 1: margen/espacio intermedio mínimo
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            // Columna 2: gráfico de torta grande (Ventas por Categoría)
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 0);
+            // Quitar el bloque de "Ventas por Tiempo" del layout
+            // this.tableLayoutPanel1.Controls.Add(this.groupBox2, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox3, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox5, 1, 1);
+            // Quitar el groupBox de tendencia mensual de la grilla principal
+            // this.tableLayoutPanel1.Controls.Add(this.groupBox5, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.groupBox4, 2, 0);
+            // Hacer que el gráfico de categorías (torta) ocupe las dos filas
+            this.tableLayoutPanel1.SetRowSpan(this.groupBox4, 2);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(15, 15);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
@@ -294,6 +301,7 @@ namespace Gamora_Indumentaria
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "📈 Ventas por Tiempo";
+            this.groupBox2.Visible = false;
             // 
             // chartVentasTiempo
             // 
@@ -315,12 +323,13 @@ namespace Gamora_Indumentaria
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.chartCategorias);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
             this.groupBox4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(62)))), ((int)(((byte)(80)))));
             this.groupBox4.Location = new System.Drawing.Point(781, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Padding = new System.Windows.Forms.Padding(10);
-            this.groupBox4.Size = new System.Drawing.Size(383, 312);
+            this.groupBox4.Size = new System.Drawing.Size(386, 312);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "🎯 Ventas por Categoría";
@@ -342,8 +351,8 @@ namespace Gamora_Indumentaria
             this.chartCategorias.TabIndex = 0;
             this.chartCategorias.Text = "chart3";
             // 
-            // groupBox5
-            // 
+            // groupBox5 (tendencia mensual) se mantiene creado pero oculto
+            // para no mostrarse en el formulario principal
             this.groupBox5.Controls.Add(this.chartTendenciaMensual);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
@@ -355,6 +364,7 @@ namespace Gamora_Indumentaria
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "📈 Tendencia Mensual";
+            this.groupBox5.Visible = false;
             // 
             // groupBox3
             // 

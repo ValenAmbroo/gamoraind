@@ -51,14 +51,14 @@ namespace Gamora_Indumentaria
 
 
 
-            
 
-            string contraseñaCorrecta = "1234"; // Cambiá esto por tu contraseña real
+
+            string contraseñaCorrecta = "Gamora23"; // Contraseña actual de la aplicación
 
             if (txtPassword.Text == contraseñaCorrecta)
             {
                 Form1 form1 = new Form1("administrador");
-               // Form1 form1 = new Form1(); // Abre Form1
+                // Form1 form1 = new Form1(); // Abre Form1
                 form1.Show();              // Muestra Form1
                 this.Hide();               // Oculta el login
                                            // Aplica el mismo estado de ventana que tenía el anterior
@@ -71,9 +71,9 @@ namespace Gamora_Indumentaria
                 txtPassword.Focus();
 
 
-               
+
             }
-    }
+        }
 
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {

@@ -33,6 +33,14 @@ namespace Gamora_Indumentaria
         private VentaTicketData lastTicketData;
         private PrintPreviewDialog previewDlg;
         private Button btnVistaPrevia;
+        // Montos separados para métodos combinados (efectivo + otro)
+        private Label lblMontoEfectivo;
+        private Label lblMontoOtro;
+        private TextBox txtMontoEfectivo;
+        private TextBox txtMontoOtro;
+        // Paneles de layout
+        private Panel panelLeft;
+        private Panel panelRight;
 
         private class VentaTicketData
         {
@@ -62,6 +70,9 @@ namespace Gamora_Indumentaria
         private Button btnCerrar;
         private Label lblTitulo;
         private Label lblTotal;
+        private Label lblMetodoPago1;
+        private Label lblIntereses1;
+        private TextBox txtIntereses1;
         // Eliminado soporte de cliente (no se almacena)
 
 
@@ -93,8 +104,8 @@ namespace Gamora_Indumentaria
                 {
                     Text = "Es un regalo",
                     AutoSize = true,
-                    // Colocar debajo del checkbox de imprimir para que sean visibles
-                    Location = new Point(20, 60)
+                    // Colocar debajo de "Imprimir ticket"
+                    Location = new Point(20, 240)
                 };
                 grpPago.Controls.Add(chkEsRegalo);
                 chkEsRegalo.BringToFront();
@@ -288,7 +299,21 @@ namespace Gamora_Indumentaria
 
         private void ActualizarTotal()
         {
-            totalVenta = carrito.Sum(x => x.Subtotal);
+            decimal baseTotal = carrito.Sum(x => x.Subtotal);
+            decimal interesesPorcentaje = 0m;
+            if (txtIntereses1 != null && !string.IsNullOrWhiteSpace(txtIntereses1.Text))
+            {
+                decimal parsed;
+                if (decimal.TryParse(txtIntereses1.Text.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out parsed))
+                {
+                    if (parsed < 0) parsed = 0;
+                    if (parsed > 100) parsed = 100;
+                    interesesPorcentaje = parsed;
+                }
+            }
+
+            decimal interesesMonto = baseTotal * interesesPorcentaje / 100m;
+            totalVenta = baseTotal + interesesMonto;
             if (lblTotal != null)
             {
                 lblTotal.Text = string.Format("Total: {0:C}", totalVenta);
@@ -456,7 +481,93 @@ namespace Gamora_Indumentaria
             {
                 // Recalcular total neto por seguridad
                 foreach (var it in carrito) RecalcularItem(it);
-                totalVenta = carrito.Sum(c => c.Subtotal);
+                // Recalcular total incluyendo intereses
+                ActualizarTotal();
+
+                // Validar montos cuando el método de pago es combinado
+                bool metodoMixto = metodoPago != null && metodoPago.StartsWith("Efectivo +", StringComparison.OrdinalIgnoreCase);
+
+                decimal montoEfectivo = 0m;
+                decimal montoOtro = 0m;
+
+                // Montos desglosados por medio de pago para guardar en BD
+                decimal montoEfectivoBD = 0m;
+                decimal montoDebitoBD = 0m;
+                decimal montoCreditoBD = 0m;
+                decimal montoTransferenciaBD = 0m;
+
+                if (metodoMixto)
+                {
+                    if (txtMontoEfectivo == null || txtMontoOtro == null)
+                    {
+                        MessageBox.Show("No se encontraron los campos de montos para el método combinado.",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (!decimal.TryParse(txtMontoEfectivo.Text.Replace(',', '.'), out montoEfectivo) || montoEfectivo < 0)
+                    {
+                        MessageBox.Show("Ingrese un monto de EFECTIVO válido.", "Monto inválido",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    if (!decimal.TryParse(txtMontoOtro.Text.Replace(',', '.'), out montoOtro) || montoOtro < 0)
+                    {
+                        MessageBox.Show("Ingrese un monto para el segundo medio de pago válido.", "Monto inválido",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    decimal suma = Math.Round(montoEfectivo + montoOtro, 2);
+                    decimal totalRedondeado = Math.Round(totalVenta, 2);
+
+                    if (suma != totalRedondeado)
+                    {
+                        MessageBox.Show(string.Format("La suma de los montos ({0:C}) no coincide con el total de la venta ({1:C}).",
+                                suma, totalVenta),
+                            "Montos no coinciden", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
+                    // Mapear montos combinados a columnas específicas
+                    if (metodoPago.StartsWith("Efectivo + Transferencia", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoEfectivoBD = montoEfectivo;
+                        montoTransferenciaBD = montoOtro;
+                    }
+                    else if (metodoPago.StartsWith("Efectivo + Tarjeta de Débito", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoEfectivoBD = montoEfectivo;
+                        montoDebitoBD = montoOtro;
+                    }
+                    else if (metodoPago.StartsWith("Efectivo + Tarjeta de Crédito", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoEfectivoBD = montoEfectivo;
+                        montoCreditoBD = montoOtro;
+                    }
+                }
+
+                // Métodos de pago simples: todo el total se asigna a un solo medio
+                if (!metodoMixto)
+                {
+                    if (string.Equals(metodoPago, "Efectivo", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoEfectivoBD = totalVenta;
+                    }
+                    else if (string.Equals(metodoPago, "Tarjeta de Débito", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoDebitoBD = totalVenta;
+                    }
+                    else if (string.Equals(metodoPago, "Tarjeta de Crédito", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoCreditoBD = totalVenta;
+                    }
+                    else if (string.Equals(metodoPago, "Transferencia", StringComparison.OrdinalIgnoreCase))
+                    {
+                        montoTransferenciaBD = totalVenta;
+                    }
+                }
                 // Guardar snapshot antes de limpiar
                 var snapshotItems = carrito.Select(i => new ItemCarrito
                 {
@@ -469,7 +580,8 @@ namespace Gamora_Indumentaria
                 }).ToList();
 
                 // Ya no persistimos 'regalo' en BD. Solo afecta la impresión del ticket.
-                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta);
+                int ventaId = DatabaseManager.ProcesarVenta(carrito, metodoPago, totalVenta, chkEsRegalo?.Checked == true,
+                    montoEfectivoBD, montoDebitoBD, montoCreditoBD, montoTransferenciaBD);
 
                 // Preparar datos para ticket
                 lastTicketData = new VentaTicketData
@@ -519,6 +631,10 @@ namespace Gamora_Indumentaria
             txtCodigoBarras1?.Focus();
             if (cmbMetodoPago1 != null)
                 cmbMetodoPago1.SelectedIndex = -1;
+            if (txtIntereses1 != null)
+                txtIntereses1.Text = string.Empty;
+            if (txtMontoEfectivo != null) txtMontoEfectivo.Text = string.Empty;
+            if (txtMontoOtro != null) txtMontoOtro.Text = string.Empty;
         }
 
 
@@ -531,6 +647,13 @@ namespace Gamora_Indumentaria
             this.lblTitulo1 = new System.Windows.Forms.GroupBox();
             this.btnAgregar1 = new System.Windows.Forms.Button();
             this.grpPago = new System.Windows.Forms.GroupBox();
+            this.txtMontoOtro = new System.Windows.Forms.TextBox();
+            this.txtMontoEfectivo = new System.Windows.Forms.TextBox();
+            this.lblMontoOtro = new System.Windows.Forms.Label();
+            this.lblMontoEfectivo = new System.Windows.Forms.Label();
+            this.txtIntereses1 = new System.Windows.Forms.TextBox();
+            this.lblIntereses1 = new System.Windows.Forms.Label();
+            this.lblMetodoPago1 = new System.Windows.Forms.Label();
             this.ProcesarVentabtn = new System.Windows.Forms.Button();
             this.chkImprimirTicket = new System.Windows.Forms.CheckBox();
             this.btnVistaPrevia = new System.Windows.Forms.Button();
@@ -572,12 +695,38 @@ namespace Gamora_Indumentaria
             this.lblTitulo1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
             | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTitulo1.Controls.Add(this.btnAgregar1);
-            this.lblTitulo1.Controls.Add(this.grpPago);
-            this.lblTitulo1.Controls.Add(this.txtCodigoBarras1);
-            this.lblTitulo1.Controls.Add(this.groupBox2);
-            this.lblTitulo1.Controls.Add(this.label1);
-            this.lblTitulo1.Controls.Add(this.lblUltimoCodigo);
+            // Los controles se distribuyen ahora en paneles izquierdo y derecho
+            this.panelLeft = new System.Windows.Forms.Panel();
+            this.panelRight = new System.Windows.Forms.Panel();
+
+            // panelLeft: escáner y carrito
+            this.panelLeft.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left))));
+            this.panelLeft.Location = new System.Drawing.Point(15, 30);
+            this.panelLeft.Name = "panelLeft";
+            this.panelLeft.Size = new System.Drawing.Size(760, 500);
+            this.panelLeft.TabIndex = 10;
+
+            // panelRight: pago
+            this.panelRight.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Right))));
+            this.panelRight.Location = new System.Drawing.Point(790, 30);
+            this.panelRight.Name = "panelRight";
+            this.panelRight.Size = new System.Drawing.Size(370, 500);
+            this.panelRight.TabIndex = 11;
+
+            // Agregar controles al panel izquierdo
+            this.panelLeft.Controls.Add(this.btnAgregar1);
+            this.panelLeft.Controls.Add(this.txtCodigoBarras1);
+            this.panelLeft.Controls.Add(this.label1);
+            this.panelLeft.Controls.Add(this.lblUltimoCodigo);
+            this.panelLeft.Controls.Add(this.groupBox2);
+
+            // Agregar controles al panel derecho
+            this.panelRight.Controls.Add(this.grpPago);
+
+            this.lblTitulo1.Controls.Add(this.panelLeft);
+            this.lblTitulo1.Controls.Add(this.panelRight);
             this.lblTitulo1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitulo1.Location = new System.Drawing.Point(12, 50);
             this.lblTitulo1.Name = "lblTitulo1";
@@ -601,7 +750,17 @@ namespace Gamora_Indumentaria
             // 
             // grpPago
             // 
-            this.grpPago.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            // Anclar el panel de pago dentro del panel derecho
+            this.grpPago.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grpPago.Controls.Add(this.txtMontoOtro);
+            this.grpPago.Controls.Add(this.txtMontoEfectivo);
+            this.grpPago.Controls.Add(this.lblMontoOtro);
+            this.grpPago.Controls.Add(this.lblMontoEfectivo);
+            this.grpPago.Controls.Add(this.txtIntereses1);
+            this.grpPago.Controls.Add(this.lblIntereses1);
+            this.grpPago.Controls.Add(this.lblMetodoPago1);
             this.grpPago.Controls.Add(this.ProcesarVentabtn);
             this.grpPago.Controls.Add(this.chkImprimirTicket);
             this.grpPago.Controls.Add(this.btnVistaPrevia);
@@ -609,21 +768,93 @@ namespace Gamora_Indumentaria
             this.grpPago.Controls.Add(this.lblTotal);
             this.grpPago.Controls.Add(this.label3);
             this.grpPago.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpPago.Location = new System.Drawing.Point(589, 372);
+            // Ubicar el panel de pago dentro del panel derecho
+            this.grpPago.Location = new System.Drawing.Point(10, 10);
             this.grpPago.Name = "grpPago";
-            this.grpPago.Size = new System.Drawing.Size(586, 175);
+            this.grpPago.Size = new System.Drawing.Size(350, 300);
             this.grpPago.TabIndex = 5;
             this.grpPago.TabStop = false;
-            this.grpPago.Text = "Procedimiento de Pago";
+            this.grpPago.Text = "Procedimiento de Pago e Interés";
+            // 
+            // txtMontoOtro
+            // 
+            this.txtMontoOtro.Location = new System.Drawing.Point(150, 166);
+            this.txtMontoOtro.Name = "txtMontoOtro";
+            this.txtMontoOtro.Size = new System.Drawing.Size(100, 26);
+            this.txtMontoOtro.TabIndex = 11;
+            this.txtMontoOtro.Visible = false;
+            // 
+            // txtMontoEfectivo
+            // 
+            this.txtMontoEfectivo.Location = new System.Drawing.Point(150, 134);
+            this.txtMontoEfectivo.Name = "txtMontoEfectivo";
+            this.txtMontoEfectivo.Size = new System.Drawing.Size(100, 26);
+            this.txtMontoEfectivo.TabIndex = 10;
+            this.txtMontoEfectivo.Visible = false;
+            // 
+            // lblMontoOtro
+            // 
+            this.lblMontoOtro.AutoSize = true;
+            this.lblMontoOtro.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMontoOtro.ForeColor = System.Drawing.Color.Green;
+            this.lblMontoOtro.Location = new System.Drawing.Point(20, 168);
+            this.lblMontoOtro.Name = "lblMontoOtro";
+            this.lblMontoOtro.Size = new System.Drawing.Size(105, 18);
+            this.lblMontoOtro.TabIndex = 13;
+            this.lblMontoOtro.Text = "Otro monto:";
+            this.lblMontoOtro.Visible = false;
+            // 
+            // lblMontoEfectivo
+            // 
+            this.lblMontoEfectivo.AutoSize = true;
+            this.lblMontoEfectivo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMontoEfectivo.ForeColor = System.Drawing.Color.Green;
+            this.lblMontoEfectivo.Location = new System.Drawing.Point(20, 136);
+            this.lblMontoEfectivo.Name = "lblMontoEfectivo";
+            this.lblMontoEfectivo.Size = new System.Drawing.Size(116, 18);
+            this.lblMontoEfectivo.TabIndex = 12;
+            this.lblMontoEfectivo.Text = "Efectivo ($):";
+            this.lblMontoEfectivo.Visible = false;
+            // 
+            // txtIntereses1
+            // 
+            this.txtIntereses1.Location = new System.Drawing.Point(150, 66);
+            this.txtIntereses1.Name = "txtIntereses1";
+            this.txtIntereses1.Size = new System.Drawing.Size(100, 26);
+            this.txtIntereses1.TabIndex = 4;
+            this.txtIntereses1.TextChanged += new System.EventHandler(this.txtIntereses1_TextChanged);
+            // 
+            // lblIntereses1
+            // 
+            this.lblIntereses1.AutoSize = true;
+            this.lblIntereses1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblIntereses1.ForeColor = System.Drawing.Color.Green;
+            this.lblIntereses1.Location = new System.Drawing.Point(20, 68);
+            this.lblIntereses1.Name = "lblIntereses1";
+            this.lblIntereses1.Size = new System.Drawing.Size(113, 18);
+            this.lblIntereses1.TabIndex = 9;
+            this.lblIntereses1.Text = "Intereses (%):";
+            // 
+            // lblMetodoPago1
+            // 
+            this.lblMetodoPago1.AutoSize = true;
+            this.lblMetodoPago1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMetodoPago1.ForeColor = System.Drawing.Color.Green;
+            this.lblMetodoPago1.Location = new System.Drawing.Point(20, 104);
+            this.lblMetodoPago1.Name = "lblMetodoPago1";
+            this.lblMetodoPago1.Size = new System.Drawing.Size(112, 18);
+            this.lblMetodoPago1.TabIndex = 8;
+            this.lblMetodoPago1.Text = "Método pago:";
             // 
             // ProcesarVentabtn
             // 
             this.ProcesarVentabtn.BackColor = System.Drawing.Color.LawnGreen;
             this.ProcesarVentabtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ProcesarVentabtn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.ProcesarVentabtn.Location = new System.Drawing.Point(369, 142);
+            // Ubicar el botón dentro del ancho del grupo, debajo de los montos
+            this.ProcesarVentabtn.Location = new System.Drawing.Point(180, 200);
             this.ProcesarVentabtn.Name = "ProcesarVentabtn";
-            this.ProcesarVentabtn.Size = new System.Drawing.Size(196, 27);
+            this.ProcesarVentabtn.Size = new System.Drawing.Size(150, 40);
             this.ProcesarVentabtn.TabIndex = 3;
             this.ProcesarVentabtn.Text = " Procesar Venta";
             this.ProcesarVentabtn.UseVisualStyleBackColor = false;
@@ -634,7 +865,8 @@ namespace Gamora_Indumentaria
             this.chkImprimirTicket.AutoSize = true;
             this.chkImprimirTicket.Checked = true;
             this.chkImprimirTicket.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkImprimirTicket.Location = new System.Drawing.Point(6, 102);
+            // Mover debajo de los campos de monto para que no se superponga
+            this.chkImprimirTicket.Location = new System.Drawing.Point(20, 210);
             this.chkImprimirTicket.Name = "chkImprimirTicket";
             this.chkImprimirTicket.Size = new System.Drawing.Size(141, 24);
             this.chkImprimirTicket.TabIndex = 6;
@@ -645,9 +877,10 @@ namespace Gamora_Indumentaria
             // 
             this.btnVistaPrevia.BackColor = System.Drawing.Color.LightSteelBlue;
             this.btnVistaPrevia.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold);
-            this.btnVistaPrevia.Location = new System.Drawing.Point(369, 108);
+            // Colocar debajo del botón de procesar dentro del grupo
+            this.btnVistaPrevia.Location = new System.Drawing.Point(180, 245);
             this.btnVistaPrevia.Name = "btnVistaPrevia";
-            this.btnVistaPrevia.Size = new System.Drawing.Size(196, 24);
+            this.btnVistaPrevia.Size = new System.Drawing.Size(150, 30);
             this.btnVistaPrevia.TabIndex = 7;
             this.btnVistaPrevia.Text = "Vista previa";
             this.btnVistaPrevia.UseVisualStyleBackColor = false;
@@ -656,9 +889,9 @@ namespace Gamora_Indumentaria
             // cmbMetodoPago1
             // 
             this.cmbMetodoPago1.FormattingEnabled = true;
-            this.cmbMetodoPago1.Location = new System.Drawing.Point(369, 62);
+            this.cmbMetodoPago1.Location = new System.Drawing.Point(150, 100);
             this.cmbMetodoPago1.Name = "cmbMetodoPago1";
-            this.cmbMetodoPago1.Size = new System.Drawing.Size(196, 28);
+            this.cmbMetodoPago1.Size = new System.Drawing.Size(190, 28);
             this.cmbMetodoPago1.TabIndex = 5;
             // 
             // lblTotal
@@ -666,7 +899,7 @@ namespace Gamora_Indumentaria
             this.lblTotal.AutoSize = true;
             this.lblTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTotal.ForeColor = System.Drawing.Color.Green;
-            this.lblTotal.Location = new System.Drawing.Point(75, 62);
+            this.lblTotal.Location = new System.Drawing.Point(178, 28);
             this.lblTotal.Name = "lblTotal";
             this.lblTotal.Size = new System.Drawing.Size(60, 24);
             this.lblTotal.TabIndex = 4;
@@ -677,11 +910,11 @@ namespace Gamora_Indumentaria
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.ForeColor = System.Drawing.Color.Green;
-            this.label3.Location = new System.Drawing.Point(6, 66);
+            this.label3.Location = new System.Drawing.Point(20, 32);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(51, 18);
+            this.label3.Size = new System.Drawing.Size(152, 18);
             this.label3.TabIndex = 3;
-            this.label3.Text = "Total:";
+            this.label3.Text = "Total (con interés):";
             // 
             // txtCodigoBarras1
             // 
@@ -839,12 +1072,25 @@ namespace Gamora_Indumentaria
                     "Tarjeta de Débito",
                     "Tarjeta de Crédito",
                     "Transferencia",
-                    "Mercado Pago"
+                    "Efectivo + Transferencia",
+                    "Efectivo + Tarjeta de Débito",
+                    "Efectivo + Tarjeta de Crédito"
                 });
-                cmbMetodoPago1.SelectedIndexChanged += (s, ev) => UpdateProcesarEnabled();
+                cmbMetodoPago1.SelectedIndexChanged += cmbMetodoPago1_SelectedIndexChanged;
+            }
+
+            if (txtIntereses1 != null)
+            {
+                txtIntereses1.Text = string.Empty;
             }
 
             txtCodigoBarras1?.Focus();
+            UpdateProcesarEnabled();
+        }
+
+        private void cmbMetodoPago1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ActualizarVisibilidadMontosPago();
             UpdateProcesarEnabled();
         }
 
@@ -857,6 +1103,11 @@ namespace Gamora_Indumentaria
                 e.Handled = true;
                 AgregarProductoPorCodigo();
             }
+        }
+
+        private void txtIntereses1_TextChanged(object sender, EventArgs e)
+        {
+            ActualizarTotal();
         }
 
         private void btnAgregar1_Click(object sender, EventArgs e)
@@ -936,8 +1187,11 @@ namespace Gamora_Indumentaria
         private void Ventas_KeyPress_Global(object sender, KeyPressEventArgs e)
         {
 
-            // If user is actively typing in the barcode textbox or editing a grid cell (e.g. descuento), don't intercept
+            // If user is actively typing in a textbox or editing a grid cell (e.g. descuento), don't intercept
             if ((txtCodigoBarras1 != null && txtCodigoBarras1.Focused)
+                || (txtIntereses1 != null && txtIntereses1.Focused)
+                || (txtMontoEfectivo != null && txtMontoEfectivo.Focused)
+                || (txtMontoOtro != null && txtMontoOtro.Focused)
                 || (descuentoEditor != null && descuentoEditor.Focused)
                 || (dgvCarrito1 != null && dgvCarrito1.IsCurrentCellInEditMode))
             {
@@ -1226,6 +1480,57 @@ namespace Gamora_Indumentaria
         {
             bool puede = carrito != null && carrito.Count > 0 && cmbMetodoPago1 != null && cmbMetodoPago1.SelectedIndex >= 0;
             if (ProcesarVentabtn != null) ProcesarVentabtn.Enabled = puede;
+        }
+
+        private void ActualizarVisibilidadMontosPago()
+        {
+            if (cmbMetodoPago1 == null) return;
+
+            string metodo = cmbMetodoPago1.SelectedItem as string ?? string.Empty;
+
+            bool esMixto = metodo.StartsWith("Efectivo +", StringComparison.OrdinalIgnoreCase);
+
+            if (!esMixto)
+            {
+                if (lblMontoEfectivo != null) lblMontoEfectivo.Visible = false;
+                if (lblMontoOtro != null) lblMontoOtro.Visible = false;
+                if (txtMontoEfectivo != null)
+                {
+                    txtMontoEfectivo.Visible = false;
+                    txtMontoEfectivo.Text = string.Empty;
+                }
+                if (txtMontoOtro != null)
+                {
+                    txtMontoOtro.Visible = false;
+                    txtMontoOtro.Text = string.Empty;
+                }
+                return;
+            }
+
+            // Configurar etiquetas según el tipo de combinación
+            string etiquetaOtro = "Otro ($):";
+            if (metodo.Contains("Transferencia")) etiquetaOtro = "Transferencia ($):";
+            else if (metodo.Contains("Tarjeta de Débito")) etiquetaOtro = "Tarjeta Débito ($):";
+            else if (metodo.Contains("Tarjeta de Crédito")) etiquetaOtro = "Tarjeta Crédito ($):";
+
+            if (lblMontoEfectivo != null)
+            {
+                lblMontoEfectivo.Text = "Efectivo ($):";
+                lblMontoEfectivo.Visible = true;
+            }
+            if (lblMontoOtro != null)
+            {
+                lblMontoOtro.Text = etiquetaOtro;
+                lblMontoOtro.Visible = true;
+            }
+            if (txtMontoEfectivo != null)
+            {
+                txtMontoEfectivo.Visible = true;
+            }
+            if (txtMontoOtro != null)
+            {
+                txtMontoOtro.Visible = true;
+            }
         }
 
         private void btnCerrar_Click(object sender, EventArgs e)
